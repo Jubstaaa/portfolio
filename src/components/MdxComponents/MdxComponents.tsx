@@ -107,9 +107,7 @@ function Li({ className, ...props }: HTMLAttributes<HTMLLIElement>) {
 }
 
 function Hr() {
-  return (
-    <hr className="hairline my-8 h-px border-0 bg-[color-mix(in_oklch,var(--border)_70%,transparent)]" />
-  );
+  return <hr className="my-8 border-t border-[color:var(--foreground)]" />;
 }
 
 function Blockquote({ className, ...props }: HTMLAttributes<HTMLQuoteElement>) {

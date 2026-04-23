@@ -31,7 +31,7 @@ export function SectionHeading({
         </span>
         <span>{title}</span>
       </Tag>
-      <hr className="hairline m-0 h-px border-0 bg-[color-mix(in_oklch,var(--border)_70%,transparent)]" />
+      <hr className="m-0 border-t border-[color:var(--foreground)]" />
       {description ? (
         <p className="text-muted-foreground prose-max text-sm">{description}</p>
       ) : null}
