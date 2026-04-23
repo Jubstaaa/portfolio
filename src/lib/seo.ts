@@ -95,13 +95,3 @@ export function buildProjectJsonLd(project: Project): Record<string, unknown> {
     keywords: project.stack.join(", "),
   };
 }
-
-export function JsonLd({ data }: { data: Record<string, unknown> }) {
-  return (
-    <script
-      type="application/ld+json"
-      // Server-rendered, our content — safe to serialize directly.
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
-    />
-  );
-}

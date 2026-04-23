@@ -8,7 +8,8 @@ import { PathBar } from "@/components/PathBar";
 import { Prose } from "@/components/Prose";
 import { SectionHeading } from "@/components/SectionHeading";
 import { getAllProjects, getProjectBySlug, site, type Project } from "@/lib/content";
-import { buildBreadcrumbJsonLd, buildMetadata, buildProjectJsonLd, JsonLd } from "@/lib/seo";
+import { JsonLd } from "@/components/JsonLd";
+import { buildBreadcrumbJsonLd, buildMetadata, buildProjectJsonLd } from "@/lib/seo";
 
 export function generateStaticParams() {
   return getAllProjects().map((project) => ({ slug: project.slug }));
@@ -49,8 +50,9 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
   return (
     <>
-      <JsonLd data={buildProjectJsonLd(project)} />
+      <JsonLd id={`ld-project-${project.slug}`} data={buildProjectJsonLd(project)} />
       <JsonLd
+        id={`ld-breadcrumb-${project.slug}`}
         data={buildBreadcrumbJsonLd([
           { name: "Home", path: "/" },
           { name: "Projects", path: "/projects" },
