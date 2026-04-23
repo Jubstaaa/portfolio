@@ -88,12 +88,7 @@ export default async function PostPage({ params }: PostPageProps) {
               <span aria-hidden className="select-none">
                 ·
               </span>
-              <Link
-                href={`/blog/category/${post.category}`}
-                className="hover:text-foreground transition-token"
-              >
-                {post.category}
-              </Link>
+              <span>{post.category}</span>
             </p>
             <div className="relative space-y-3">
               <h1
@@ -118,13 +113,7 @@ export default async function PostPage({ params }: PostPageProps) {
             {post.tags.length > 0 ? (
               <p className="text-muted-foreground flex flex-wrap gap-x-3 text-xs">
                 {post.tags.map((tag) => (
-                  <Link
-                    key={tag}
-                    href={`/blog?tag=${encodeURIComponent(tag)}`}
-                    className="hover:text-foreground transition-token"
-                  >
-                    #{tag}
-                  </Link>
+                  <span key={tag}>#{tag}</span>
                 ))}
               </p>
             ) : null}

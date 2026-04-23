@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-import { getAllBlogCategories, getAllProjects, getPublishedPosts, site } from "@/lib/content";
+import { getAllProjects, getPublishedPosts, site } from "@/lib/content";
 
 function absolute(path: string): string {
   return new URL(path, site.url).toString();
@@ -31,12 +31,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: post.featured ? 0.85 : 0.7,
   }));
 
-  const categoryRoutes: MetadataRoute.Sitemap = getAllBlogCategories().map((slug) => ({
-    url: absolute(`/blog/category/${slug}`),
-    lastModified: now,
-    changeFrequency: "weekly",
-    priority: 0.5,
-  }));
-
-  return [...staticRoutes, ...projectRoutes, ...postRoutes, ...categoryRoutes];
+  return [...staticRoutes, ...projectRoutes, ...postRoutes];
 }

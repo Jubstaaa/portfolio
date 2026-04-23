@@ -22,8 +22,6 @@ import {
 export { about, education, experiences, posts, projects, site, skills, socials, stacks };
 export type { About, Education, Experience, Post, Project, Site, Skill, Social, Stack };
 
-export type ProjectCategory = Project["category"];
-
 // ───── Posts ──────────────────────────────────────────────────────────────────
 export function getPublishedPosts(): Post[] {
   return posts
@@ -40,18 +38,6 @@ export function getPostBySlug(slug: string): Post | undefined {
   return posts.find((post) => post.slug === slug);
 }
 
-export function getPostsByCategory(category: string): Post[] {
-  return getPublishedPosts().filter((post) => post.category === category);
-}
-
-export function getAllBlogCategories(): string[] {
-  return Array.from(new Set(posts.map((post) => post.category))).sort();
-}
-
-export function getAllBlogTags(): string[] {
-  return Array.from(new Set(posts.flatMap((post) => post.tags))).sort();
-}
-
 // ───── Projects ───────────────────────────────────────────────────────────────
 export function getAllProjects(): Project[] {
   return projects
@@ -65,31 +51,6 @@ export function getFeaturedProjects(): Project[] {
 
 export function getProjectBySlug(slug: string): Project | undefined {
   return projects.find((project) => project.slug === slug);
-}
-
-export interface ProjectFilter {
-  category?: ProjectCategory;
-  stack?: string[];
-}
-
-export function filterProjects(filter: ProjectFilter): Project[] {
-  return getAllProjects().filter((project) => {
-    if (filter.category && project.category !== filter.category) return false;
-    if (filter.stack && filter.stack.length > 0) {
-      for (const stack of filter.stack) {
-        if (!project.stack.includes(stack)) return false;
-      }
-    }
-    return true;
-  });
-}
-
-export function getAllProjectCategories(): ProjectCategory[] {
-  return Array.from(new Set(projects.map((project) => project.category))).sort();
-}
-
-export function getAllProjectStacks(): string[] {
-  return Array.from(new Set(projects.flatMap((project) => project.stack))).sort();
 }
 
 // ───── Experience / Education ─────────────────────────────────────────────────
