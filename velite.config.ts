@@ -79,7 +79,6 @@ const posts = defineCollection({
       featured: s.boolean().default(false),
       cover: image.optional(),
       slug: s.path(),
-      metadata: s.metadata(),
       toc: s.toc(),
       body: s.mdx(),
       raw: s.raw(),
@@ -88,7 +87,6 @@ const posts = defineCollection({
       ...data,
       slug: data.slug.replace(/^blog\//, ""),
       path: `/blog/${data.slug.replace(/^blog\//, "")}`,
-      readingTime: Math.max(1, Math.round(data.metadata.readingTime)),
       toc: cleanToc(data.toc as TocEntry[]),
     })),
 });

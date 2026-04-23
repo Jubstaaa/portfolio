@@ -74,17 +74,13 @@ export default async function PostPage({ params }: PostPageProps) {
       <ReadingProgress />
       <PathBar
         path={`~/${site.handle}/blog/${post.slug}`}
-        meta={`${formatDate(post.date)} · ${post.readingTime} min · ${post.category}`}
+        meta={`${formatDate(post.date)} · ${post.category}`}
       />
       <div className="container-default section-pad grid gap-12 lg:grid-cols-[minmax(0,1fr),16rem]">
         <article className="min-w-0 space-y-8">
           <header className="space-y-4">
             <p className="text-muted-foreground flex flex-wrap items-center gap-x-3 text-xs">
               <span className="font-mono tracking-tight">{formatDate(post.date)}</span>
-              <span aria-hidden className="select-none">
-                ·
-              </span>
-              <span>{post.readingTime} min</span>
               <span aria-hidden className="select-none">
                 ·
               </span>
@@ -160,7 +156,7 @@ export default async function PostPage({ params }: PostPageProps) {
                       {r.title}
                     </Link>
                     <p className="text-muted-foreground mt-1 text-xs">
-                      {formatDate(r.date)} · {r.readingTime} min · {r.category}
+                      {formatDate(r.date)} · {r.category}
                     </p>
                   </li>
                 ))}

@@ -27,10 +27,6 @@ export function BlogCard({ post, className }: BlogCardProps) {
         <span aria-hidden className="select-none">
           ·
         </span>
-        <span>{post.readingTime} min</span>
-        <span aria-hidden className="select-none">
-          ·
-        </span>
         <span>{post.category}</span>
         {post.featured ? (
           <>

@@ -19,7 +19,7 @@ export default async function OG({ params }: Props) {
   const post = getPostBySlug(slug);
   const title = post?.title ?? site.name;
   const date = post ? new Date(post.date).toISOString().slice(0, 10) : "";
-  const meta = post ? `${date} · ${post.readingTime} min · ${post.category}` : site.role;
+  const meta = post ? `${date} · ${post.category}` : site.role;
 
   return new ImageResponse(
     <div
