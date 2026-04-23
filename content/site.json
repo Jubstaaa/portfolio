@@ -1,11 +1,11 @@
 {
-  "name": "İlker Balcılar",
+  "name": "ilker balcilar",
   "handle": "ilker",
-  "role": "Software Engineer",
-  "location": "Istanbul",
-  "title": "İlker Balcılar — Software Engineer",
-  "description": "Senior frontend engineer building fast, accessible interfaces.",
-  "url": "https://example.com",
+  "role": "software engineer",
+  "location": "istanbul",
+  "title": "ilker balcilar — software engineer",
+  "description": "senior frontend engineer building fast, accessible interfaces.",
+  "url": "https://ilkerbalcilar.com",
   "email": "ilkerbalcilartr@gmail.com",
   "locale": "en",
   "ogDefault": "/opengraph-image",
@@ -29,6 +29,6 @@
   ],
   "avatar": {
     "src": "/images/site/avatar.webp",
-    "alt": "İlker Balcılar"
+    "alt": "ilker balcilar"
   }
 }
