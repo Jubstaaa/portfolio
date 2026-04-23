@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { site, type Project } from "@/lib/content";
+import { site, type Post, type Project } from "@/lib/content";
 
 export interface BuildMetadataInput {
   title: string;
@@ -45,6 +45,39 @@ export function buildPersonJsonLd(): Record<string, unknown> {
     email: `mailto:${site.email}`,
     url: site.url,
     address: { "@type": "PostalAddress", addressLocality: site.location },
+  };
+}
+
+export function buildArticleJsonLd(post: Post): Record<string, unknown> {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.description,
+    datePublished: post.date,
+    ...(post.updated ? { dateModified: post.updated } : { dateModified: post.date }),
+    author: { "@type": "Person", name: site.name, url: site.url },
+    url: new URL(post.path, site.url).toString(),
+    ...(post.cover ? { image: new URL(post.cover.src, site.url).toString() } : {}),
+    keywords: post.tags.join(", "),
+    articleSection: post.category,
+    inLanguage: "en",
+    mainEntityOfPage: new URL(post.path, site.url).toString(),
+  };
+}
+
+export function buildBreadcrumbJsonLd(
+  trail: Array<{ name: string; path: string }>,
+): Record<string, unknown> {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: trail.map((entry, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: entry.name,
+      item: new URL(entry.path, site.url).toString(),
+    })),
   };
 }
 

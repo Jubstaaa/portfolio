@@ -10,7 +10,7 @@ import { ReadingProgress } from "@/components/ReadingProgress";
 import { SectionHeading } from "@/components/SectionHeading";
 import { Toc } from "@/components/Toc";
 import { getPostBySlug, getPublishedPosts, posts, site, type Post } from "@/lib/content";
-import { buildMetadata } from "@/lib/seo";
+import { buildArticleJsonLd, buildMetadata, JsonLd } from "@/lib/seo";
 
 export function generateStaticParams() {
   return posts.map((post) => ({ slug: post.slug }));
@@ -70,6 +70,7 @@ export default async function PostPage({ params }: PostPageProps) {
 
   return (
     <>
+      <JsonLd data={buildArticleJsonLd(post)} />
       <ReadingProgress />
       <PathBar
         path={`~/${site.handle}/blog/${post.slug}`}

@@ -7,11 +7,13 @@ import {
   TerminalMeta,
   TerminalPrompt,
 } from "@/components/TerminalBlock";
+import { buildPersonJsonLd, JsonLd } from "@/lib/seo";
 import { site } from "@/lib/site";
 
 export default function Home() {
   return (
     <section className="container-default section-pad">
+      <JsonLd data={buildPersonJsonLd()} />
       <TerminalBlock>
         <TerminalMeta path={`~/${site.handle}`} branch="main" />
 
