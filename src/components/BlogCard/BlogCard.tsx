@@ -1,4 +1,5 @@
-import { ViewTransitionLink } from "@/components/ViewTransitionLink";
+import Link from "next/link";
+
 import type { Post } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
@@ -12,10 +13,8 @@ function formatDate(iso: string): string {
 }
 
 export function BlogCard({ post, className }: BlogCardProps) {
-  const vtName = `post-${post.slug}`;
-
   return (
-    <ViewTransitionLink
+    <Link
       href={post.path}
       className={cn(
         "hairline group block border-b py-6 transition-[border-color] duration-[var(--duration-base)] ease-[var(--ease-out)]",
@@ -29,10 +28,7 @@ export function BlogCard({ post, className }: BlogCardProps) {
         </span>
         <span>{post.category}</span>
       </p>
-      <h2
-        className="text-foreground group-hover:text-accent transition-token mt-2 text-lg font-semibold tracking-tight"
-        style={{ viewTransitionName: vtName }}
-      >
+      <h2 className="text-foreground group-hover:text-accent transition-token mt-2 text-lg font-semibold tracking-tight">
         {post.title}
       </h2>
       <p className="text-muted-foreground mt-1 max-w-prose text-sm">{post.description}</p>
@@ -43,6 +39,6 @@ export function BlogCard({ post, className }: BlogCardProps) {
           ))}
         </p>
       ) : null}
-    </ViewTransitionLink>
+    </Link>
   );
 }

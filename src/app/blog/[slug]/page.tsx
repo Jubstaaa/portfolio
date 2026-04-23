@@ -83,16 +83,13 @@ export default async function PostPage({ params }: PostPageProps) {
               <span>{post.category}</span>
             </p>
             <div className="relative space-y-3">
-              <h1
-                className="text-foreground flex items-baseline gap-2 text-lg font-normal"
-                style={{ viewTransitionName: `post-${post.slug}` }}
-              >
+              <h1 className="text-foreground flex items-baseline gap-2 text-lg font-normal">
                 <span aria-hidden className="text-muted-foreground select-none">
                   #
                 </span>
                 <span>{post.title}</span>
               </h1>
-              <hr className="my-2 border-t border-[color:var(--foreground)]" />
+              <hr className="border-foreground my-2 border-t" />
             </div>
             <p className="text-foreground max-w-prose text-base leading-relaxed">
               {post.description}
@@ -107,7 +104,7 @@ export default async function PostPage({ params }: PostPageProps) {
           </header>
 
           {post.cover ? (
-            <div className="hairline relative aspect-[16/9] overflow-hidden rounded-md border">
+            <div className="hairline relative aspect-video overflow-hidden rounded-md border">
               <Image
                 src={post.cover.src}
                 alt={post.cover.alt}

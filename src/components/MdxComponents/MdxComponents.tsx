@@ -107,7 +107,7 @@ function Li({ className, ...props }: HTMLAttributes<HTMLLIElement>) {
 }
 
 function Hr() {
-  return <hr className="my-8 border-t border-[color:var(--foreground)]" />;
+  return <hr className="border-foreground my-8 border-t" />;
 }
 
 function Blockquote({ className, ...props }: HTMLAttributes<HTMLQuoteElement>) {

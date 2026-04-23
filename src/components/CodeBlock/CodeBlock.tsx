@@ -31,7 +31,7 @@ export function CodeBlock({ className, children, ...rest }: HTMLAttributes<HTMLP
       <pre
         ref={preRef}
         className={cn(
-          "hairline overflow-x-auto rounded-md border bg-[color:var(--muted)] p-4 text-[0.85rem] leading-relaxed",
+          "hairline bg-muted overflow-x-auto rounded-md border p-4 text-[0.85rem] leading-relaxed",
           className,
         )}
         {...rest}
@@ -42,7 +42,7 @@ export function CodeBlock({ className, children, ...rest }: HTMLAttributes<HTMLP
         type="button"
         onClick={onCopy}
         aria-label={copied ? "Copied" : "Copy code"}
-        className="hairline text-muted-foreground hover:text-foreground bg-background absolute top-2 right-2 inline-flex size-7 items-center justify-center rounded border opacity-0 transition-opacity duration-[var(--duration-fast)] group-hover:opacity-100 focus-visible:opacity-100"
+        className="hairline text-muted-foreground hover:text-foreground bg-background absolute top-2 right-2 inline-flex size-7 items-center justify-center rounded border opacity-0 transition-opacity duration-(--duration-fast) group-hover:opacity-100 focus-visible:opacity-100"
       >
         {copied ? (
           <Check aria-hidden className="text-success size-3.5" strokeWidth={2} />

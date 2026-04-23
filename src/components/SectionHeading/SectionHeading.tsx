@@ -31,7 +31,7 @@ export function SectionHeading({
         </span>
         <span>{title}</span>
       </Tag>
-      <hr className="my-2 border-t border-[color:var(--foreground)]" />
+      <hr className="border-foreground my-2 border-t" />
       {description ? (
         <p className="text-muted-foreground prose-max text-sm">{description}</p>
       ) : null}

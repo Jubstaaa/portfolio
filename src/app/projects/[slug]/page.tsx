@@ -69,16 +69,13 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               <span>{project.category}</span>
             </p>
             <div className="relative space-y-3">
-              <h1
-                className="text-foreground flex items-baseline gap-2 text-lg font-normal"
-                style={{ viewTransitionName: `project-${project.slug}` }}
-              >
+              <h1 className="text-foreground flex items-baseline gap-2 text-lg font-normal">
                 <span aria-hidden className="text-muted-foreground select-none">
                   #
                 </span>
                 <span>{project.title}</span>
               </h1>
-              <hr className="my-2 border-t border-[color:var(--foreground)]" />
+              <hr className="border-foreground my-2 border-t" />
             </div>
             <p className="text-foreground max-w-prose text-base leading-relaxed">
               {project.summary}
@@ -121,7 +118,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           </header>
 
           {cover ? (
-            <div className="hairline relative aspect-[16/9] overflow-hidden rounded-md border">
+            <div className="hairline relative aspect-video overflow-hidden rounded-md border">
               <Image
                 src={cover.src}
                 alt={cover.alt}
@@ -146,7 +143,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
                 {project.highlights.map((h) => (
                   <li
                     key={h}
-                    className="before:text-muted-foreground pl-[1.5ch] before:mr-[0.5ch] before:-ml-[1.5ch] before:content-['→'] before:select-none"
+                    className="before:text-muted-foreground pl-[1.5ch] before:mr-[0.5ch] before:ml-[-1.5ch] before:content-['→'] before:select-none"
                   >
                     {h}
                   </li>
