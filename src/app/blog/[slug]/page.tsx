@@ -6,7 +6,6 @@ import { notFound } from "next/navigation";
 import { Mdx } from "@/components/Mdx";
 import { PathBar } from "@/components/PathBar";
 import { Prose } from "@/components/Prose";
-import { ReadingProgress } from "@/components/ReadingProgress";
 import { getPostBySlug, getPublishedPosts, posts, site, type Post } from "@/lib/content";
 import { buildArticleJsonLd, buildMetadata, JsonLd } from "@/lib/seo";
 
@@ -53,7 +52,6 @@ export default async function PostPage({ params }: PostPageProps) {
   return (
     <>
       <JsonLd data={buildArticleJsonLd(post)} />
-      <ReadingProgress />
       <PathBar
         path={`~/${site.handle}/blog/${post.slug}`}
         meta={`${formatDate(post.date)} · ${post.category}`}
