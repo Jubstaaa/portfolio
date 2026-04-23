@@ -51,9 +51,7 @@ interface MongoProject {
   previewUrl?: string | null;
   projectCategoryId: string;
   mediaId: string;
-  logoId?: string | null;
   stackIds: string[];
-  stacks?: string[];
   content: string | null;
 }
 
@@ -65,8 +63,6 @@ interface MongoExperience {
   startDate: string;
   endDate: string | null;
   description: string | null;
-  logo?: string | null;
-  mediaId: string;
 }
 
 interface MongoEducation {
@@ -77,8 +73,6 @@ interface MongoEducation {
   startDate: string;
   endDate: string | null;
   description: string | null;
-  logo?: string | null;
-  mediaId: string;
 }
 
 interface MongoSkill {
@@ -440,14 +434,6 @@ function buildMap<T extends { _id: string }>(docs: T[]): Map<string, T> {
 
 // ───── Category mappers ───────────────────────────────────────────────────────
 
-const PROJECT_CATEGORY: Record<string, string> = {
-  "Web App": "web",
-  "Mobile App": "mobile",
-  "Browser Extension": "tool",
-  Service: "tool",
-  Game: "other",
-};
-
 const STACK_CATEGORY: Record<string, string> = {
   // framework
   "Next.js": "framework",
@@ -697,12 +683,8 @@ function main(): void {
   for (const project of projects) {
     const slug = project.slug || slugify(project.name);
     const cat = projCatMap.get(project.projectCategoryId);
-    const categoryName = cat?.name ?? "Web App";
-    const category = PROJECT_CATEGORY[categoryName] ?? "other";
+    const category = cat?.name ?? "Other";
     if (!cat) todo("projects", `"${slug}" has unknown category id ${project.projectCategoryId}`);
-    if (!PROJECT_CATEGORY[categoryName]) {
-      todo("projects", `"${slug}" category "${categoryName}" → fell back to "other" — review`);
-    }
 
     const stackNames: string[] = [];
     for (const id of project.stackIds ?? []) {
@@ -740,9 +722,7 @@ function main(): void {
       "---",
       `title: ${JSON.stringify(project.name)}`,
       `summary: ${JSON.stringify(summary)}`,
-      `category: ${category}`,
-      `role: ${JSON.stringify("Creator")}`,
-      `status: shipped`,
+      `category: ${JSON.stringify(category)}`,
     ];
     if (project.sourceUrl) fmLines.push(`repo: ${JSON.stringify(project.sourceUrl)}`);
     if (project.previewUrl) fmLines.push(`url: ${JSON.stringify(project.previewUrl)}`);
@@ -760,7 +740,7 @@ function main(): void {
     fmLines.push("---", "");
     writeFile(join(CONTENT, "projects", `${slug}.mdx`), fmLines.join("\n") + "\n" + body + "\n");
     counts.projects++;
-    todo("projects", `"${slug}" — fill highlights[], review role/status`);
+    todo("projects", `"${slug}" — fill highlights[] if any`);
   }
 
   // ─── Experiences ────────────────────────────────────────────────────────────
@@ -770,25 +750,6 @@ function main(): void {
   expSorted.forEach((exp, i) => {
     const slug = slugify(exp.name);
     const num = String(i + 1).padStart(2, "0");
-
-    // Prefer mediaId (Supabase), fall back to logo (Vercel Blob)
-    const m = mediaMap.get(exp.mediaId);
-    let logo: { src: string; alt: string } | undefined;
-    if (m) {
-      const local = `/images/experiences/${slug}/logo.${extOf(m.filename)}`;
-      queueImage(
-        `${SUPABASE_BASE}/${m.filename}`,
-        `public${local}`,
-        `experiences/${slug} logo (supabase)`,
-      );
-      logo = { src: local, alt: `${exp.name} logo` };
-    } else if (exp.logo) {
-      const local = `/images/experiences/${slug}/logo.${extOf(exp.logo)}`;
-      queueImage(exp.logo, `public${local}`, `experiences/${slug} logo (direct URL)`);
-      logo = { src: local, alt: `${exp.name} logo` };
-    } else {
-      todo("experiences", `"${exp.name}" has no logo reference`);
-    }
 
     const record = {
       company: exp.name,
@@ -800,7 +761,6 @@ function main(): void {
       summary: exp.description ?? "",
       highlights: [] as string[],
       stack: [] as string[],
-      ...(logo ? { logo } : {}),
     };
     writeFile(join(CONTENT, "experiences", `${num}-${slug}.json`), JSON.stringify(record, null, 2));
     counts.experiences++;
@@ -812,21 +772,6 @@ function main(): void {
   const seEdu = seMatch ?? null;
   if (seEdu) {
     const slug = slugify(seEdu.name);
-    const logoMedia = mediaMap.get(seEdu.mediaId);
-    let logo: { src: string; alt: string } | undefined;
-    if (logoMedia) {
-      const local = `/images/education/${slug}/logo.${extOf(logoMedia.filename)}`;
-      queueImage(
-        `${SUPABASE_BASE}/${logoMedia.filename}`,
-        `public${local}`,
-        `education/${slug} logo (supabase)`,
-      );
-      logo = { src: local, alt: `${seEdu.name} logo` };
-    } else if (seEdu.logo) {
-      const local = `/images/education/${slug}/logo.${extOf(seEdu.logo)}`;
-      queueImage(seEdu.logo, `public${local}`, `education/${slug} logo (direct URL)`);
-      logo = { src: local, alt: `${seEdu.name} logo` };
-    }
     const record = {
       school: seEdu.name,
       degree: "BSc in Software Engineering",
@@ -834,7 +779,6 @@ function main(): void {
       // end deliberately omitted (ongoing) per user spec
       location: seEdu.location,
       ...(seEdu.description ? { notes: seEdu.description } : {}),
-      ...(logo ? { logo } : {}),
     };
     writeFile(join(CONTENT, "education", `01-${slug}.json`), JSON.stringify(record, null, 2));
     counts.education++;

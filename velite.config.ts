@@ -11,7 +11,6 @@ const prettyCode: PrettyCodeOptions = {
 };
 
 const image = s.object({ src: s.string(), alt: s.string(), caption: s.string().optional() });
-const logo = s.object({ src: s.string(), alt: s.string() });
 
 const site = defineCollection({
   name: "Site",
@@ -76,10 +75,8 @@ const projects = defineCollection({
     .object({
       title: s.string(),
       summary: s.string(),
-      category: s.enum(["web", "mobile", "tool", "library", "other"]),
+      category: s.string(),
       stack: s.array(s.string()).default([]),
-      role: s.string(),
-      status: s.enum(["shipped", "in-progress", "archived"]).default("shipped"),
       repo: s.string().url().optional(),
       url: s.string().url().optional(),
       images: s.array(image).default([]),
@@ -108,7 +105,6 @@ const experiences = defineCollection({
       summary: s.string(),
       highlights: s.array(s.string()).default([]),
       stack: s.array(s.string()).default([]),
-      logo: logo.optional(),
     })
     .transform((data, { meta }) => {
       const file = meta.path.split("/").pop() ?? "";
@@ -129,7 +125,6 @@ const education = defineCollection({
       end: s.string().optional(),
       location: s.string().optional(),
       notes: s.string().optional(),
-      logo: logo.optional(),
     })
     .transform((data, { meta }) => {
       const file = meta.path.split("/").pop() ?? "";

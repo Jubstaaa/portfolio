@@ -52,20 +52,12 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     <>
       <JsonLd data={buildProjectJsonLd(project)} />
       <ReadingProgress />
-      <PathBar path={`~/${site.handle}/projects/${project.slug}`} meta={project.role} />
+      <PathBar path={`~/${site.handle}/projects/${project.slug}`} meta={project.category} />
       <section className="container-default section-pad">
         <article className="mx-auto max-w-3xl min-w-0 space-y-8">
           <header className="space-y-4">
             <p className="text-muted-foreground flex flex-wrap items-center gap-x-3 text-xs">
               <span>{project.category}</span>
-              {project.status !== "shipped" ? (
-                <>
-                  <span aria-hidden className="select-none">
-                    ·
-                  </span>
-                  <span className="text-warning">{project.status}</span>
-                </>
-              ) : null}
             </p>
             <div className="relative space-y-3">
               <h1 className="text-foreground flex items-baseline gap-2 text-lg font-normal">
