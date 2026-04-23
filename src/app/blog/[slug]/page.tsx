@@ -7,8 +7,6 @@ import { Mdx } from "@/components/Mdx";
 import { PathBar } from "@/components/PathBar";
 import { Prose } from "@/components/Prose";
 import { ReadingProgress } from "@/components/ReadingProgress";
-import { SectionHeading } from "@/components/SectionHeading";
-import { Toc } from "@/components/Toc";
 import { getPostBySlug, getPublishedPosts, posts, site, type Post } from "@/lib/content";
 import { buildArticleJsonLd, buildMetadata, JsonLd } from "@/lib/seo";
 
@@ -32,21 +30,6 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
   });
 }
 
-function relatedPosts(current: Post, limit = 3): Post[] {
-  if (current.tags.length === 0) return [];
-  const tagSet = new Set(current.tags);
-  return getPublishedPosts()
-    .filter((post) => post.slug !== current.slug)
-    .map((post) => ({
-      post,
-      overlap: post.tags.filter((t) => tagSet.has(t)).length,
-    }))
-    .filter((entry) => entry.overlap > 0)
-    .sort((a, b) => b.overlap - a.overlap || b.post.date.localeCompare(a.post.date))
-    .slice(0, limit)
-    .map((entry) => entry.post);
-}
-
 function adjacent(current: Post): { prev?: Post; next?: Post } {
   const list = getPublishedPosts();
   const index = list.findIndex((p) => p.slug === current.slug);
@@ -65,7 +48,6 @@ export default async function PostPage({ params }: PostPageProps) {
   const post = getPostBySlug(slug);
   if (!post) notFound();
 
-  const related = relatedPosts(post);
   const { prev, next } = adjacent(post);
 
   return (
@@ -76,8 +58,8 @@ export default async function PostPage({ params }: PostPageProps) {
         path={`~/${site.handle}/blog/${post.slug}`}
         meta={`${formatDate(post.date)} · ${post.category}`}
       />
-      <div className="container-default section-pad grid gap-12 lg:grid-cols-[minmax(0,1fr),16rem]">
-        <article className="min-w-0 space-y-8">
+      <section className="container-default section-pad">
+        <article className="mx-auto max-w-3xl min-w-0 space-y-8">
           <header className="space-y-4">
             <p className="text-muted-foreground flex flex-wrap items-center gap-x-3 text-xs">
               <span className="font-mono tracking-tight">{formatDate(post.date)}</span>
@@ -128,41 +110,9 @@ export default async function PostPage({ params }: PostPageProps) {
             </div>
           ) : null}
 
-          {post.toc.length > 0 ? (
-            <details className="hairline group rounded-md border p-4 lg:hidden">
-              <summary className="text-muted-foreground hover:text-foreground marker:text-muted-foreground cursor-pointer text-xs tracking-[0.18em] uppercase">
-                on this page
-              </summary>
-              <div className="mt-4">
-                <Toc items={post.toc} />
-              </div>
-            </details>
-          ) : null}
-
           <Prose>
             <Mdx code={post.body} />
           </Prose>
-
-          {related.length > 0 ? (
-            <section className="space-y-4 pt-10">
-              <SectionHeading title="related" />
-              <ul className="divide-border hairline flex flex-col divide-y border-t">
-                {related.map((r) => (
-                  <li key={r.slug} className="py-4">
-                    <Link
-                      href={r.path}
-                      className="text-foreground hover:text-accent transition-token"
-                    >
-                      {r.title}
-                    </Link>
-                    <p className="text-muted-foreground mt-1 text-xs">
-                      {formatDate(r.date)} · {r.category}
-                    </p>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          ) : null}
 
           {prev || next ? (
             <nav
@@ -198,13 +148,7 @@ export default async function PostPage({ params }: PostPageProps) {
             </nav>
           ) : null}
         </article>
-
-        <aside className="hidden lg:block">
-          <div className="sticky top-24">
-            <Toc items={post.toc} />
-          </div>
-        </aside>
-      </div>
+      </section>
     </>
   );
 }

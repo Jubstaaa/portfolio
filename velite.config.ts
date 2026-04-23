@@ -4,24 +4,6 @@ import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 import { defineConfig, defineCollection, s } from "velite";
 
-interface TocEntry {
-  title: string;
-  url: string;
-  items: TocEntry[];
-}
-
-function cleanToc(items: TocEntry[]): TocEntry[] {
-  return items.map((item) => ({
-    title: item.title
-      .replace(/undefined/g, "")
-      .replace(/\*\*/g, "")
-      .replace(/\s+/g, " ")
-      .trim(),
-    url: item.url,
-    items: cleanToc(item.items ?? []),
-  }));
-}
-
 const prettyCode: PrettyCodeOptions = {
   theme: { dark: "github-dark-default", light: "github-light" },
   defaultLang: "plaintext",
@@ -79,7 +61,6 @@ const posts = defineCollection({
       featured: s.boolean().default(false),
       cover: image.optional(),
       slug: s.path(),
-      toc: s.toc(),
       body: s.mdx(),
       raw: s.raw(),
     })
@@ -87,7 +68,6 @@ const posts = defineCollection({
       ...data,
       slug: data.slug.replace(/^blog\//, ""),
       path: `/blog/${data.slug.replace(/^blog\//, "")}`,
-      toc: cleanToc(data.toc as TocEntry[]),
     })),
 });
 
