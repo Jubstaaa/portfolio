@@ -40,9 +40,7 @@ export function getPostBySlug(slug: string): Post | undefined {
 
 // ───── Projects ───────────────────────────────────────────────────────────────
 export function getAllProjects(): Project[] {
-  return projects
-    .slice()
-    .sort((a, b) => (a.featured === b.featured ? b.year - a.year : a.featured ? -1 : 1));
+  return projects.slice().sort((a, b) => (a.featured === b.featured ? 0 : a.featured ? -1 : 1));
 }
 
 export function getFeaturedProjects(): Project[] {

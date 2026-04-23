@@ -35,18 +35,11 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
   return (
     <>
-      <PathBar
-        path={`~/${site.handle}/projects/${project.slug}`}
-        meta={`${project.role} · ${project.year}`}
-      />
+      <PathBar path={`~/${site.handle}/projects/${project.slug}`} meta={project.role} />
       <section className="container-default section-pad space-y-10">
         <header className="max-w-3xl space-y-4">
           <p className="text-muted-foreground flex items-center gap-2 text-xs tracking-[0.18em] uppercase">
             <span>{project.category}</span>
-            <span aria-hidden className="select-none">
-              ·
-            </span>
-            <span className="font-mono tracking-tight">{project.year}</span>
             {project.status !== "shipped" ? (
               <>
                 <span aria-hidden className="select-none">

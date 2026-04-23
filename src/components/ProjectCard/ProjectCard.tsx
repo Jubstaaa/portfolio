@@ -36,20 +36,17 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
         </div>
       ) : null}
       <div className="space-y-3 p-5">
-        <div className="flex items-baseline justify-between gap-4 text-xs">
-          <span className="text-muted-foreground">
-            {project.category}
-            {project.status !== "shipped" ? (
-              <>
-                <span aria-hidden className="mx-2 select-none">
-                  ·
-                </span>
-                <span className="text-warning">{project.status}</span>
-              </>
-            ) : null}
-          </span>
-          <span className="text-muted-foreground font-mono tracking-tight">{project.year}</span>
-        </div>
+        <p className="text-muted-foreground text-xs">
+          {project.category}
+          {project.status !== "shipped" ? (
+            <>
+              <span aria-hidden className="mx-2 select-none">
+                ·
+              </span>
+              <span className="text-warning">{project.status}</span>
+            </>
+          ) : null}
+        </p>
         <h3 className="text-foreground text-base font-semibold tracking-tight">{project.title}</h3>
         <p className="text-muted-foreground line-clamp-2 text-sm">{project.summary}</p>
         {project.stack.length > 0 ? (

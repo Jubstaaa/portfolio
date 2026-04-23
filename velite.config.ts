@@ -82,7 +82,6 @@ const projects = defineCollection({
       category: s.enum(["web", "mobile", "tool", "library", "other"]),
       stack: s.array(s.string()).default([]),
       role: s.string(),
-      year: s.number().int(),
       featured: s.boolean().default(false),
       status: s.enum(["shipped", "in-progress", "archived"]).default("shipped"),
       repo: s.string().url().optional(),

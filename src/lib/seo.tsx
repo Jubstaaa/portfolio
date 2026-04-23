@@ -89,7 +89,6 @@ export function buildProjectJsonLd(project: Project): Record<string, unknown> {
     name: project.title,
     description: project.summary,
     creator: { "@type": "Person", name: site.name },
-    dateCreated: String(project.year),
     url: new URL(`/projects/${project.slug}`, site.url).toString(),
     ...(project.repo ? { codeRepository: project.repo } : {}),
     ...(cover ? { image: new URL(cover.src, site.url).toString() } : {}),
