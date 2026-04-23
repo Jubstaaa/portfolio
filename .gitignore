@@ -39,5 +39,7 @@ bun-debug.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# stray dumps (flagged for triage — see TODO.md)
-full_dump.sql
+# sql dumps — source-data files live outside the repo (e.g. ~/Desktop/personal/portfolio-assets/)
+*.sql
+*.sql.gz
+*.dump
