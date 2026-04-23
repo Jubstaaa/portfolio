@@ -44,8 +44,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: dark)", color: "oklch(0.145 0.01 270)" },
-    { media: "(prefers-color-scheme: light)", color: "oklch(0.99 0.005 270)" },
+    { media: "(prefers-color-scheme: dark)", color: "oklch(0.17 0.013 255)" },
+    { media: "(prefers-color-scheme: light)", color: "oklch(0.985 0.005 85)" },
   ],
   colorScheme: "dark light",
 };
@@ -57,7 +57,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       suppressHydrationWarning
       className={`${GeistSans.variable} ${GeistMono.variable}`}
     >
-      <body className="bg-background text-foreground flex min-h-screen flex-col antialiased">
+      <body className="bg-background text-foreground flex min-h-screen flex-col font-mono antialiased">
         <ThemeProvider>
           <Nav />
           <main id="main" className="flex-1">

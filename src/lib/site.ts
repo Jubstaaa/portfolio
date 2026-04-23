@@ -1,6 +1,8 @@
 export interface SiteConfig {
   name: string;
   handle: string;
+  role: string;
+  location: string;
   title: string;
   description: string;
   url: string;
@@ -12,19 +14,21 @@ export interface SiteConfig {
 }
 
 export const site: SiteConfig = {
-  name: "Your Name",
-  handle: "yourhandle",
-  title: "Your Name — Senior Frontend Engineer",
+  name: "İlker Balcılar",
+  handle: "ilker",
+  role: "Frontend Engineer",
+  location: "Istanbul",
+  title: "İlker Balcılar — Senior Frontend Engineer",
   description: "Senior frontend engineer building fast, accessible interfaces.",
   url: "https://example.com",
-  email: "you@example.com",
+  email: "ilkerbalcilartr@gmail.com",
   locale: "en",
   isAvailable: true,
   ogDefault: "/opengraph-image",
   nav: [
-    { label: "About", href: "/about" },
-    { label: "Projects", href: "/projects" },
-    { label: "Blog", href: "/blog" },
-    { label: "Contact", href: "/contact" },
+    { label: "projects", href: "/projects" },
+    { label: "about", href: "/about" },
+    { label: "blog", href: "/blog" },
+    { label: "contact", href: "/contact" },
   ],
 };

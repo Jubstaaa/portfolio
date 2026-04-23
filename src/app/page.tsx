@@ -1,47 +1,63 @@
-import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 
+import {
+  StatusDot,
+  TerminalBlock,
+  TerminalLine,
+  TerminalMeta,
+  TerminalPrompt,
+} from "@/components/TerminalBlock";
 import { site } from "@/lib/site";
 
 export default function Home() {
   return (
     <section className="container-default section-pad">
-      <div className="max-w-4xl space-y-10">
-        {site.isAvailable ? (
-          <p className="text-muted-foreground inline-flex items-center gap-2 font-mono text-xs tracking-[0.18em] uppercase">
-            <span aria-hidden className="bg-success relative flex size-2 rounded-full">
-              <span className="bg-success/60 absolute inset-0 -z-10 animate-ping rounded-full" />
-            </span>
-            Available for work
+      <TerminalBlock>
+        <TerminalMeta path={`~/${site.handle}`} branch="main" />
+
+        <TerminalLine command="whoami">
+          <p>{site.name}</p>
+          <p className="text-muted-foreground">
+            {site.role} · {site.location}
           </p>
-        ) : null}
+        </TerminalLine>
 
-        <h1 className="text-display text-balance">
-          {site.name}. Senior frontend engineer building fast, accessible interfaces.
-        </h1>
+        <TerminalLine command="cat status">
+          {site.isAvailable ? (
+            <p>
+              <StatusDot tone="success" />
+              available for work
+            </p>
+          ) : (
+            <p>
+              <StatusDot tone="muted" />
+              heads-down
+            </p>
+          )}
+          <p className="text-muted-foreground">
+            <span aria-hidden className="mr-1 select-none">
+              →
+            </span>
+            open to remote & contract
+          </p>
+        </TerminalLine>
 
-        <p className="text-muted-foreground prose-max text-lg text-balance md:text-xl">
-          I design and ship production web apps with React, TypeScript, and a sharp eye for
-          performance. Currently open to staff-level roles, product advisory, and focused
-          engagements.
-        </p>
+        <TerminalLine command="ls">
+          <p className="flex flex-wrap gap-x-6 gap-y-1">
+            {site.nav.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="hover:text-accent transition-token underline-offset-4 hover:underline"
+              >
+                .{item.href}
+              </Link>
+            ))}
+          </p>
+        </TerminalLine>
 
-        <div className="flex flex-wrap items-center gap-3 pt-2">
-          <Link
-            href="/projects"
-            className="bg-foreground text-background hover:bg-foreground/90 transition-token inline-flex h-11 items-center gap-2 rounded-md px-5 text-sm font-medium"
-          >
-            View projects
-            <ArrowUpRight className="size-4" strokeWidth={2} aria-hidden />
-          </Link>
-          <Link
-            href="/contact"
-            className="hairline hover:bg-muted/60 transition-token inline-flex h-11 items-center gap-2 rounded-md border px-5 text-sm font-medium"
-          >
-            Get in touch
-          </Link>
-        </div>
-      </div>
+        <TerminalPrompt />
+      </TerminalBlock>
     </section>
   );
 }

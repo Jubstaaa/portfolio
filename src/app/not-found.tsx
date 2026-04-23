@@ -1,32 +1,47 @@
 import Link from "next/link";
 
+import { StatusDot, TerminalBlock, TerminalLine, TerminalMeta } from "@/components/TerminalBlock";
+import { site } from "@/lib/site";
+
 export default function NotFound() {
   return (
     <section className="container-default section-pad">
-      <div className="max-w-2xl space-y-6">
-        <p className="text-muted-foreground font-mono text-xs tracking-[0.18em] uppercase">
-          404 — not found
-        </p>
-        <h1 className="text-display">This page is off the map.</h1>
-        <p className="text-muted-foreground prose-max text-lg">
-          The page you were looking for doesn&apos;t exist, or has moved. Try one of the links
-          below.
-        </p>
-        <div className="flex flex-wrap items-center gap-3 pt-2">
-          <Link
-            href="/"
-            className="bg-foreground text-background hover:bg-foreground/90 transition-token inline-flex h-11 items-center rounded-md px-5 text-sm font-medium"
-          >
-            Back to home
-          </Link>
-          <Link
-            href="/projects"
-            className="hairline hover:bg-muted/60 transition-token inline-flex h-11 items-center rounded-md border px-5 text-sm font-medium"
-          >
-            See projects
-          </Link>
-        </div>
-      </div>
+      <TerminalBlock>
+        <TerminalMeta path="~/unknown" branch="detached" />
+
+        <TerminalLine command="cat .">
+          <p>
+            <StatusDot tone="danger" />
+            not found · 404
+          </p>
+          <p className="text-muted-foreground">
+            <span aria-hidden className="mr-1 select-none">
+              →
+            </span>
+            the page you requested doesn&apos;t exist or has moved
+          </p>
+        </TerminalLine>
+
+        <TerminalLine command="ls">
+          <p className="flex flex-wrap gap-x-6 gap-y-1">
+            <Link
+              href="/"
+              className="hover:text-accent transition-token underline-offset-4 hover:underline"
+            >
+              ./home
+            </Link>
+            {site.nav.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="hover:text-accent transition-token underline-offset-4 hover:underline"
+              >
+                .{item.href}
+              </Link>
+            ))}
+          </p>
+        </TerminalLine>
+      </TerminalBlock>
     </section>
   );
 }

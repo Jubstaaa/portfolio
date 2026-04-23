@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 
+import { PathBar } from "@/components/PathBar";
 import { SectionHeading } from "@/components/SectionHeading";
+import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "About",
@@ -9,13 +11,16 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <section className="container-default section-pad">
-      <SectionHeading
-        as="h1"
-        eyebrow="About"
-        title="Bio, experience, skills."
-        description="Long-form bio, timeline, and education arrive in S02 (content pipeline) and S03 (about layout)."
-      />
-    </section>
+    <>
+      <PathBar path={`~/${site.handle}/about`} meta="last updated 2026-04-23" />
+      <section className="container-default section-pad">
+        <SectionHeading
+          as="h1"
+          title="about"
+          number="01"
+          description="Long-form bio, timeline, and education arrive in S02 (content pipeline) and S03 (about layout)."
+        />
+      </section>
+    </>
   );
 }

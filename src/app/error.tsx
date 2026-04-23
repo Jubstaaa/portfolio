@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useEffect } from "react";
 
+import { StatusDot, TerminalBlock, TerminalLine, TerminalMeta } from "@/components/TerminalBlock";
+
 export default function GlobalError({
   error,
   reset,
@@ -16,33 +18,51 @@ export default function GlobalError({
 
   return (
     <section className="container-default section-pad">
-      <div className="max-w-2xl space-y-6">
-        <p className="text-muted-foreground font-mono text-xs tracking-[0.18em] uppercase">
-          500 — something broke
-        </p>
-        <h1 className="text-display">Unexpected error.</h1>
-        <p className="text-muted-foreground prose-max text-lg">
-          The page failed to render. You can retry, or head back home.
-        </p>
-        {error.digest ? (
-          <p className="text-muted-foreground font-mono text-xs">ref: {error.digest}</p>
-        ) : null}
-        <div className="flex flex-wrap items-center gap-3 pt-2">
-          <button
-            type="button"
-            onClick={reset}
-            className="bg-foreground text-background hover:bg-foreground/90 transition-token inline-flex h-11 items-center rounded-md px-5 text-sm font-medium"
-          >
-            Try again
-          </button>
-          <Link
-            href="/"
-            className="hairline hover:bg-muted/60 transition-token inline-flex h-11 items-center rounded-md border px-5 text-sm font-medium"
-          >
-            Back to home
-          </Link>
-        </div>
-      </div>
+      <TerminalBlock>
+        <TerminalMeta path="~/error" branch="500" />
+
+        <TerminalLine command="cat .">
+          <p>
+            <StatusDot tone="danger" />
+            unexpected error · 500
+          </p>
+          <p className="text-muted-foreground">
+            <span aria-hidden className="mr-1 select-none">
+              →
+            </span>
+            the page failed to render
+          </p>
+          {error.digest ? (
+            <p className="text-muted-foreground">
+              <span aria-hidden className="mr-1 select-none">
+                →
+              </span>
+              ref: {error.digest}
+            </p>
+          ) : null}
+        </TerminalLine>
+
+        <TerminalLine command="retry">
+          <p>
+            <button
+              type="button"
+              onClick={reset}
+              className="text-foreground hover:text-accent transition-token underline underline-offset-4"
+            >
+              ./reset
+            </button>
+            <span aria-hidden className="text-muted-foreground mx-3 select-none">
+              ·
+            </span>
+            <Link
+              href="/"
+              className="text-foreground hover:text-accent transition-token underline-offset-4 hover:underline"
+            >
+              ./home
+            </Link>
+          </p>
+        </TerminalLine>
+      </TerminalBlock>
     </section>
   );
 }

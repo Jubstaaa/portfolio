@@ -2,31 +2,42 @@ import { cn } from "@/lib/utils";
 
 export interface SectionHeadingProps {
   as?: "h1" | "h2" | "h3";
-  eyebrow?: string;
   title: string;
+  number?: string;
   description?: string;
-  align?: "start" | "center";
   className?: string;
 }
 
+const RULE = "─".repeat(240);
+
 export function SectionHeading({
   as: Tag = "h2",
-  eyebrow,
   title,
+  number,
   description,
-  align = "start",
   className,
 }: SectionHeadingProps) {
   return (
-    <div className={cn(align === "center" && "text-center", "space-y-3", className)}>
-      {eyebrow ? (
-        <p className="text-muted-foreground font-mono text-xs tracking-[0.18em] uppercase">
-          {eyebrow}
-        </p>
+    <div className={cn("relative space-y-3", className)}>
+      {number ? (
+        <span
+          aria-hidden
+          className="text-muted-foreground absolute top-0 -left-10 hidden text-xs md:block"
+        >
+          {number}
+        </span>
       ) : null}
-      <Tag className="text-foreground max-w-2xl text-balance">{title}</Tag>
+      <Tag className="text-foreground flex items-baseline gap-2 text-lg font-normal">
+        <span aria-hidden className="text-muted-foreground select-none">
+          #
+        </span>
+        <span>{title}</span>
+      </Tag>
+      <div aria-hidden className="term-rule overflow-hidden text-sm leading-none whitespace-nowrap">
+        {RULE}
+      </div>
       {description ? (
-        <p className="text-muted-foreground prose-max text-balance">{description}</p>
+        <p className="text-muted-foreground prose-max text-sm">{description}</p>
       ) : null}
     </div>
   );

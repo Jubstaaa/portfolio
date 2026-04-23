@@ -44,8 +44,6 @@
     "Helvetica Neue", Arial, sans-serif;
   --font-mono:
     var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-
-  --text-display: clamp(3rem, 6vw + 1rem, 6rem);
 }
 
 @layer base {
@@ -58,6 +56,9 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    font-feature-settings:
+      "calt" 1,
+      "zero" 1;
   }
 
   html.light {
@@ -67,12 +68,13 @@
   body {
     background-color: var(--background);
     color: var(--foreground);
-    font-family: var(--font-sans);
-    font-feature-settings: "cv11", "ss01";
+    font-family: var(--font-mono);
+    font-size: 15px;
+    line-height: 1.6;
   }
 
   ::selection {
-    background-color: color-mix(in oklch, var(--accent) 40%, transparent);
+    background-color: color-mix(in oklch, var(--accent) 35%, transparent);
     color: var(--foreground);
   }
 
@@ -80,29 +82,6 @@
     outline: 2px solid var(--ring);
     outline-offset: 2px;
     border-radius: 2px;
-  }
-
-  h1,
-  h2,
-  h3,
-  h4 {
-    font-weight: 600;
-    letter-spacing: -0.02em;
-  }
-
-  h1 {
-    font-size: clamp(2.25rem, 3vw + 1rem, 3.5rem);
-    line-height: 1.1;
-  }
-
-  h2 {
-    font-size: clamp(1.75rem, 1.5vw + 1rem, 2.25rem);
-    line-height: 1.15;
-  }
-
-  h3 {
-    font-size: 1.5rem;
-    line-height: 1.2;
   }
 }
 
@@ -122,13 +101,6 @@
     max-width: var(--prose-max);
   }
 
-  .text-display {
-    font-size: var(--text-display);
-    line-height: 1.02;
-    letter-spacing: -0.04em;
-    font-weight: 700;
-  }
-
   .hairline {
     border-color: color-mix(in oklch, var(--border) 70%, transparent);
   }
@@ -136,5 +108,31 @@
   .transition-token {
     transition-duration: var(--duration-base);
     transition-timing-function: var(--ease-out);
+  }
+
+  .cursor-blink {
+    animation: cursor-blink 1.2s steps(2) infinite;
+  }
+
+  .term-rule {
+    color: var(--muted-foreground);
+    letter-spacing: -0.05em;
+    user-select: none;
+  }
+}
+
+@keyframes cursor-blink {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cursor-blink {
+    animation: none;
+    opacity: 1;
   }
 }
