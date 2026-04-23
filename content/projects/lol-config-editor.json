@@ -1,0 +1,19 @@
+{
+  "title": "LoL Config Editor",
+  "summary": "Instantly swap, save & share your perfect League of Legends settings—no client required.",
+  "description": "### What Is It?\n\nLoL Config Editor is a lightweight desktop app that lets you create named profiles for every playstyle, account, or roommate, then activate any profile with one click. Think of it as your personal “loadout switch” for League settings.\n\n---\n\n### How It Works • Zero Friction Pipeline\n\n1. **Profile-First Design**\n2.   - Craft a setup (resolution, keybinds, chat state, minimap size, color-blind mode, etc.).\n  - Save it under any name—*Ranked*, *ARAM*, *Guest*.\n3. **One-Click Apply**\n4.   - Select a profile → hit **Apply** → launch League.\n  - The chosen config propagates to every LoL account on that PC.\n5. **Multi-User Smartness**\n6.   - Each person on a shared computer keeps their own library of configs.\n  - No more “Who messed up my hotkeys?”\n\n---\n\n### Headline Features\n\n- **Game-Free Editing** – Adjust everything outside the client.\n- **Unlimited Profiles** – From sweat-tryhard to chill-casual, store them all.\n- **Account-Wide Consistency** – Settings follow you across every login.\n- **Open Source & Free** – MIT-licensed; fork it, mod it, ship PRs.\n\n---\n\n### Why You’ll Love It\n\n- **Speed** – Swap from “Solo Queue focus mode” to “Friends & Fun mode” in seconds.\n- **Peace** – Roommates, siblings, or LAN cafés can coexist without setting wars.\n- **Control** – Keep chat off where it tilts you, on where it memes you.\n- **Future-Proof** – Built with Electron, NextUI, Tailwind—easy to extend.\n\n---\n\n### Get Involved\n\nGitHub: [**github.com/Jubstaaa/lol-config-editor**](https://github.com/Jubstaaa/lol-config-editor)  \nOpen an issue, star the repo, or jump into a pull request—community tweaks welcome!\n",
+  "category": "other",
+  "stack": ["JavaScript", "TypeScript", "Electron.js"],
+  "role": "Creator",
+  "year": 2025,
+  "featured": false,
+  "status": "shipped",
+  "repo": "https://github.com/Jubstaaa/lol-config-editor",
+  "images": [
+    {
+      "src": "/images/projects/lol-config-editor/cover.webp",
+      "alt": "LoL Config Editor"
+    }
+  ],
+  "highlights": []
+}

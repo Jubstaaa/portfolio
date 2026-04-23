@@ -1,0 +1,10 @@
+{
+  "school": "İstanbul Nişantaşı Üniversitesi",
+  "degree": "BSc in Software Engineering",
+  "start": "2024-11",
+  "location": "İstanbul",
+  "logo": {
+    "src": "/images/education/istanbul-nisantasi-universitesi/logo.webp",
+    "alt": "İstanbul Nişantaşı Üniversitesi logo"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "title": "League of Legends Daily Lore Video Bot",
+  "summary": "League of Legends Daily Lore Video Bot is a fully automated content creation tool that generates and shares daily lore videos for random League of Legends champions. Leveraging the latest Riot Games data, AI-powered voice narration, and advanced video processing, this project brings champion stories to life on social media—completely hands-free!",
+  "description": "### What is League of Legends Daily Lore Video Bot?\n\nThis automation project is designed to create and publish engaging, vertical-format lore videos for League of Legends champions every day. The bot fetches the latest champion data, generates high-quality audio narration, adds animated subtitles, and compiles everything into a visually appealing video—ready for Instagram Reels and Catbox.moe.\n\n\n\n---\n\n\n\n### How It Works: Automated Content Pipeline\n\n- Random Champion Selection:\n\nEvery day, the bot fetches the latest champion list from Riot’s Data Dragon API and selects a random champion.\n\n- Fetching Lore & Splash Arts:\n\nThe bot retrieves the chosen champion’s lore and all available splash art images.\n\n- AI Voice Narration:\n\nUsing ElevenLabs’ advanced text-to-speech API, the champion’s lore is narrated with natural, expressive AI voices.\n\n- Animated Subtitles:\n\nThe narration is paired with stylized, animated subtitles for maximum accessibility and engagement.\n\n- Video Creation & Optimization:\n\nAll assets are combined into a vertical (1080x1920) video, optimized for Instagram Reels and mobile viewing.\n\n- Automated Upload:\n\nThe finished video is uploaded to Catbox.moe (for public hosting with a direct mp4 link) and then posted to Instagram Reels via the Instagram Graph API.\n\n\n\n---\n\n\n\n### Key Features\n\n- Fully Automated:\n\nRuns daily via GitHub Actions—no manual intervention required.\n\n- Always Up-to-Date:\n\nUses Riot’s official API to ensure the latest champion data and artwork.\n\n- AI-Powered Narration:\n\nHigh-quality, natural-sounding voiceovers with precise subtitle timing.\n\n- Animated, Styled Subtitles:\n\nLarge, yellow, top-aligned subtitles with black outline and fade-in/out animation.\n\n- Optimized for Social Media:\n\nVideos are formatted for Instagram Reels and Catbox.moe, ensuring maximum reach and compatibility.\n\n- Multi-Account & Multi-Language Ready:\n\nEasily extendable for different languages or social media accounts.\n\n\n\n---\n\n\n\n### Why This Project?\n\n- Zero Maintenance:\n\nOnce set up, the bot runs itself—delivering fresh, engaging content every day.\n\n- Community Engagement:\n\nBrings League of Legends lore to a wider audience in a modern, shareable format.\n\n- Open Source & Customizable:\n\nThe project is fully open source and can be adapted for other games, languages, or platforms.\n\n\n\n---\n\n\n\n### See the Daily Videos Live!\n\nFollow the project’s daily League of Legends lore videos on Instagram:\n\n👉 [@daily.league.lore](https://www.instagram.com/daily.league.lore/)\n",
+  "category": "other",
+  "stack": ["JavaScript", "Node.js", "Github Actions"],
+  "role": "Creator",
+  "year": 2025,
+  "featured": false,
+  "status": "shipped",
+  "repo": "https://github.com/Jubstaaa/lol-content-bot",
+  "url": "https://www.instagram.com/daily.league.lore/",
+  "images": [
+    {
+      "src": "/images/projects/league-of-legends-daily-lore-video-bot/cover.webp",
+      "alt": "League of Legends Daily Lore Video Bot"
+    }
+  ],
+  "highlights": []
+}

@@ -1,0 +1,14 @@
+{
+  "company": "Macellan SuperApp",
+  "role": "Frontend Developer",
+  "start": "2025-09",
+  "location": "İstanbul, Türkiye",
+  "remote": false,
+  "summary": "",
+  "highlights": [],
+  "stack": [],
+  "logo": {
+    "src": "/images/experiences/macellan-superapp/logo.webp",
+    "alt": "Macellan SuperApp logo"
+  }
+}

@@ -1,0 +1,220 @@
+---
+title: "How to Debug Hono Applications with Telescope — Laravel Telescope for Bun & Node.js"
+description: "A Laravel Telescope–style debugging tool for Hono.js applications. Monitor requests, queries, logs, and exceptions in real-time with a beautiful dashboard. Works with Bun & Node.js."
+date: 2025-10-31
+category: development
+tags: []
+draft: false
+featured: false
+cover:
+  src: /images/blog/how-to-debug-hono-applications-with-hono-telescope/cover.webp
+  alt: "Hono Telescope Dashboard"
+---
+
+# How to Debug Hono Applications with Telescope
+
+If you've ever used Laravel Telescope, you know how game-changing it is for debugging. Now imagine having that same power for your Hono.js applications.
+
+Introducing **Hono Telescope** — a Laravel Telescope-inspired debugging tool built for Bun and Node.js, specifically designed for Hono developers.
+
+## Why Debugging Matters
+
+Debugging is where we spend most of our development time. But traditional debugging can be frustrating:
+
+🤔 Where did that error come from?
+
+🔍 How long did that database query take?
+
+📊 Which requests are hitting my API?
+
+🧠 What logs did my app output?
+
+These questions get answered in seconds with the right tool.
+
+## Introducing Hono Telescope
+
+Hono Telescope is a powerful, production-ready debugging and monitoring tool for Hono applications. Works seamlessly with Bun and Node.js.
+
+It captures:
+
+✅ **HTTP Requests** — Every incoming and outgoing request with headers, payload, and response
+
+✅ **Exceptions** — Errors with full stack traces
+
+✅ **Logs** — All console.log output organized by level
+
+✅ **Database Queries** — SQL queries from Prisma, Sequelize, MongoDB, or Bun SQLite with execution times
+
+✅ **Beautiful Dashboard** — Modern React UI to visualize everything
+
+All in real-time. Zero configuration.
+
+## Quick Start with Bun — 30 Seconds
+
+### Install it:
+
+`bun add hono-telescope`
+
+Or with npm/yarn/pnpm:
+
+`npm install hono-telescope`  
+`# yarn add hono-telescope`  
+`# pnpm add hono-telescope`
+
+### Use it:
+
+`import { Hono } from 'hono';`  
+`import { setupTelescope } from 'hono-telescope';`
+
+`const app = new Hono();`
+
+`// One line – that's it!`  
+`setupTelescope(app);`
+
+`app.get('/api/users', async (c) => {`  
+`  console.log('Fetching users');`  
+`  const users = await db.query('SELECT * FROM users');`  
+`  return c.json(users);`  
+`});`
+
+`export default app;`
+
+### Run it with Bun:
+
+`bun run src/index.ts`
+
+Open `http://localhost:3000/telescope` and start debugging!
+
+## Features in Action
+
+### 1. Request Monitoring 📊
+
+See every HTTP request in real-time:
+
+- Request path, method, and status
+- Headers and request body
+- Response time
+- Request context
+
+Perfect for understanding your API flow during development.
+
+### 2. Exception Tracking 🚨
+
+Never miss an error:
+
+- Full stack traces
+- Error message and type
+- Request that triggered it
+- Timestamp
+
+Catch bugs before your users do.
+
+### 3. Database Query Inspection 🗄️
+
+Monitor database performance:
+
+- Query text and bindings
+- Execution time
+- Parent request context
+- Error information if query fails
+
+Works with:
+
+- **Prisma** — $queryRaw and $executeRaw
+- **Sequelize** — All queries
+- **MongoDB** — Document operations
+- **Bun SQLite** — Native queries ⚡
+
+### 4. Log Monitoring 📝
+
+Centralized logging:
+
+- console.log capture
+- Organized by severity level
+- Searchable and filterable
+- Linked to requests
+
+All your debug logs in one place.
+
+## Configuration
+
+Want fine-grained control?
+
+`setupTelescope(app, {`  
+`  enabled: true, // Enable/disable`  
+`  path: '/telescope', // Dashboard URL`  
+`  max_entries: 1000, // Max entries to store`  
+`  ignored_paths: ['/health'], // Paths to skip`  
+`  watchers: {`  
+`    requests: true, // Monitor requests`  
+`    exceptions: true, // Monitor errors`  
+`    logs: true, // Monitor logs`  
+`    queries: true, // Monitor queries`  
+`  },`  
+`});`
+
+## Live Demo — Try It Now
+
+No installation needed!
+
+🎮 [**Live Dashboard**](https://hono-telescope-9lvpv.ondigitalocean.app/telescope)
+
+Test the API:
+
+`# Get all users`  
+`curl `[`https://hono-telescope-9lvpv.ondigitalocean.app/api/users`](https://hono-telescope-9lvpv.ondigitalocean.app/api/users)
+
+`# Create a user`  
+`curl -X POST `[`https://hono-telescope-9lvpv.ondigitalocean.app/api/users`](https://hono-telescope-9lvpv.ondigitalocean.app/api/users)` \`  
+`  -H "Content-Type: application/json" \`  
+`  -d '{"name":"John","email":"john@example.com"}'`
+
+`# Trigger an error`  
+`curl `[`https://hono-telescope-9lvpv.ondigitalocean.app/api/error`](https://hono-telescope-9lvpv.ondigitalocean.app/api/error)
+
+`# Run all tests at once`  
+`bash <(curl -s https://raw.githubusercontent.com/jubstaaa/hono-telescope/main/src/example/test-all-endpoints.sh)`
+
+Then check the dashboard to see everything!
+
+## Perfect For
+
+🔧 **Development** — Debug during active development with Bun's speed
+
+🐛 **Testing** — Understand request/response flows
+
+📈 **Performance** — Track database query times and optimize
+
+🚀 **Production Issues** — See exactly what's happening
+
+🎯 **API Development** — Monitor API behavior
+
+## Why Bun + Telescope?
+
+Bun is lightning-fast. But you still need to see what's happening in your app. Hono Telescope gives you that visibility with zero overhead.
+
+Perfect combo for modern API development.
+
+## Roadmap 🗺️
+
+We're actively developing:
+
+- 💾 Data export (JSON, CSV)
+- 🔔 Real-time alerts
+- 📈 Advanced analytics
+- 🔐 Dashboard authentication
+- 🌍 Multi-tenancy support
+- 📱 Enhanced mobile dashboard
+- 🧩 Plugin system
+
+## Get Started
+
+`bun add hono-telescope`
+
+- 📖 [Full Documentation](https://github.com/jubstaaa/hono-telescope)
+- 🐛 [Report Bugs](https://github.com/jubstaaa/hono-telescope/issues)
+- 💡 [Share Ideas](https://github.com/jubstaaa/hono-telescope/discussions)
+
+---
+
+Made with ❤️ for the Hono community.

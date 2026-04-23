@@ -1,0 +1,15 @@
+{
+  "company": "Bishy",
+  "role": "Frontend Developer",
+  "start": "2024-08",
+  "end": "2025-05",
+  "location": "Remote",
+  "remote": false,
+  "summary": "I was part of the team that developed the Bishy website, a modern and visually focused landing page for a creative agency. I used Next.js and Tailwind CSS to build a smooth and responsive UI. I also helped with server setup using Nginx on Ubuntu and set up automated deployments with GitHub Actions. The goal of the project was to deliver a fast, user-friendly, and elegant website that matched the client’s design vision.",
+  "highlights": [],
+  "stack": [],
+  "logo": {
+    "src": "/images/experiences/bishy/logo.webp",
+    "alt": "Bishy logo"
+  }
+}

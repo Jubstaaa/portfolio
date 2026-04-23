@@ -153,14 +153,16 @@ All models declared as Zod schemas in `velite.config.ts`; types are emitted to `
 interface SiteConfig {
   name: string;
   handle: string; // @handle, no leading @
+  role: string; // hero display — e.g. "Software Engineer"
+  location: string;
   title: string;
   description: string; // one sentence (hero/meta); long-form bio lives in content/about.mdx
   url: string; // https://…, no trailing slash
   email: string;
   locale: "en"; // English only — no i18n
-  isAvailable: boolean; // drives hero "available for work" badge
   ogDefault: string; // /opengraph-image
   nav: Array<{ label: string; href: string }>;
+  avatar?: { src: string; alt: string };
 }
 
 interface BlogPost {
@@ -223,7 +225,6 @@ interface Education {
 
 interface Skill {
   name: string;
-  level: "familiar" | "proficient" | "expert";
   category: "lang" | "frontend" | "backend" | "devops" | "design" | "other";
 }
 

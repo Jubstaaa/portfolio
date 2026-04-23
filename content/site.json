@@ -1,0 +1,34 @@
+{
+  "name": "İlker Balcılar",
+  "handle": "ilker",
+  "role": "Software Engineer",
+  "location": "Istanbul",
+  "title": "İlker Balcılar — Software Engineer",
+  "description": "Senior frontend engineer building fast, accessible interfaces.",
+  "url": "https://example.com",
+  "email": "ilkerbalcilartr@gmail.com",
+  "locale": "en",
+  "ogDefault": "/opengraph-image",
+  "nav": [
+    {
+      "label": "projects",
+      "href": "/projects"
+    },
+    {
+      "label": "about",
+      "href": "/about"
+    },
+    {
+      "label": "blog",
+      "href": "/blog"
+    },
+    {
+      "label": "contact",
+      "href": "/contact"
+    }
+  ],
+  "avatar": {
+    "src": "/images/site/avatar.webp",
+    "alt": "İlker Balcılar"
+  }
+}

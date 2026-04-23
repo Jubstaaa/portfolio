@@ -1,0 +1,38 @@
+[
+  {
+    "name": "Frontend Development",
+    "category": "frontend"
+  },
+  {
+    "name": "Backend Development",
+    "category": "frontend"
+  },
+  {
+    "name": "React / Next.js",
+    "category": "frontend"
+  },
+  {
+    "name": "JavaScript / TypeScript",
+    "category": "frontend"
+  },
+  {
+    "name": "Node.js",
+    "category": "frontend"
+  },
+  {
+    "name": "MongoDB / PostgreSQL",
+    "category": "frontend"
+  },
+  {
+    "name": "Prisma ORM",
+    "category": "frontend"
+  },
+  {
+    "name": "Git / GitHub / CI-CD",
+    "category": "frontend"
+  },
+  {
+    "name": "Tailwind CSS",
+    "category": "frontend"
+  }
+]

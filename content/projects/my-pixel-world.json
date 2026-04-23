@@ -1,0 +1,20 @@
+{
+  "title": "My Pixel World",
+  "summary": "My Pixel World is an innovative web application that enables multiple users to create pixel art together in real-time. Built with modern web technologies, this collaborative platform offers a seamless drawing experience with live synchronization, making it perfect for creative collaboration and artistic expression.",
+  "description": "# How It Works: Gameplay Overview\n\nIn this collaborative pixel art editor, your goal is simple:  \nCreate beautiful pixel art together with other users in real-time.\n\nHere's how the application works:\n\n- **Choose Your Tool:** Select from pen, eraser, or hand tools for different drawing needs.\n- **Real-Time Collaboration:** Draw simultaneously with other users — see their pixels appear instantly.\n- **Room-Based System:** Join different rooms for focused collaboration or create custom rooms.\n- **Large Canvas:** Work on a spacious 2000x2000 pixel canvas with smooth panning and zooming.\n- **Color Selection:** Use the intuitive color picker to choose from millions of colors.\n- **Live Synchronization:** All changes are instantly shared with connected users.\n\n# Multiple Features & Expanding Capabilities\n\n**My Pixel World** features a comprehensive set of drawing tools and collaborative features, including:\n\n- **Real-Time Drawing:** See other users' pixels appear instantly as they draw\n- **Advanced Tools:** Pen tool for precise pixel placement, eraser for corrections, and hand tool for navigation\n- **Color Picker:** Full RGB color spectrum with intuitive selection\n- **Large Workspace:** Spacious 2000x2000 pixel canvas for detailed artwork\n- **Smooth Navigation:** Pan around the canvas with the hand tool for easy access to all areas\n- **Room System:** Multiple collaborative rooms with dynamic navigation and popular rooms feature\n- **Connection Status:** Real-time indicator showing connection status to the server\n- **Popular Rooms:** Real-time sorting of rooms based on pixel count and activity\n\nEach feature is designed to enhance the collaborative drawing experience, and new capabilities are added regularly.\n\n# Technical & Performance Features\n\n- **Real-Time Communication:** WebSocket-based communication ensures instant pixel synchronization across all connected users.\n- **Memory-Based Architecture:** Lightning-fast performance with all operations in memory, backed by MongoDB for data persistence.\n- **Data Persistence:** Drawing history is automatically saved to MongoDB with memory-based architecture for optimal performance.\n- **Room Management: **Efficient room system with automatic creation and popular rooms calculation.\n- **Scalable Architecture:** Built with Next.js frontend and Node.js backend, deployed on Vercel (frontend) and Digitalocean.com (backend with MongoDB) for optimal performance.\n\n# Feedback & Future Updates\n\nWe value user feedback! The application is continuously improved based on user suggestions and new feature requests.\n\nPlanned future updates include:\n\n- User authentication and individual profiles\n- Room templates and themes\n- Advanced drawing tools (line, rectangle, fill)\n- Export options for saving artwork\n- Built-in chat system for collaborators\n- Version history and undo functionality\n\n# Current Status\n\n**My Pixel World** is live and open to everyone!  \nThe application is continuously updated based on user feedback and new technological advancements.\n\nTry it now: [my-pixel-world.vercel.app](https://my-pixel-world.vercel.app/)\n",
+  "category": "web",
+  "stack": ["TypeScript", "Vercel", "Node.js", "DigitalOcean"],
+  "role": "Creator",
+  "year": 2025,
+  "featured": false,
+  "status": "shipped",
+  "repo": "https://github.com/Jubstaaa/my-pixel-world",
+  "url": "https://my-pixel-world.vercel.app/",
+  "images": [
+    {
+      "src": "/images/projects/my-pixel-world/cover.webp",
+      "alt": "My Pixel World"
+    }
+  ],
+  "highlights": []
+}

@@ -1,0 +1,15 @@
+{
+  "company": "A101 Yeni Mağazacılık A.Ş.",
+  "role": "Information Technology Intern",
+  "start": "2020-07",
+  "end": "2020-09",
+  "location": "İstanbul, Türkiye",
+  "remote": false,
+  "summary": "During my internship, I helped solve hardware and network issues in the company. I learned more about how IT teams support daily business operations in a large company.",
+  "highlights": [],
+  "stack": [],
+  "logo": {
+    "src": "/images/experiences/a101-yeni-magazacilik-a-s/logo.webp",
+    "alt": "A101 Yeni Mağazacılık A.Ş. logo"
+  }
+}

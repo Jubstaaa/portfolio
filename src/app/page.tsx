@@ -23,17 +23,10 @@ export default function Home() {
         </TerminalLine>
 
         <TerminalLine command="cat status">
-          {site.isAvailable ? (
-            <p>
-              <StatusDot tone="success" />
-              available for work
-            </p>
-          ) : (
-            <p>
-              <StatusDot tone="muted" />
-              heads-down
-            </p>
-          )}
+          <p>
+            <StatusDot tone="success" />
+            available for work
+          </p>
           <p className="text-muted-foreground">
             <span aria-hidden className="mr-1 select-none">
               →

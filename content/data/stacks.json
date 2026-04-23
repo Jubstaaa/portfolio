@@ -1,0 +1,182 @@
+[
+  {
+    "name": "TypeScript",
+    "category": "lang",
+    "url": "https://www.typescriptlang.org/"
+  },
+  {
+    "name": "Vite",
+    "category": "tooling",
+    "url": "https://vitejs.dev/"
+  },
+  {
+    "name": "JavaScript",
+    "category": "lang",
+    "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript"
+  },
+  {
+    "name": "Bun",
+    "category": "tooling",
+    "url": "https://bun.sh/"
+  },
+  {
+    "name": "Python",
+    "category": "lang",
+    "url": "https://www.python.org/"
+  },
+  {
+    "name": "Hono",
+    "category": "framework",
+    "url": "https://hono.dev/"
+  },
+  {
+    "name": "C#",
+    "category": "lang",
+    "url": "https://learn.microsoft.com/en-us/dotnet/csharp/"
+  },
+  {
+    "name": "Sequelize",
+    "category": "library",
+    "url": "https://sequelize.org/"
+  },
+  {
+    "name": "HTML",
+    "category": "library",
+    "url": "https://developer.mozilla.org/en-US/docs/Web/HTML"
+  },
+  {
+    "name": "npm",
+    "category": "library",
+    "url": "https://www.npmjs.com/"
+  },
+  {
+    "name": "CSS",
+    "category": "library",
+    "url": "https://developer.mozilla.org/en-US/docs/Web/CSS"
+  },
+  {
+    "name": "React",
+    "category": "library",
+    "url": "https://reactjs.org/"
+  },
+  {
+    "name": "Tailwind CSS",
+    "category": "design",
+    "url": "https://tailwindcss.com/"
+  },
+  {
+    "name": "NextJS",
+    "category": "library",
+    "url": "https://nextjs.org/"
+  },
+  {
+    "name": "Node.js",
+    "category": "library",
+    "url": "https://nodejs.org/"
+  },
+  {
+    "name": "Electron.js",
+    "category": "library",
+    "url": "https://www.electronjs.org/"
+  },
+  {
+    "name": "Unity",
+    "category": "library",
+    "url": "https://unity.com/"
+  },
+  {
+    "name": "jQuery",
+    "category": "library",
+    "url": "https://jquery.com/"
+  },
+  {
+    "name": "Firebase",
+    "category": "infra",
+    "url": "https://firebase.google.com/"
+  },
+  {
+    "name": "Postman",
+    "category": "library",
+    "url": "https://www.postman.com/"
+  },
+  {
+    "name": "Git",
+    "category": "tooling",
+    "url": "https://git-scm.com/"
+  },
+  {
+    "name": "GitHub",
+    "category": "tooling",
+    "url": "https://github.com/"
+  },
+  {
+    "name": "Vercel",
+    "category": "infra",
+    "url": "https://vercel.com/"
+  },
+  {
+    "name": "Github Actions",
+    "category": "library",
+    "url": "https://github.com/features/actions"
+  },
+  {
+    "name": "DigitalOcean",
+    "category": "library",
+    "url": "https://www.digitalocean.com/"
+  },
+  {
+    "name": "Cloudflare",
+    "category": "infra",
+    "url": "https://www.cloudflare.com/"
+  },
+  {
+    "name": "Nginx",
+    "category": "library",
+    "url": "https://nginx.org/"
+  },
+  {
+    "name": "PostgreSQL",
+    "category": "infra",
+    "url": "https://www.postgresql.org/"
+  },
+  {
+    "name": "MySQL",
+    "category": "infra",
+    "url": "https://www.mysql.com/"
+  },
+  {
+    "name": "MongoDB",
+    "category": "infra",
+    "url": "https://www.mongodb.com/"
+  },
+  {
+    "name": "Prisma",
+    "category": "library",
+    "url": "https://www.prisma.io/"
+  },
+  {
+    "name": "Payload",
+    "category": "library",
+    "url": "https://payloadcms.com/"
+  },
+  {
+    "name": "Ubuntu",
+    "category": "library",
+    "url": "https://ubuntu.com/"
+  },
+  {
+    "name": "Expo",
+    "category": "framework",
+    "url": "https://expo.dev"
+  },
+  {
+    "name": "React Native",
+    "category": "framework",
+    "url": "https://reactnative.dev"
+  },
+  {
+    "name": "Redux Toolkit",
+    "category": "library",
+    "url": "https://redux-toolkit.js.org"
+  }
+]
