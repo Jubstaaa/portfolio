@@ -9,7 +9,6 @@
   "featured": false,
   "status": "shipped",
   "repo": "https://github.com/Jubstaaa/my-pixel-world",
-  "url": "https://my-pixel-world.vercel.app/",
   "images": [
     {
       "src": "/images/projects/my-pixel-world/cover.webp",
