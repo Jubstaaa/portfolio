@@ -81,7 +81,7 @@ const projects = defineCollection({
     .object({
       title: s.string(),
       summary: s.string(),
-      description: s.string(),
+      description: s.markdown(),
       category: s.enum(["web", "mobile", "tool", "library", "other"]),
       stack: s.array(s.string()).default([]),
       role: s.string(),
@@ -192,6 +192,10 @@ export default defineConfig({
     skills,
     stacks,
     socials,
+  },
+  markdown: {
+    remarkPlugins: [remarkGfm],
+    rehypePlugins: [rehypeSlug, [rehypePrettyCode, prettyCode]],
   },
   mdx: {
     remarkPlugins: [remarkGfm],
