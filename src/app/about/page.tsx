@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 
 import { EducationList } from "@/components/EducationList";
 import { Mdx } from "@/components/Mdx";
@@ -28,18 +27,6 @@ export default function AboutPage() {
       <PathBar path={`~/${site.handle}/about`} meta={`${site.role} · ${site.location}`} />
       <section className="container-default section-pad space-y-20">
         <div className="max-w-3xl space-y-10">
-          {site.avatar ? (
-            <div className="hairline relative size-20 overflow-hidden rounded-md border">
-              <Image
-                src={site.avatar.src}
-                alt={site.avatar.alt}
-                fill
-                sizes="80px"
-                className="object-cover"
-                priority
-              />
-            </div>
-          ) : null}
           <SectionHeading as="h1" title="bio" number="01" />
           <Prose>
             <Mdx code={about.body} />

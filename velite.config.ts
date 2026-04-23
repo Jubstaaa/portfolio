@@ -29,7 +29,6 @@ const site = defineCollection({
     locale: s.literal("en"),
     ogDefault: s.string(),
     nav: s.array(s.object({ label: s.string(), href: s.string() })),
-    avatar: logo.optional(),
   }),
 });
 

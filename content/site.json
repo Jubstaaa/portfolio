@@ -26,9 +26,5 @@
       "label": "contact",
       "href": "/contact"
     }
-  ],
-  "avatar": {
-    "src": "/images/site/avatar.webp",
-    "alt": "ilker balcilar"
-  }
+  ]
 }
