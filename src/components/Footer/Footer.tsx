@@ -9,7 +9,7 @@ export function Footer() {
     <footer className="hairline mt-24 border-t">
       <div className="container-default text-muted-foreground flex h-14 items-center justify-between text-xs">
         <p>
-          <span className="text-foreground">{site.handle}</span> · {year} · built with next
+          <span className="text-foreground">{site.name}</span> · portfolio · {year}
         </p>
         <Link
           href="/feed.xml"
