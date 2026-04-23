@@ -8,8 +8,18 @@ import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
   title: "Projects",
-  description: "Selected work.",
+  description:
+    "Selected projects by İlker Balcılar — web apps, open-source developer tools, mobile apps, and games built with TypeScript, Next.js, React Native, Hono, and Node.js.",
   path: "/projects",
+  keywords: [
+    "ilker balcilar projects",
+    "nextjs projects",
+    "typescript portfolio",
+    "react native",
+    "open source",
+    "hono telescope",
+    "prosbase",
+  ],
 });
 
 export default function ProjectsPage() {

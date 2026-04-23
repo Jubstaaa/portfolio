@@ -27,6 +27,13 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
     description: post.description,
     path: post.path,
     ogImage: `${post.path}/opengraph-image`,
+    type: "article",
+    publishedTime: post.date,
+    modifiedTime: post.updated ?? post.date,
+    authors: [site.name],
+    section: post.category,
+    tags: post.tags,
+    keywords: post.tags,
   });
 }
 

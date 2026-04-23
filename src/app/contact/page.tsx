@@ -9,8 +9,10 @@ import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
   title: "Contact",
-  description: "How to reach me.",
+  description:
+    "Get in touch with İlker Balcılar — email and social links for collaboration, contract work, or open-source questions.",
   path: "/contact",
+  keywords: ["contact ilker balcilar", "hire frontend engineer", "freelance developer istanbul"],
 });
 
 export default function ContactPage() {

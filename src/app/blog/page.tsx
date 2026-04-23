@@ -8,8 +8,17 @@ import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
   title: "Blog",
-  description: "Notes on frontend engineering, performance, and tooling.",
+  description:
+    "Writing on frontend engineering, TypeScript, Next.js, performance, and developer tooling — plus occasional posts about games and anime.",
   path: "/blog",
+  keywords: [
+    "ilker balcilar blog",
+    "frontend engineering",
+    "nextjs tutorial",
+    "typescript tips",
+    "developer tools",
+    "web performance",
+  ],
 });
 
 export default function BlogPage() {

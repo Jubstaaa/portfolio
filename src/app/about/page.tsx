@@ -12,8 +12,19 @@ import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
   title: "About",
-  description: `${site.role} · ${site.location}`,
+  description:
+    "Software engineer based in Istanbul. Full-stack web development with Next.js, React, TypeScript, Node.js, and cloud infra. Currently studying Software Engineering.",
   path: "/about",
+  keywords: [
+    "ilker balcilar",
+    "software engineer",
+    "frontend engineer",
+    "full-stack developer",
+    "istanbul",
+    "nextjs developer",
+    "typescript",
+    "react",
+  ],
 });
 
 export default function AboutPage() {
