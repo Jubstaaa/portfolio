@@ -1,2 +1,2 @@
-export { Prose, MarkdownProse } from "./Prose";
-export type { ProseProps, MarkdownProseProps } from "./Prose";
+export { Prose } from "./Prose";
+export type { ProseProps } from "./Prose";

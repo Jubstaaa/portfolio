@@ -187,10 +187,6 @@ export default defineConfig({
     stacks,
     socials,
   },
-  markdown: {
-    remarkPlugins: [remarkGfm],
-    rehypePlugins: [rehypeSlug, [rehypePrettyCode, prettyCode]],
-  },
   mdx: {
     remarkPlugins: [remarkGfm],
     rehypePlugins: [
