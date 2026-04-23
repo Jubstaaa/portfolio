@@ -4,12 +4,12 @@ import * as runtime from "react/jsx-runtime";
 import { mdxComponents } from "@/components/MdxComponents";
 
 type MdxComponent = React.ComponentType<{
-  components?: Record<string, React.ComponentType<Record<string, unknown>>>;
+  components?: Record<string, React.ElementType>;
 }>;
 
 export interface MdxProps {
   code: string;
-  components?: Record<string, React.ComponentType<Record<string, unknown>>>;
+  components?: Record<string, React.ElementType>;
 }
 
 const cache = new Map<string, MdxComponent>();

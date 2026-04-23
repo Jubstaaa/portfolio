@@ -1,7 +1,10 @@
 import Link from "next/link";
 import type { AnchorHTMLAttributes, HTMLAttributes, ImgHTMLAttributes } from "react";
 
+import { CodeBlock } from "@/components/CodeBlock";
 import { cn } from "@/lib/utils";
+
+const RULE = "─".repeat(240);
 
 function isExternal(href: string | undefined): boolean {
   if (!href) return false;
@@ -103,15 +106,15 @@ function Li({ className, ...props }: HTMLAttributes<HTMLLIElement>) {
   );
 }
 
-function Hr(props: HTMLAttributes<HTMLHRElement>) {
+function Hr() {
   return (
-    <hr
-      className="term-rule my-8 overflow-hidden border-0 text-sm leading-none whitespace-nowrap"
+    <div
+      role="separator"
       aria-hidden
-      {...props}
+      className="term-rule my-8 overflow-hidden text-sm leading-none whitespace-nowrap"
     >
-      ──────────────────────────────────────────────────────
-    </hr>
+      {RULE}
+    </div>
   );
 }
 
@@ -136,15 +139,78 @@ function InlineCode({ className, ...props }: HTMLAttributes<HTMLElement>) {
   );
 }
 
-function Pre({ className, ...props }: HTMLAttributes<HTMLPreElement>) {
+function Pre(props: HTMLAttributes<HTMLPreElement>) {
+  return <CodeBlock {...props} />;
+}
+
+type CalloutTone = "note" | "warn";
+
+function Callout({
+  tone = "note",
+  label,
+  children,
+}: {
+  tone?: CalloutTone;
+  label?: string;
+  children: React.ReactNode;
+}) {
+  const labelText = label ?? tone;
+  const labelClass = tone === "warn" ? "text-warning" : "text-muted-foreground";
   return (
-    <pre
+    <aside
       className={cn(
-        "hairline my-6 overflow-x-auto rounded-md border bg-[color:var(--muted)] p-4 text-[0.85rem] leading-relaxed",
-        className,
+        "my-6 text-sm leading-relaxed",
+        tone === "warn" ? "text-foreground" : "text-foreground",
       )}
-      {...props}
-    />
+      data-callout={tone}
+    >
+      <div className="text-muted-foreground flex items-baseline gap-2 text-sm leading-none">
+        <span aria-hidden className="select-none">
+          ╭─
+        </span>
+        <span className={cn("text-xs tracking-[0.18em] uppercase", labelClass)}>{labelText}</span>
+        <span
+          aria-hidden
+          className="term-rule flex-1 overflow-hidden whitespace-nowrap select-none"
+        >
+          {RULE}
+        </span>
+        <span aria-hidden className="select-none">
+          ╮
+        </span>
+      </div>
+      <div className="px-1 py-3">{children}</div>
+      <div className="text-muted-foreground flex items-baseline gap-2 text-sm leading-none">
+        <span aria-hidden className="select-none">
+          ╰
+        </span>
+        <span
+          aria-hidden
+          className="term-rule flex-1 overflow-hidden whitespace-nowrap select-none"
+        >
+          {RULE}
+        </span>
+        <span aria-hidden className="select-none">
+          ╯
+        </span>
+      </div>
+    </aside>
+  );
+}
+
+function Note({ children, label }: { children: React.ReactNode; label?: string }) {
+  return (
+    <Callout tone="note" {...(label !== undefined ? { label } : {})}>
+      {children}
+    </Callout>
+  );
+}
+
+function Warn({ children, label }: { children: React.ReactNode; label?: string }) {
+  return (
+    <Callout tone="warn" {...(label !== undefined ? { label } : {})}>
+      {children}
+    </Callout>
   );
 }
 
@@ -187,4 +253,6 @@ export const mdxComponents = {
   img: Img,
   strong: Strong,
   em: Em,
+  Note,
+  Warn,
 } as const;
