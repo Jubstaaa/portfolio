@@ -14,8 +14,6 @@
     "format:check": "prettier --check .",
     "velite": "velite build",
     "velite:watch": "velite build --watch",
-    "content:migrate": "bun run scripts/migrate-content.ts",
-    "content:download-images": "bun run scripts/download-images.ts",
     "prepare": "husky"
   },
   "dependencies": {

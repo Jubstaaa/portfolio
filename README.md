@@ -18,32 +18,29 @@ bun run velite:watch # in a second terminal
 
 ## Scripts
 
-| Command                           | What it does                            |
-| --------------------------------- | --------------------------------------- |
-| `bun dev`                         | velite + `next dev --turbopack`         |
-| `bun run build`                   | velite + `next build`                   |
-| `bun start`                       | `next start` (after `bun run build`)    |
-| `bun run typecheck`               | velite + `tsc --noEmit`                 |
-| `bun run lint` / `lint:fix`       | ESLint                                  |
-| `bun run format` / `format:check` | Prettier                                |
-| `bun run velite`                  | build the content pipeline              |
-| `bun run velite:watch`            | watch content                           |
-| `bun run content:migrate`         | re-run the MongoDB → content/ migrator  |
-| `bun run content:download-images` | download referenced images to `public/` |
+| Command                           | What it does                         |
+| --------------------------------- | ------------------------------------ |
+| `bun dev`                         | velite + `next dev --turbopack`      |
+| `bun run build`                   | velite + `next build`                |
+| `bun start`                       | `next start` (after `bun run build`) |
+| `bun run typecheck`               | velite + `tsc --noEmit`              |
+| `bun run lint` / `lint:fix`       | ESLint                               |
+| `bun run format` / `format:check` | Prettier                             |
+| `bun run velite`                  | build the content pipeline           |
+| `bun run velite:watch`            | watch content                        |
 
 ## Content authoring
 
 See [`CLAUDE.md`](./CLAUDE.md) for full conventions. Short version:
 
-- `content/blog/<slug>.mdx` — frontmatter (title, description, date, category, tags, featured, cover) + MDX body. Supports `<Note>` and `<Warn>` shortcodes.
-- `content/projects/<slug>.json` — typed project entry (title, summary, description, category, stack, role, year, status, images, highlights, repo, url).
+- `content/blog/<slug>.mdx` — frontmatter (title, description, date, category, tags, cover) + MDX body. Supports `<Note>` and `<Warn>` shortcodes.
+- `content/projects/<slug>.mdx` — frontmatter (title, summary, category, stack, repo, url, images, highlights) + MDX body.
 - `content/site.json` — single source of truth for hero / nav / metadata.
-- `content/about.mdx` — long-form bio, rendered inside `Prose` on `/about`.
 - `content/experiences/*.json`, `content/education/*.json`, `content/data/{skills,stacks,socials}.json` — typed arrays.
 
 All content is Zod-validated at build time by [`velite.config.ts`](./velite.config.ts). A broken schema fails the build with a precise error.
 
-Images live at `/public/images/<area>/<slug>/<file>.webp`. The `scripts/download-images.ts` script fetches every URL produced by the migrator.
+Images live at `/public/images/<area>/<slug>/<file>.webp`. Drop them in and reference from frontmatter or MDX.
 
 ## Design system
 

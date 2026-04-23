@@ -12,9 +12,6 @@
 /.velite/
 /public/_velite/
 
-# migrator artifacts (regenerated each run)
-.migrator-image-manifest.json
-
 # testing
 /coverage
 
