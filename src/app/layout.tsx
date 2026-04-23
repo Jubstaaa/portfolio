@@ -6,7 +6,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import { Footer } from "@/components/Footer";
 import { Nav } from "@/components/Nav";
-import { ReadingProgress } from "@/components/ReadingProgress";
+import { ScrollProgress } from "@/components/ScrollProgress";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { site } from "@/lib/site";
 
@@ -63,7 +63,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="bg-background text-foreground flex min-h-screen flex-col font-mono antialiased">
         <ThemeProvider>
           <Nav />
-          <ReadingProgress />
+          <ScrollProgress />
           <main id="main" className="flex-1">
             {children}
           </main>

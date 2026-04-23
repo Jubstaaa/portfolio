@@ -23,7 +23,7 @@ function getServerSnapshot(): number {
   return 0;
 }
 
-export function ReadingProgress() {
+export function ScrollProgress() {
   const progress = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   return (
