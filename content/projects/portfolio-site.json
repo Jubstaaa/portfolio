@@ -6,7 +6,6 @@
   "stack": ["NextJS", "Vercel", "Node.js", "TypeScript", "MongoDB", "Prisma", "Payload"],
   "role": "Creator",
   "year": 2025,
-  "featured": true,
   "status": "shipped",
   "repo": "https://github.com/Jubstaaa/portfolio-typescript",
   "url": "https://ilkerbalcilar.com/",

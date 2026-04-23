@@ -30,21 +30,13 @@ export function getPublishedPosts(): Post[] {
     .sort((a, b) => b.date.localeCompare(a.date));
 }
 
-export function getFeaturedPosts(): Post[] {
-  return getPublishedPosts().filter((post) => post.featured);
-}
-
 export function getPostBySlug(slug: string): Post | undefined {
   return posts.find((post) => post.slug === slug);
 }
 
 // ───── Projects ───────────────────────────────────────────────────────────────
 export function getAllProjects(): Project[] {
-  return projects.slice().sort((a, b) => (a.featured === b.featured ? 0 : a.featured ? -1 : 1));
-}
-
-export function getFeaturedProjects(): Project[] {
-  return getAllProjects().filter((project) => project.featured);
+  return projects.slice();
 }
 
 export function getProjectBySlug(slug: string): Project | undefined {

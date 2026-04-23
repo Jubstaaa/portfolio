@@ -681,7 +681,6 @@ function main(): void {
       `category: ${category}`,
       "tags: []",
       "draft: false",
-      "featured: false",
       coverFrontmatter.trim(),
       "---",
       "",
@@ -691,13 +690,10 @@ function main(): void {
 
     writeFile(join(CONTENT, "blog", `${slug}.mdx`), frontmatter + "\n" + body);
     counts.blog++;
-    todo("blog", `post "${slug}" — pick tags (currently empty) and decide if featured`);
+    todo("blog", `post "${slug}" — pick tags (currently empty)`);
   }
 
   // ─── Projects ───────────────────────────────────────────────────────────────
-  const sortedProjects = [...projects].sort((a, b) => Number(a.order ?? 0) - Number(b.order ?? 0));
-  const featuredIds = new Set(sortedProjects.slice(0, 4).map((p) => p._id));
-
   for (const project of projects) {
     const slug = project.slug || slugify(project.name);
     const cat = projCatMap.get(project.projectCategoryId);
@@ -728,19 +724,6 @@ function main(): void {
     } else {
       todo("projects", `"${slug}" references missing cover mediaId ${project.mediaId}`);
     }
-    if (project.logoId) {
-      const logoMedia = mediaMap.get(project.logoId);
-      if (logoMedia) {
-        const localLogo = `/images/projects/${slug}/logo.${extOf(logoMedia.filename)}`;
-        queueImage(
-          `${SUPABASE_BASE}/${logoMedia.filename}`,
-          `public${localLogo}`,
-          `projects/${slug} logo`,
-        );
-        images.push({ src: localLogo, alt: `${project.name} logo` });
-      }
-    }
-
     let descriptionMd = "";
     if (project.content) {
       const ctx: ConvertContext = { mediaMap, slug, kind: "project", todos };
@@ -759,7 +742,6 @@ function main(): void {
       stack: stackNames,
       role: "Creator",
       year: new Date(project.createdAt).getFullYear(),
-      featured: featuredIds.has(project._id),
       status: "shipped" as const,
       ...(project.sourceUrl ? { repo: project.sourceUrl } : {}),
       ...(project.previewUrl ? { url: project.previewUrl } : {}),

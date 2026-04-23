@@ -21,14 +21,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url: absolute(`/projects/${project.slug}`),
     lastModified: now,
     changeFrequency: "monthly",
-    priority: project.featured ? 0.85 : 0.7,
+    priority: 0.7,
   }));
 
   const postRoutes: MetadataRoute.Sitemap = getPublishedPosts().map((post) => ({
     url: absolute(post.path),
     lastModified: new Date(post.updated ?? post.date),
     changeFrequency: "monthly",
-    priority: post.featured ? 0.85 : 0.7,
+    priority: 0.7,
   }));
 
   return [...staticRoutes, ...projectRoutes, ...postRoutes];

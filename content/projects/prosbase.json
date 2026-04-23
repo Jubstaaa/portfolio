@@ -17,17 +17,12 @@
   ],
   "role": "Creator",
   "year": 2025,
-  "featured": true,
   "status": "shipped",
   "url": "https://prosbase.com/",
   "images": [
     {
       "src": "/images/projects/prosbase/cover.webp",
       "alt": "Prosbase Leaderboard"
-    },
-    {
-      "src": "/images/projects/prosbase/logo.webp",
-      "alt": "Prosbase logo"
     }
   ],
   "highlights": []

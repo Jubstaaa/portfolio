@@ -6,7 +6,6 @@
   "stack": ["TypeScript", "NextJS", "Vercel", "Tailwind CSS"],
   "role": "Creator",
   "year": 2025,
-  "featured": false,
   "status": "shipped",
   "repo": "https://github.com/Jubstaaa/emoji-guess-game",
   "url": "https://emojiguessgame.com/",
@@ -14,10 +13,6 @@
     {
       "src": "/images/projects/emoji-guess-game/cover.webp",
       "alt": "Emoji Guess Game Main Game Interface"
-    },
-    {
-      "src": "/images/projects/emoji-guess-game/logo.webp",
-      "alt": "Emoji Guess Game logo"
     }
   ],
   "highlights": []

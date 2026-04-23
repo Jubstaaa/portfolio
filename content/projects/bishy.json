@@ -6,17 +6,12 @@
   "stack": ["NextJS", "Node.js", "Nginx", "Ubuntu", "Github Actions"],
   "role": "Creator",
   "year": 2025,
-  "featured": true,
   "status": "shipped",
   "url": "https://bishy.com.tr/",
   "images": [
     {
       "src": "/images/projects/bishy/cover.webp",
       "alt": "Bishy Website"
-    },
-    {
-      "src": "/images/projects/bishy/logo.webp",
-      "alt": "Bishy logo"
     }
   ],
   "highlights": []

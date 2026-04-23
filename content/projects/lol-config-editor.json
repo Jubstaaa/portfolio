@@ -6,7 +6,6 @@
   "stack": ["JavaScript", "TypeScript", "Electron.js"],
   "role": "Creator",
   "year": 2025,
-  "featured": false,
   "status": "shipped",
   "repo": "https://github.com/Jubstaaa/lol-config-editor",
   "images": [

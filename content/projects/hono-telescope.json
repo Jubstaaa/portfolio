@@ -18,7 +18,6 @@
   ],
   "role": "Creator",
   "year": 2025,
-  "featured": true,
   "status": "shipped",
   "repo": "https://github.com/jubstaaa/hono-telescope",
   "url": "https://hono-telescope-9lvpv.ondigitalocean.app/telescope",
@@ -26,10 +25,6 @@
     {
       "src": "/images/projects/hono-telescope/cover.webp",
       "alt": "Hono Telescope Dashboard"
-    },
-    {
-      "src": "/images/projects/hono-telescope/logo.webp",
-      "alt": "Hono Telescope logo"
     }
   ],
   "highlights": []

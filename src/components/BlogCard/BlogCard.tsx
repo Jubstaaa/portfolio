@@ -28,14 +28,6 @@ export function BlogCard({ post, className }: BlogCardProps) {
           ·
         </span>
         <span>{post.category}</span>
-        {post.featured ? (
-          <>
-            <span aria-hidden className="select-none">
-              ·
-            </span>
-            <span className="text-accent">featured</span>
-          </>
-        ) : null}
       </p>
       <h2
         className="text-foreground group-hover:text-accent transition-token mt-2 text-lg font-semibold tracking-tight"
