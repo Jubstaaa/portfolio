@@ -1,7 +1,6 @@
 import Link from "next/link";
 
 import {
-  StatusDot,
   TerminalBlock,
   TerminalLine,
   TerminalMeta,
@@ -21,19 +20,6 @@ export default function Home() {
           <p>{site.name}</p>
           <p className="text-muted-foreground">
             {site.role} · {site.location}
-          </p>
-        </TerminalLine>
-
-        <TerminalLine command="cat status">
-          <p>
-            <StatusDot tone="success" />
-            available for work
-          </p>
-          <p className="text-muted-foreground">
-            <span aria-hidden className="mr-1 select-none">
-              →
-            </span>
-            open to remote & contract
           </p>
         </TerminalLine>
 
