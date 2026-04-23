@@ -1,49 +1,154 @@
 [
-  { "name": "TypeScript", "category": "lang", "url": "https://www.typescriptlang.org/" },
+  {
+    "name": "TypeScript",
+    "category": "lang"
+  },
   {
     "name": "JavaScript",
-    "category": "lang",
-    "url": "https://developer.mozilla.org/docs/Web/JavaScript"
+    "category": "lang"
   },
-  { "name": "Python", "category": "lang", "url": "https://www.python.org/" },
-  { "name": "C#", "category": "lang", "url": "https://learn.microsoft.com/dotnet/csharp/" },
-  { "name": "HTML", "category": "lang", "url": "https://developer.mozilla.org/docs/Web/HTML" },
-  { "name": "CSS", "category": "lang", "url": "https://developer.mozilla.org/docs/Web/CSS" },
-
-  { "name": "Next.js", "category": "framework", "url": "https://nextjs.org/" },
-  { "name": "React Native", "category": "framework", "url": "https://reactnative.dev/" },
-  { "name": "Expo", "category": "framework", "url": "https://expo.dev/" },
-  { "name": "Hono", "category": "framework", "url": "https://hono.dev/" },
-  { "name": "Payload CMS", "category": "framework", "url": "https://payloadcms.com/" },
-  { "name": "Electron", "category": "framework", "url": "https://www.electronjs.org/" },
-  { "name": "Unity", "category": "framework", "url": "https://unity.com/" },
-
-  { "name": "React", "category": "library", "url": "https://react.dev/" },
-  { "name": "Redux Toolkit", "category": "library", "url": "https://redux-toolkit.js.org/" },
-  { "name": "Prisma", "category": "library", "url": "https://www.prisma.io/" },
-  { "name": "Sequelize", "category": "library", "url": "https://sequelize.org/" },
-  { "name": "jQuery", "category": "library", "url": "https://jquery.com/" },
-
-  { "name": "Tailwind CSS", "category": "design", "url": "https://tailwindcss.com/" },
-  { "name": "Figma", "category": "design", "url": "https://www.figma.com/" },
-
-  { "name": "Node.js", "category": "tooling", "url": "https://nodejs.org/" },
-  { "name": "Bun", "category": "tooling", "url": "https://bun.sh/" },
-  { "name": "npm", "category": "tooling", "url": "https://www.npmjs.com/" },
-  { "name": "Vite", "category": "tooling", "url": "https://vitejs.dev/" },
-  { "name": "Git", "category": "tooling", "url": "https://git-scm.com/" },
-  { "name": "GitHub", "category": "tooling", "url": "https://github.com/" },
-  { "name": "GitHub Actions", "category": "tooling", "url": "https://github.com/features/actions" },
-  { "name": "Postman", "category": "tooling", "url": "https://www.postman.com/" },
-  { "name": "VS Code", "category": "tooling", "url": "https://code.visualstudio.com/" },
-
-  { "name": "Vercel", "category": "infra", "url": "https://vercel.com/" },
-  { "name": "Cloudflare", "category": "infra", "url": "https://www.cloudflare.com/" },
-  { "name": "Firebase", "category": "infra", "url": "https://firebase.google.com/" },
-  { "name": "DigitalOcean", "category": "infra", "url": "https://www.digitalocean.com/" },
-  { "name": "MongoDB", "category": "infra", "url": "https://www.mongodb.com/" },
-  { "name": "PostgreSQL", "category": "infra", "url": "https://www.postgresql.org/" },
-  { "name": "MySQL", "category": "infra", "url": "https://www.mysql.com/" },
-  { "name": "Nginx", "category": "infra", "url": "https://nginx.org/" },
-  { "name": "Ubuntu", "category": "infra", "url": "https://ubuntu.com/" }
+  {
+    "name": "Python",
+    "category": "lang"
+  },
+  {
+    "name": "C#",
+    "category": "lang"
+  },
+  {
+    "name": "HTML",
+    "category": "lang"
+  },
+  {
+    "name": "CSS",
+    "category": "lang"
+  },
+  {
+    "name": "Next.js",
+    "category": "framework"
+  },
+  {
+    "name": "React Native",
+    "category": "framework"
+  },
+  {
+    "name": "Expo",
+    "category": "framework"
+  },
+  {
+    "name": "Hono",
+    "category": "framework"
+  },
+  {
+    "name": "Payload CMS",
+    "category": "framework"
+  },
+  {
+    "name": "Electron",
+    "category": "framework"
+  },
+  {
+    "name": "Unity",
+    "category": "framework"
+  },
+  {
+    "name": "React",
+    "category": "library"
+  },
+  {
+    "name": "Redux Toolkit",
+    "category": "library"
+  },
+  {
+    "name": "Prisma",
+    "category": "library"
+  },
+  {
+    "name": "Sequelize",
+    "category": "library"
+  },
+  {
+    "name": "jQuery",
+    "category": "library"
+  },
+  {
+    "name": "Tailwind CSS",
+    "category": "design"
+  },
+  {
+    "name": "Figma",
+    "category": "design"
+  },
+  {
+    "name": "Node.js",
+    "category": "tooling"
+  },
+  {
+    "name": "Bun",
+    "category": "tooling"
+  },
+  {
+    "name": "npm",
+    "category": "tooling"
+  },
+  {
+    "name": "Vite",
+    "category": "tooling"
+  },
+  {
+    "name": "Git",
+    "category": "tooling"
+  },
+  {
+    "name": "GitHub",
+    "category": "tooling"
+  },
+  {
+    "name": "GitHub Actions",
+    "category": "tooling"
+  },
+  {
+    "name": "Postman",
+    "category": "tooling"
+  },
+  {
+    "name": "VS Code",
+    "category": "tooling"
+  },
+  {
+    "name": "Vercel",
+    "category": "infra"
+  },
+  {
+    "name": "Cloudflare",
+    "category": "infra"
+  },
+  {
+    "name": "Firebase",
+    "category": "infra"
+  },
+  {
+    "name": "DigitalOcean",
+    "category": "infra"
+  },
+  {
+    "name": "MongoDB",
+    "category": "infra"
+  },
+  {
+    "name": "PostgreSQL",
+    "category": "infra"
+  },
+  {
+    "name": "MySQL",
+    "category": "infra"
+  },
+  {
+    "name": "Nginx",
+    "category": "infra"
+  },
+  {
+    "name": "Ubuntu",
+    "category": "infra"
+  }
 ]

@@ -146,7 +146,6 @@ const stacks = defineCollection({
   schema: s.object({
     name: s.string(),
     category: s.enum(["framework", "library", "lang", "infra", "tooling", "design"]),
-    url: s.string().url().optional(),
   }),
 });
 

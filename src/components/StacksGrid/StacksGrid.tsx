@@ -37,20 +37,7 @@ export function StacksGrid({ className }: StacksGridProps) {
           <dd>
             <ul className="text-foreground flex flex-wrap gap-x-3 gap-y-1 text-sm">
               {(buckets[cat] ?? []).map((stack) => (
-                <li key={stack.name}>
-                  {stack.url ? (
-                    <a
-                      href={stack.url}
-                      target="_blank"
-                      rel="noreferrer noopener"
-                      className="hover:text-accent transition-token underline-offset-4 hover:underline"
-                    >
-                      {stack.name}
-                    </a>
-                  ) : (
-                    stack.name
-                  )}
-                </li>
+                <li key={stack.name}>{stack.name}</li>
               ))}
             </ul>
           </dd>
