@@ -78,7 +78,7 @@ export default async function PostPage({ params }: PostPageProps) {
                 </span>
                 <span>{post.title}</span>
               </h1>
-              <hr className="m-0 border-t border-[color:var(--foreground)]" />
+              <hr className="my-2 border-t border-[color:var(--foreground)]" />
             </div>
             <p className="text-foreground max-w-prose text-base leading-relaxed">
               {post.description}
