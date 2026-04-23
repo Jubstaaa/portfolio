@@ -71,12 +71,11 @@ const posts = defineCollection({
 
 const projects = defineCollection({
   name: "Project",
-  pattern: "projects/*.json",
+  pattern: "projects/*.mdx",
   schema: s
     .object({
       title: s.string(),
       summary: s.string(),
-      description: s.markdown(),
       category: s.enum(["web", "mobile", "tool", "library", "other"]),
       stack: s.array(s.string()).default([]),
       role: s.string(),
@@ -85,10 +84,12 @@ const projects = defineCollection({
       url: s.string().url().optional(),
       images: s.array(image).default([]),
       highlights: s.array(s.string()).default([]),
+      body: s.mdx(),
+      raw: s.raw(),
     })
     .transform((data, { meta }) => {
       const file = meta.path.split("/").pop() ?? "";
-      const slug = file.replace(/\.json$/, "");
+      const slug = file.replace(/\.mdx$/, "");
       return { ...data, slug, path: `/projects/${slug}` };
     }),
 });

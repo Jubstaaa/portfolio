@@ -133,28 +133,29 @@ Body is standard MDX. Fenced code blocks are highlighted via Shiki.
 
 ### Project
 
-`content/projects/my-project.json`
+`content/projects/my-project.mdx` — frontmatter for metadata, MDX body for the long-form description:
 
-```json
-{
-  "title": "Prosbase V2",
-  "summary": "LoL esports stats platform — real-time ingest + analytics.",
-  "description": "Longer description (plain text or MDX in S04+).",
-  "category": "web",
-  "stack": ["Next.js", "Hono", "PostgreSQL", "BullMQ"],
-  "role": "Lead engineer",
-  "year": 2026,
-  "featured": true,
-  "status": "in-progress",
-  "repo": "https://github.com/you/prosbase",
-  "url": "https://prosbase.example.com",
-  "images": [{ "src": "/images/projects/prosbase/shot-1.jpg", "alt": "Dashboard" }],
-  "highlights": [
-    "Ingest pipeline scales to 10k events/sec",
-    "TypeScript monorepo with shared contracts",
-    "Tauri desktop companion"
-  ]
-}
+```yaml
+---
+title: "Prosbase V2"
+summary: "LoL esports stats platform — real-time ingest + analytics."
+category: web
+role: "Lead engineer"
+status: in-progress
+repo: "https://github.com/you/prosbase"
+url: "https://prosbase.example.com"
+stack: ["Next.js", "Hono", "PostgreSQL", "BullMQ"]
+highlights:
+  - "Ingest pipeline scales to 10k events/sec"
+  - "TypeScript monorepo with shared contracts"
+  - "Tauri desktop companion"
+images:
+  - src: /images/projects/prosbase/cover.webp
+    alt: "Dashboard"
+---
+# Overview
+
+Long-form description as MDX. Same pipeline as blog posts — `remark-gfm`, Shiki code blocks, `<Note>` / `<Warn>` shortcodes, etc.
 ```
 
 ### Experience / Education / Skills / Stacks / Socials
@@ -165,9 +166,9 @@ Schema lives in `velite.config.ts`. Add a JSON file; re-run `bun run velite` or 
 
 `content/about.mdx` is a singleton MDX file. Same frontmatter-less body, same MDX component map as blog posts. The `/about` page renders it inside the shared `Prose` wrapper above the timeline/education/skills. `SiteConfig.description` is one sentence (hero/meta) — long-form bio lives here.
 
-### Project.description (MDX)
+### One MDX map, three surfaces
 
-When a project's `description` is authored as MDX (S04+), it renders through the **same `MdxComponents` map as blog posts**. Don't fork the map — one source of truth for prose, callouts, code blocks, and images across blog + projects + about.
+Blog posts, project bodies, and `about.mdx` all render through the same `MdxComponents` map. Any element override (code blocks, callouts, images, links) applies everywhere. Don't fork the map.
 
 ### Images
 

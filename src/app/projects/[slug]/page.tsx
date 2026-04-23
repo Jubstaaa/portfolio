@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import { Mdx } from "@/components/Mdx";
 import { PathBar } from "@/components/PathBar";
-import { MarkdownProse } from "@/components/Prose";
 import { ProjectGallery } from "@/components/ProjectGallery";
+import { Prose } from "@/components/Prose";
 import { SectionHeading } from "@/components/SectionHeading";
 import { getAllProjects, getProjectBySlug, site } from "@/lib/content";
 import { buildMetadata, buildProjectJsonLd, JsonLd } from "@/lib/seo";
@@ -94,8 +95,10 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           className="max-w-3xl"
         />
 
-        {project.description ? (
-          <MarkdownProse html={project.description} className="max-w-3xl" />
+        {project.body ? (
+          <Prose className="max-w-3xl">
+            <Mdx code={project.body} />
+          </Prose>
         ) : null}
 
         {project.highlights.length > 0 ? (

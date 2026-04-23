@@ -734,26 +734,33 @@ function main(): void {
       }
     }
 
-    const record = {
-      title: project.name,
-      summary: project.description ?? "",
-      description: descriptionMd || project.description || "",
-      category,
-      stack: stackNames,
-      role: "Creator",
-      year: new Date(project.createdAt).getFullYear(),
-      status: "shipped" as const,
-      ...(project.sourceUrl ? { repo: project.sourceUrl } : {}),
-      ...(project.previewUrl ? { url: project.previewUrl } : {}),
-      images,
-      highlights: [] as string[],
-    };
-    writeFile(join(CONTENT, "projects", `${slug}.json`), JSON.stringify(record, null, 2));
+    const summary = project.description ?? "";
+    const body = descriptionMd || summary;
+    const fmLines: string[] = [
+      "---",
+      `title: ${JSON.stringify(project.name)}`,
+      `summary: ${JSON.stringify(summary)}`,
+      `category: ${category}`,
+      `role: ${JSON.stringify("Creator")}`,
+      `status: shipped`,
+    ];
+    if (project.sourceUrl) fmLines.push(`repo: ${JSON.stringify(project.sourceUrl)}`);
+    if (project.previewUrl) fmLines.push(`url: ${JSON.stringify(project.previewUrl)}`);
+    fmLines.push(`stack: ${JSON.stringify(stackNames)}`);
+    fmLines.push(`highlights: []`);
+    if (images.length > 0) {
+      fmLines.push("images:");
+      for (const img of images) {
+        fmLines.push(`  - src: ${JSON.stringify(img.src)}`);
+        fmLines.push(`    alt: ${JSON.stringify(img.alt)}`);
+      }
+    } else {
+      fmLines.push("images: []");
+    }
+    fmLines.push("---", "");
+    writeFile(join(CONTENT, "projects", `${slug}.mdx`), fmLines.join("\n") + "\n" + body + "\n");
     counts.projects++;
-    todo(
-      "projects",
-      `"${slug}" — fill highlights[], review role/status, verify year=${record.year}`,
-    );
+    todo("projects", `"${slug}" — fill highlights[], review role/status`);
   }
 
   // ─── Experiences ────────────────────────────────────────────────────────────
