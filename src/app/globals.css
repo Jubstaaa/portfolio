@@ -56,6 +56,7 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    overscroll-behavior: none;
     font-feature-settings:
       "calt" 1,
       "zero" 1;
