@@ -17,7 +17,7 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
     <ViewTransitionLink
       href={`/projects/${project.slug}`}
       className={cn(
-        "hairline group block border bg-[color:var(--card)] transition-[border-color,transform] duration-[var(--duration-base)] ease-[var(--ease-out)] hover:border-[color:var(--foreground)]/30",
+        "hairline block border bg-[color:var(--card)] transition-[border-color] duration-[var(--duration-base)] ease-[var(--ease-out)] hover:border-[color:var(--foreground)]/30",
         className,
       )}
     >
@@ -31,7 +31,7 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
             alt={cover.alt}
             fill
             sizes="(min-width: 768px) 50vw, 100vw"
-            className="object-cover transition-transform duration-[var(--duration-slow)] ease-[var(--ease-out)] group-hover:scale-[1.02]"
+            className="object-cover"
           />
         </div>
       ) : null}
