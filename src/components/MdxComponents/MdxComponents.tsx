@@ -108,13 +108,7 @@ function Li({ className, ...props }: HTMLAttributes<HTMLLIElement>) {
 
 function Hr() {
   return (
-    <div
-      role="separator"
-      aria-hidden
-      className="term-rule my-8 overflow-hidden text-sm leading-none whitespace-nowrap"
-    >
-      {RULE}
-    </div>
+    <hr className="hairline my-8 h-px border-0 bg-[color-mix(in_oklch,var(--border)_70%,transparent)]" />
   );
 }
 

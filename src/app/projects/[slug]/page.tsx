@@ -69,12 +69,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
                 </span>
                 <span>{project.title}</span>
               </h1>
-              <div
-                aria-hidden
-                className="term-rule overflow-hidden text-sm leading-none whitespace-nowrap"
-              >
-                {"─".repeat(240)}
-              </div>
+              <hr className="hairline m-0 h-px border-0 bg-[color-mix(in_oklch,var(--border)_70%,transparent)]" />
             </div>
             <p className="text-foreground max-w-prose text-base leading-relaxed">
               {project.summary}
