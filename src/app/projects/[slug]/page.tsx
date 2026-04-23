@@ -60,7 +60,10 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               <span>{project.category}</span>
             </p>
             <div className="relative space-y-3">
-              <h1 className="text-foreground flex items-baseline gap-2 text-lg font-normal">
+              <h1
+                className="text-foreground flex items-baseline gap-2 text-lg font-normal"
+                style={{ viewTransitionName: `project-${project.slug}` }}
+              >
                 <span aria-hidden className="text-muted-foreground select-none">
                   #
                 </span>
@@ -114,10 +117,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           </header>
 
           {cover ? (
-            <div
-              className="hairline relative aspect-[16/9] overflow-hidden rounded-md border"
-              style={{ viewTransitionName: `project-${project.slug}` }}
-            >
+            <div className="hairline relative aspect-[16/9] overflow-hidden rounded-md border">
               <Image
                 src={cover.src}
                 alt={cover.alt}

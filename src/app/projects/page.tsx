@@ -28,13 +28,13 @@ export default function ProjectsPage() {
           number="01"
           description="Shipped products, tools, and side projects."
         />
-        <ul className="grid gap-6 md:grid-cols-2">
+        <ol className="divide-border hairline flex flex-col divide-y border-t">
           {projects.map((project) => (
             <li key={project.slug}>
               <ProjectCard project={project} />
             </li>
           ))}
-        </ul>
+        </ol>
       </section>
     </>
   );

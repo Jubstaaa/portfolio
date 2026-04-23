@@ -19,7 +19,7 @@ export default function BlogPage() {
     <>
       <PathBar
         path={`~/${site.handle}/blog`}
-        meta={`${posts.length} ${posts.length === 1 ? "post" : "posts"} · rss`}
+        meta={`${posts.length} ${posts.length === 1 ? "post" : "posts"}`}
       />
       <section className="container-default section-pad space-y-10">
         <SectionHeading

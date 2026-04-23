@@ -1,6 +1,4 @@
-import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypePrettyCode, { type Options as PrettyCodeOptions } from "rehype-pretty-code";
-import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 import { defineConfig, defineCollection, s } from "velite";
 
@@ -184,10 +182,6 @@ export default defineConfig({
   },
   mdx: {
     remarkPlugins: [remarkGfm],
-    rehypePlugins: [
-      rehypeSlug,
-      [rehypeAutolinkHeadings, { behavior: "wrap" }],
-      [rehypePrettyCode, prettyCode],
-    ],
+    rehypePlugins: [[rehypePrettyCode, prettyCode]],
   },
 });

@@ -222,7 +222,7 @@ function Img({ alt = "", src, className, ...rest }: ImgHTMLAttributes<HTMLImageE
       alt={alt}
       loading="lazy"
       decoding="async"
-      className={cn("hairline my-6 w-full rounded-md border", className)}
+      className={cn("my-6 w-full", className)}
       {...rest}
     />
   );
