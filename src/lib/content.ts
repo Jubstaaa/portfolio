@@ -1,5 +1,4 @@
 import {
-  about,
   education,
   experiences,
   posts,
@@ -8,7 +7,6 @@ import {
   skills,
   socials,
   stacks,
-  type About,
   type Education,
   type Experience,
   type Post,
@@ -19,8 +17,8 @@ import {
   type Stack,
 } from "#site/content";
 
-export { about, education, experiences, posts, projects, site, skills, socials, stacks };
-export type { About, Education, Experience, Post, Project, Site, Skill, Social, Stack };
+export { education, experiences, posts, projects, site, skills, socials, stacks };
+export type { Education, Experience, Post, Project, Site, Skill, Social, Stack };
 
 // ───── Posts ──────────────────────────────────────────────────────────────────
 export function getPublishedPosts(): Post[] {

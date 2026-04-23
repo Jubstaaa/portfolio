@@ -29,19 +29,6 @@ const site = defineCollection({
   }),
 });
 
-const about = defineCollection({
-  name: "About",
-  pattern: "about.mdx",
-  single: true,
-  schema: s
-    .object({
-      title: s.string().default("About"),
-      body: s.mdx(),
-      raw: s.raw(),
-    })
-    .transform((data) => ({ ...data })),
-});
-
 const posts = defineCollection({
   name: "Post",
   pattern: "blog/*.mdx",
@@ -170,7 +157,6 @@ export default defineConfig({
   },
   collections: {
     site,
-    about,
     posts,
     projects,
     experiences,

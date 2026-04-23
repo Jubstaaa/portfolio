@@ -1,5 +1,4 @@
 export type {
-  About,
   Education,
   Experience,
   Post,
