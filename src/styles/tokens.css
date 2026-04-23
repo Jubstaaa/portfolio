@@ -1,0 +1,95 @@
+:root,
+.dark {
+  --background: oklch(0.145 0.01 270);
+  --foreground: oklch(0.97 0.01 270);
+
+  --card: oklch(0.18 0.01 270);
+  --card-foreground: oklch(0.96 0.01 270);
+  --popover: oklch(0.18 0.01 270);
+  --popover-foreground: oklch(0.96 0.01 270);
+
+  --muted: oklch(0.22 0.01 270);
+  --muted-foreground: oklch(0.68 0.02 270);
+
+  --primary: oklch(0.97 0.01 270);
+  --primary-foreground: oklch(0.145 0.01 270);
+  --secondary: oklch(0.22 0.01 270);
+  --secondary-foreground: oklch(0.96 0.01 270);
+
+  --accent: oklch(0.76 0.17 240);
+  --accent-foreground: oklch(0.12 0.02 270);
+
+  --border: oklch(0.28 0.01 270);
+  --input: oklch(0.28 0.01 270);
+  --ring: oklch(0.74 0.16 240);
+
+  --destructive: oklch(0.72 0.2 25);
+  --destructive-foreground: oklch(0.99 0 0);
+  --success: oklch(0.78 0.15 150);
+  --warning: oklch(0.82 0.15 80);
+
+  --radius: 0.625rem;
+
+  --duration-fast: 150ms;
+  --duration-base: 240ms;
+  --duration-slow: 420ms;
+  --duration-vt: 360ms;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --space-gutter: 1.25rem;
+  --space-section: 6rem;
+  --content-max: 80rem;
+  --prose-max: 72ch;
+}
+
+@media (min-width: 768px) {
+  :root,
+  .dark {
+    --space-gutter: 2rem;
+    --space-section: 9rem;
+  }
+}
+
+.light {
+  --background: oklch(0.99 0.005 270);
+  --foreground: oklch(0.18 0.02 270);
+
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.2 0.02 270);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.2 0.02 270);
+
+  --muted: oklch(0.95 0.008 270);
+  --muted-foreground: oklch(0.45 0.02 270);
+
+  --primary: oklch(0.18 0.02 270);
+  --primary-foreground: oklch(0.99 0.005 270);
+  --secondary: oklch(0.95 0.008 270);
+  --secondary-foreground: oklch(0.2 0.02 270);
+
+  --accent: oklch(0.55 0.18 240);
+  --accent-foreground: oklch(0.99 0 0);
+
+  --border: oklch(0.9 0.01 270);
+  --input: oklch(0.9 0.01 270);
+  --ring: oklch(0.55 0.18 240);
+
+  --destructive: oklch(0.55 0.2 25);
+  --destructive-foreground: oklch(0.99 0 0);
+  --success: oklch(0.55 0.17 150);
+  --warning: oklch(0.62 0.17 80);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root,
+  .dark,
+  .light {
+    --duration-fast: 0ms;
+    --duration-base: 0ms;
+    --duration-slow: 0ms;
+    --duration-vt: 0ms;
+  }
+}

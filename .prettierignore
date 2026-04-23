@@ -1,0 +1,14 @@
+node_modules
+.next
+.velite
+out
+build
+coverage
+.vercel
+bun.lock
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+next-env.d.ts
+public
+*.min.*

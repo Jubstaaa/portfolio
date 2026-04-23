@@ -1,0 +1,140 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "../styles/tokens.css";
+
+@custom-variant dark (&:is(.dark, .dark *));
+@custom-variant light (&:is(.light, .light *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --font-sans:
+    var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --font-mono:
+    var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  --text-display: clamp(3rem, 6vw + 1rem, 6rem);
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    color-scheme: dark;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  html.light {
+    color-scheme: light;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-feature-settings: "cv11", "ss01";
+  }
+
+  ::selection {
+    background-color: color-mix(in oklch, var(--accent) 40%, transparent);
+    color: var(--foreground);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  h1 {
+    font-size: clamp(2.25rem, 3vw + 1rem, 3.5rem);
+    line-height: 1.1;
+  }
+
+  h2 {
+    font-size: clamp(1.75rem, 1.5vw + 1rem, 2.25rem);
+    line-height: 1.15;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+    line-height: 1.2;
+  }
+}
+
+@layer utilities {
+  .container-default {
+    width: 100%;
+    max-width: var(--content-max);
+    margin-inline: auto;
+    padding-inline: var(--space-gutter);
+  }
+
+  .section-pad {
+    padding-block: var(--space-section);
+  }
+
+  .prose-max {
+    max-width: var(--prose-max);
+  }
+
+  .text-display {
+    font-size: var(--text-display);
+    line-height: 1.02;
+    letter-spacing: -0.04em;
+    font-weight: 700;
+  }
+
+  .hairline {
+    border-color: color-mix(in oklch, var(--border) 70%, transparent);
+  }
+
+  .transition-token {
+    transition-duration: var(--duration-base);
+    transition-timing-function: var(--ease-out);
+  }
+}

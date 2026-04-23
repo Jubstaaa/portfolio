@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <style>
+    .bg { fill: oklch(0.145 0.01 270); }
+    .fg { fill: oklch(0.97 0.01 270); }
+    @media (prefers-color-scheme: light) {
+      .bg { fill: oklch(0.99 0.005 270); }
+      .fg { fill: oklch(0.18 0.02 270); }
+    }
+  </style>
+  <rect class="bg" width="32" height="32" rx="6" />
+  <text
+    class="fg"
+    x="16"
+    y="22"
+    text-anchor="middle"
+    font-family="ui-monospace, SFMono-Regular, Menlo, monospace"
+    font-size="14"
+    font-weight="600"
+    letter-spacing="-0.5">me</text>
+</svg>
