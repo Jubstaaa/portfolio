@@ -94,7 +94,23 @@ export default async function PostPage({ params }: PostPageProps) {
                 {post.category}
               </Link>
             </p>
-            <SectionHeading as="h1" title={post.title} />
+            <div className="relative space-y-3">
+              <h1
+                className="text-foreground flex items-baseline gap-2 text-lg font-normal"
+                style={{ viewTransitionName: `post-${post.slug}` }}
+              >
+                <span aria-hidden className="text-muted-foreground select-none">
+                  #
+                </span>
+                <span>{post.title}</span>
+              </h1>
+              <div
+                aria-hidden
+                className="term-rule overflow-hidden text-sm leading-none whitespace-nowrap"
+              >
+                {"─".repeat(240)}
+              </div>
+            </div>
             <p className="text-foreground max-w-prose text-base leading-relaxed">
               {post.description}
             </p>

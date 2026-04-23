@@ -4,10 +4,15 @@ import { cn } from "@/lib/utils";
 
 export interface ProjectGalleryProps {
   images: ReadonlyArray<{ src: string; alt: string; caption?: string | undefined }>;
+  firstViewTransitionName?: string;
   className?: string;
 }
 
-export function ProjectGallery({ images, className }: ProjectGalleryProps) {
+export function ProjectGallery({
+  images,
+  firstViewTransitionName,
+  className,
+}: ProjectGalleryProps) {
   if (images.length === 0) return null;
   return (
     <figure className={cn("flex flex-col gap-4", className)}>
@@ -15,6 +20,11 @@ export function ProjectGallery({ images, className }: ProjectGalleryProps) {
         <div
           key={img.src}
           className="hairline relative aspect-[16/10] overflow-hidden rounded-md border"
+          style={
+            index === 0 && firstViewTransitionName
+              ? { viewTransitionName: firstViewTransitionName }
+              : undefined
+          }
         >
           <Image
             src={img.src}

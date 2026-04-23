@@ -5,6 +5,7 @@ import { EducationList } from "@/components/EducationList";
 import { Mdx } from "@/components/Mdx";
 import { PathBar } from "@/components/PathBar";
 import { Prose } from "@/components/Prose";
+import { Reveal } from "@/components/Reveal";
 import { SectionHeading } from "@/components/SectionHeading";
 import { SkillsGrid } from "@/components/SkillsGrid";
 import { StacksGrid } from "@/components/StacksGrid";
@@ -45,25 +46,25 @@ export default function AboutPage() {
           </Prose>
         </div>
 
-        <div className="space-y-6">
+        <Reveal className="space-y-6">
           <SectionHeading title="experience" number="02" />
           <Timeline items={experiences} />
-        </div>
+        </Reveal>
 
-        <div className="space-y-6">
+        <Reveal className="space-y-6">
           <SectionHeading title="education" number="03" />
           <EducationList items={educations} />
-        </div>
+        </Reveal>
 
-        <div className="space-y-6">
+        <Reveal className="space-y-6">
           <SectionHeading title="skills" number="04" />
           <SkillsGrid />
-        </div>
+        </Reveal>
 
-        <div className="space-y-6">
+        <Reveal className="space-y-6">
           <SectionHeading title="stacks" number="05" />
           <StacksGrid />
-        </div>
+        </Reveal>
       </section>
     </>
   );

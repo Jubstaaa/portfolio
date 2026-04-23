@@ -1,6 +1,6 @@
 import Image from "next/image";
-import Link from "next/link";
 
+import { ViewTransitionLink } from "@/components/ViewTransitionLink";
 import type { Project } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
@@ -11,8 +11,10 @@ export interface ProjectCardProps {
 
 export function ProjectCard({ project, className }: ProjectCardProps) {
   const cover = project.images[0];
+  const vtName = `project-${project.slug}`;
+
   return (
-    <Link
+    <ViewTransitionLink
       href={`/projects/${project.slug}`}
       className={cn(
         "hairline group block border bg-[color:var(--card)] transition-[border-color,transform] duration-[var(--duration-base)] ease-[var(--ease-out)] hover:border-[color:var(--foreground)]/30",
@@ -20,7 +22,10 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
       )}
     >
       {cover ? (
-        <div className="relative aspect-[16/10] overflow-hidden border-b">
+        <div
+          className="relative aspect-[16/10] overflow-hidden border-b"
+          style={{ viewTransitionName: vtName }}
+        >
           <Image
             src={cover.src}
             alt={cover.alt}
@@ -56,6 +61,6 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
           </p>
         ) : null}
       </div>
-    </Link>
+    </ViewTransitionLink>
   );
 }

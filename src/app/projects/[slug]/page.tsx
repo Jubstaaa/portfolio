@@ -95,7 +95,11 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           </div>
         </header>
 
-        <ProjectGallery images={project.images} className="max-w-3xl" />
+        <ProjectGallery
+          images={project.images}
+          firstViewTransitionName={`project-${project.slug}`}
+          className="max-w-3xl"
+        />
 
         {project.description ? (
           <MarkdownProse html={project.description} className="max-w-3xl" />
