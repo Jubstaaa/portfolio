@@ -8,7 +8,7 @@ import { PathBar } from "@/components/PathBar";
 import { Prose } from "@/components/Prose";
 import { SectionHeading } from "@/components/SectionHeading";
 import { getAllProjects, getProjectBySlug, site, type Project } from "@/lib/content";
-import { buildMetadata, buildProjectJsonLd, JsonLd } from "@/lib/seo";
+import { buildBreadcrumbJsonLd, buildMetadata, buildProjectJsonLd, JsonLd } from "@/lib/seo";
 
 export function generateStaticParams() {
   return getAllProjects().map((project) => ({ slug: project.slug }));
@@ -50,6 +50,13 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   return (
     <>
       <JsonLd data={buildProjectJsonLd(project)} />
+      <JsonLd
+        data={buildBreadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: "Projects", path: "/projects" },
+          { name: project.title, path: `/projects/${project.slug}` },
+        ])}
+      />
       <PathBar path={`~/${site.handle}/projects/${project.slug}`} meta={project.category} />
       <section className="container-default section-pad">
         <article className="mx-auto max-w-3xl min-w-0 space-y-8">

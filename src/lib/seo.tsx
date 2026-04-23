@@ -66,6 +66,21 @@ export function buildArticleJsonLd(post: Post): Record<string, unknown> {
   };
 }
 
+export function buildBreadcrumbJsonLd(
+  trail: Array<{ name: string; path: string }>,
+): Record<string, unknown> {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: trail.map((entry, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: entry.name,
+      item: new URL(entry.path, site.url).toString(),
+    })),
+  };
+}
+
 export function buildProjectJsonLd(project: Project): Record<string, unknown> {
   const cover = project.images[0];
   return {

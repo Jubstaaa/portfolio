@@ -7,7 +7,7 @@ import { Mdx } from "@/components/Mdx";
 import { PathBar } from "@/components/PathBar";
 import { Prose } from "@/components/Prose";
 import { getPostBySlug, getPublishedPosts, posts, site, type Post } from "@/lib/content";
-import { buildArticleJsonLd, buildMetadata, JsonLd } from "@/lib/seo";
+import { buildArticleJsonLd, buildBreadcrumbJsonLd, buildMetadata, JsonLd } from "@/lib/seo";
 
 export function generateStaticParams() {
   return posts.map((post) => ({ slug: post.slug }));
@@ -52,6 +52,13 @@ export default async function PostPage({ params }: PostPageProps) {
   return (
     <>
       <JsonLd data={buildArticleJsonLd(post)} />
+      <JsonLd
+        data={buildBreadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: "Blog", path: "/blog" },
+          { name: post.title, path: post.path },
+        ])}
+      />
       <PathBar
         path={`~/${site.handle}/blog/${post.slug}`}
         meta={`${formatDate(post.date)} · ${post.category}`}
