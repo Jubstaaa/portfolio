@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { StatusDot, TerminalBlock, TerminalLine, TerminalMeta } from "@/components/TerminalBlock";
-import { site } from "@/lib/site";
+import { site } from "@/lib/content";
 
 export default function NotFound() {
   return (

@@ -8,7 +8,7 @@ import { Footer } from "@/components/Footer";
 import { Nav } from "@/components/Nav";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import { site } from "@/lib/site";
+import { site } from "@/lib/content";
 
 import "./globals.css";
 

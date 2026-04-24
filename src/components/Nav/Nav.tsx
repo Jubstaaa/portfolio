@@ -6,7 +6,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { Logo } from "@/components/Logo";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { site } from "@/lib/site";
+import { site } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
 function isActive(pathname: string, href: string): boolean {

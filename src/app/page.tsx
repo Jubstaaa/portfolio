@@ -8,7 +8,7 @@ import {
 } from "@/components/TerminalBlock";
 import { JsonLd } from "@/components/JsonLd";
 import { buildPersonJsonLd } from "@/lib/seo";
-import { site } from "@/lib/site";
+import { site } from "@/lib/content";
 
 export default function Home() {
   return (
