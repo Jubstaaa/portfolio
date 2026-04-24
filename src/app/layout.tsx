@@ -75,7 +75,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       suppressHydrationWarning
       className={`${GeistSans.variable} ${GeistMono.variable}`}
     >
-      <body className="bg-background text-foreground flex min-h-screen flex-col font-mono antialiased">
+      <body
+        suppressHydrationWarning
+        className="bg-background text-foreground flex min-h-screen flex-col font-mono antialiased"
+      >
         <ThemeProvider>
           <Nav />
           <ScrollProgress />
