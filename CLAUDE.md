@@ -6,19 +6,19 @@ Operational guide for this repo. Global rules in `~/.claude/CLAUDE.md` still app
 
 ## Stack
 
-| Concern       | Tech                                                                          |
-| ------------- | ----------------------------------------------------------------------------- |
-| Framework     | Next.js 16 (App Router, Turbopack default, React 19)                          |
-| Language      | TypeScript 5.9, `strict: true`, no `any`                                      |
-| Styling       | Tailwind CSS 4 (CSS-first via `@theme`), tokens in `src/styles/tokens.css`    |
-| UI primitives | shadcn/ui (Tailwind v4 preset) + Lucide icons only                            |
-| Content       | velite (Zod-validated MDX + JSON) → `.velite/` → typed imports                |
-| MDX pipeline  | remark-gfm, rehype-slug, rehype-autolink-headings, rehype-pretty-code (Shiki) |
-| Motion        | `motion/react` + CSS-first transitions; View Transitions API for two flows    |
-| Fonts         | `geist/font` (Sans + Mono) — self-hosted                                      |
-| SEO           | `generateMetadata`, `next/og`, sitemap, robots, JSON-LD                       |
-| Analytics     | `@vercel/analytics`, `@vercel/speed-insights`                                 |
-| Deploy        | Vercel                                                                        |
+| Concern       | Tech                                                                       |
+| ------------- | -------------------------------------------------------------------------- |
+| Framework     | Next.js 16 (App Router, Turbopack default, React 19)                       |
+| Language      | TypeScript 5.9, `strict: true`, no `any`                                   |
+| Styling       | Tailwind CSS 4 (CSS-first via `@theme`), tokens in `src/styles/tokens.css` |
+| UI primitives | shadcn/ui (Tailwind v4 preset) + Lucide icons only                         |
+| Content       | velite (Zod-validated MDX + JSON) → `.velite/` → typed imports             |
+| MDX pipeline  | remark-gfm, rehype-pretty-code (Shiki)                                     |
+| Motion        | CSS-first transitions only — no JS animation libraries                     |
+| Fonts         | `geist/font` (Sans + Mono) — self-hosted                                   |
+| SEO           | `generateMetadata`, `next/og`, sitemap, robots, JSON-LD                    |
+| Analytics     | `@vercel/analytics`, `@vercel/speed-insights`                              |
+| Deploy        | Vercel                                                                     |
 
 > Versions are pinned by `bun add` at install time — **never hand-write package versions**.
 
@@ -63,7 +63,7 @@ bun run velite:watch           # velite --watch (use alongside bun dev when edit
 
 - **Folder pattern:** `ComponentName/ComponentName.tsx` + `index.ts` re-export. Sub-components sit at the same level until they earn promotion to the top level via reuse. This overrides the global kebab-case rule for component folders only.
 - Non-component files (routes, lib, hooks, styles, content) are kebab-case.
-- Server Components by default. Add `'use client'` only when unavoidable (state, effects, browser APIs, form inputs, motion hooks, `startViewTransition`).
+- Server Components by default. Add `'use client'` only when unavoidable (state, effects, browser APIs, form inputs).
 - Client islands stay leaf-level; don't bubble `'use client'` upward.
 
 ### TypeScript
@@ -81,10 +81,8 @@ bun run velite:watch           # velite --watch (use alongside bun dev when edit
 
 ### Motion
 
-- CSS animations/transitions by default.
-- `motion/react` only when the effect needs DOM-transition mechanics (enter/exit with layout shift, FLIP-style shared element outside View Transitions, gesture-driven motion).
+- CSS animations/transitions only. No JS animation libraries.
 - Durations and easings come from tokens (`--d-*`, `--ease-*`). `prefers-reduced-motion: reduce` zeroes durations at the token level — do not re-check in components.
-- View Transitions: only for blog-list ↔ post and project-list ↔ detail. No JS fallback; in unsupported browsers, links navigate normally.
 
 ### Accessibility
 
@@ -114,10 +112,9 @@ touch content/blog/my-post.mdx
 title: Short, specific, no fluff
 description: One sentence — shown in cards and meta description.
 date: 2026-04-20
-category: engineering # single category (drives /blog/category/[slug])
+category: engineering # single category
 tags: [next, react, perf] # multiple tags
 draft: false # true hides from production builds
-featured: false # true pins to top of /blog
 cover:
   src: /images/blog/my-post/cover.jpg
   alt: Descriptive alt text
@@ -127,8 +124,6 @@ cover:
 Body is standard MDX. Fenced code blocks are highlighted via Shiki.
 ```
 
-- Headings ≥ `##` get slugified anchors automatically.
-- Reading time is computed at build (words / 220 wpm).
 - Use `<Note>` / `<Warn>` shortcodes (from `MdxComponents`) for callouts.
 
 ### Project
@@ -140,8 +135,6 @@ Body is standard MDX. Fenced code blocks are highlighted via Shiki.
 title: "Prosbase V2"
 summary: "LoL esports stats platform — real-time ingest + analytics."
 category: web
-role: "Lead engineer"
-status: in-progress
 repo: "https://github.com/you/prosbase"
 url: "https://prosbase.example.com"
 stack: ["Next.js", "Hono", "PostgreSQL", "BullMQ"]
@@ -162,13 +155,9 @@ Long-form description as MDX. Same pipeline as blog posts — `remark-gfm`, Shik
 
 Schema lives in `velite.config.ts`. Add a JSON file; re-run `bun run velite` or rely on the dev watcher. Typed helpers in `src/lib/content.ts` are the only read path — do **not** import JSON directly elsewhere.
 
-### About page body
+### One MDX map, two surfaces
 
-`content/about.mdx` is a singleton MDX file. Same frontmatter-less body, same MDX component map as blog posts. The `/about` page renders it inside the shared `Prose` wrapper above the timeline/education/skills. `SiteConfig.description` is one sentence (hero/meta) — long-form bio lives here.
-
-### One MDX map, three surfaces
-
-Blog posts, project bodies, and `about.mdx` all render through the same `MdxComponents` map. Any element override (code blocks, callouts, images, links) applies everywhere. Don't fork the map.
+Blog posts and project bodies both render through the same `MdxComponents` map. Any element override (code blocks, callouts, images, links) applies everywhere. Don't fork the map.
 
 ### Images
 
@@ -215,7 +204,6 @@ Use `superpowers:systematic-debugging` for anything non-trivial. No guessing fix
 ## What NOT to Do
 
 - Don't import JSON from `content/` directly — go through velite.
-- Don't add a client component just to use `motion/react`; CSS first.
 - Don't ship `console.log` — ESLint flags it.
 - Don't write package versions by hand. `bun add <pkg>` or `bun add <pkg>@latest`.
 - Don't mirror RTK Query / fetch results into local state or context.
