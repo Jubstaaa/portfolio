@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 
 import { EducationList } from "@/components/EducationList";
 import { PathBar } from "@/components/PathBar";
-import { Reveal } from "@/components/Reveal";
 import { SectionHeading } from "@/components/SectionHeading";
 import { SkillsGrid } from "@/components/SkillsGrid";
 import { StacksGrid } from "@/components/StacksGrid";
@@ -56,25 +55,25 @@ export default function AboutPage() {
           </div>
         </div>
 
-        <Reveal className="space-y-6">
+        <div className="space-y-6">
           <SectionHeading title="experience" number="02" />
           <Timeline items={experiences} />
-        </Reveal>
+        </div>
 
-        <Reveal className="space-y-6">
+        <div className="space-y-6">
           <SectionHeading title="education" number="03" />
           <EducationList items={educations} />
-        </Reveal>
+        </div>
 
-        <Reveal className="space-y-6">
+        <div className="space-y-6">
           <SectionHeading title="skills" number="04" />
           <SkillsGrid />
-        </Reveal>
+        </div>
 
-        <Reveal className="space-y-6">
+        <div className="space-y-6">
           <SectionHeading title="stacks" number="05" />
           <StacksGrid />
-        </Reveal>
+        </div>
       </section>
     </>
   );
