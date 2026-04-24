@@ -17,7 +17,6 @@ Operational guide for this repo. Global rules in `~/.claude/CLAUDE.md` still app
 | Motion        | CSS-first transitions only — no JS animation libraries                     |
 | Fonts         | `geist/font` (Sans + Mono) — self-hosted                                   |
 | SEO           | `generateMetadata`, `next/og`, sitemap, robots, JSON-LD                    |
-| Analytics     | `@vercel/analytics`, `@vercel/speed-insights`                              |
 | Deploy        | Vercel                                                                     |
 
 > Versions are pinned by `bun add` at install time — **never hand-write package versions**.

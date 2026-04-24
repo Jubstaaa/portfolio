@@ -57,7 +57,6 @@ Images live at `/public/images/<area>/<slug>/<file>.webp`. Drop them in and refe
 2. Import the repo in Vercel.
 3. Framework: **Next.js** (auto-detected). Build command: default (`next build`; velite is invoked via the `build` script).
 4. Set env var `NEXT_PUBLIC_SITE_URL` if you want to override the URL coded into `content/site.json` (optional — the canonical is read from `content/site.json.url`).
-5. Analytics + Speed Insights are wired via `@vercel/analytics` and `@vercel/speed-insights`; they activate automatically on Vercel.
 
 ### Anywhere else
 
