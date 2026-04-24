@@ -1,6 +1,6 @@
 # portfolio
 
-Personal site + MDX blog. Next.js 16 · React 19 · TypeScript 5 · Tailwind CSS 4 · velite · motion · Shiki. Deployed on Vercel.
+Personal site + MDX blog. Next.js 16 · React 19 · TypeScript 5 · Tailwind CSS 4 · velite · Shiki. Deployed on Vercel.
 
 ## Quickstart
 
@@ -46,7 +46,7 @@ Images live at `/public/images/<area>/<slug>/<file>.webp`. Drop them in and refe
 
 - Terminal-aesthetic (Warp / Ghostty flavor). Geist Mono everywhere. OKLCH tokens in [`src/styles/tokens.css`](./src/styles/tokens.css).
 - Dark default, `.light` override. Toggle via `ThemeProvider`.
-- Motion: CSS-first, `motion/react` only on `Reveal`. View Transitions API scoped to blog-list ↔ post and project-list ↔ detail.
+- Motion: CSS-only transitions. No JS animation libraries.
 - `prefers-reduced-motion: reduce` zeros the duration tokens globally — single source of truth.
 
 ## Deploy
@@ -66,13 +66,8 @@ bun run build
 bun start   # or any Node-compatible runtime that serves Next output
 ```
 
-Static export isn't configured — the site has two dynamic routes (`/blog`, `/projects`) that read searchParams and one RSS route.
+All routes prerender statically at build time, plus one RSS route (`/feed.xml`).
 
-## Roadmap / TODO
+## Operational guide
 
-See [`TODO.md`](./TODO.md) — items surfaced by the content migrator that need your review before going live (tags, highlights, category overrides, per-skill categories, etc.).
-
-## Architecture / implementation log
-
-- [`PLAN.md`](./PLAN.md) — the full slice-by-slice implementation plan and content model reference.
-- [`CLAUDE.md`](./CLAUDE.md) — operational guide for the codebase.
+See [`CLAUDE.md`](./CLAUDE.md) for conventions, content schema, and contributor rules.
