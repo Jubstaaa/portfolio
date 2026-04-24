@@ -6,5 +6,5 @@ export interface ProseProps {
 }
 
 export function Prose({ className, children }: ProseProps) {
-  return <div className={cn("prose-max text-foreground", className)}>{children}</div>;
+  return <div className={cn("prose text-foreground", className)}>{children}</div>;
 }
