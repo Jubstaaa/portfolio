@@ -39,8 +39,3 @@ bun-debug.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-
-# sql dumps — source-data files live outside the repo (e.g. ~/Desktop/personal/portfolio-assets/)
-*.sql
-*.sql.gz
-*.dump
