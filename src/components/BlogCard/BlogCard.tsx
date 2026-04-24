@@ -17,7 +17,7 @@ export function BlogCard({ post, className }: BlogCardProps) {
     <Link
       href={post.path}
       className={cn(
-        "hairline group block border-b py-6 transition-[border-color] duration-[var(--duration-base)] ease-[var(--ease-out)]",
+        "hairline group block border-b py-6 transition-[border-color] duration-[--duration-base] ease-out",
         className,
       )}
     >
