@@ -104,16 +104,15 @@ export default async function PostPage({ params }: PostPageProps) {
           </header>
 
           {post.cover ? (
-            <div className="hairline relative aspect-video overflow-hidden rounded-md border">
-              <Image
-                src={post.cover.src}
-                alt={post.cover.alt}
-                fill
-                priority
-                sizes="(min-width: 1024px) 720px, 100vw"
-                className="object-cover"
-              />
-            </div>
+            <Image
+              src={post.cover.src}
+              alt={post.cover.alt}
+              width={0}
+              height={0}
+              priority
+              sizes="(min-width: 1024px) 720px, 100vw"
+              className="hairline max-h-[500px] w-full rounded-md border object-contain"
+            />
           ) : null}
 
           <Prose>

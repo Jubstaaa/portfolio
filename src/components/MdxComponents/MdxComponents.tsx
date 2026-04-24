@@ -216,7 +216,7 @@ function Img({ alt = "", src, className }: ImgHTMLAttributes<HTMLImageElement>) 
       width={0}
       height={0}
       sizes="100vw"
-      className={cn("my-6 h-auto w-full", className)}
+      className={cn("my-6 max-h-[500px] w-full object-contain object-left", className)}
     />
   );
 }
