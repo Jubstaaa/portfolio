@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { AnchorHTMLAttributes, HTMLAttributes, ImgHTMLAttributes } from "react";
 
@@ -206,16 +207,16 @@ function Warn({ children, label }: { children: React.ReactNode; label?: string }
   );
 }
 
-function Img({ alt = "", src, className, ...rest }: ImgHTMLAttributes<HTMLImageElement>) {
+function Img({ alt = "", src, className }: ImgHTMLAttributes<HTMLImageElement>) {
+  if (typeof src !== "string") return null;
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
+    <Image
       src={src}
       alt={alt}
-      loading="lazy"
-      decoding="async"
-      className={cn("my-6 w-full", className)}
-      {...rest}
+      width={0}
+      height={0}
+      sizes="100vw"
+      className={cn("my-6 h-auto w-full", className)}
     />
   );
 }
