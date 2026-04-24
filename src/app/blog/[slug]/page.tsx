@@ -111,7 +111,7 @@ export default async function PostPage({ params }: PostPageProps) {
               height={0}
               priority
               sizes="(min-width: 1024px) 720px, 100vw"
-              className="hairline max-h-[500px] w-full rounded-md border object-contain"
+              className="hairline max-h-125 w-full rounded-md border object-contain"
             />
           ) : null}
 
