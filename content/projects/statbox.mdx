@@ -1,0 +1,60 @@
+---
+title: "StatBox"
+summary: "StatBox is an open-source widget builder for League of Legends streamers. It generates OBS-ready browser source overlays that display ranked info, recent games, and session-based performance — live and lightweight."
+category: "Streaming Tool"
+repo: "https://github.com/Jubstaaa/statbox"
+url: "https://statbox.live"
+stack:
+  [
+    "Next.js",
+    "React",
+    "TypeScript",
+    "Tailwind CSS",
+    "TanStack Query",
+    "Zod",
+    "Upstash Redis",
+    "Riot API",
+    "Vitest",
+  ]
+highlights:
+  [
+    "Four widget layouts: classic, minimal, compact, topbar",
+    "SoloQ and Flex queue support with session tracking",
+    "OBS-ready browser source URLs — paste and go",
+    "Riot ID resolution and rate-limited API proxy",
+  ]
+images:
+  - src: "/images/projects/statbox/cover.webp"
+    alt: "StatBox widget preview"
+---
+
+## **Widget Builder**
+
+![StatBox widget builder](/images/projects/statbox/statbox-builder.webp)
+
+The builder is the heart of StatBox. Streamers enter their Riot ID, pick a queue (SoloQ or Flex), choose a layout, and preview the final overlay live before copying the browser source URL into OBS. All state is encoded into the URL itself — no accounts, no database lookups per request.
+
+---
+
+## **Layouts**
+
+![StatBox layouts](/images/projects/statbox/statbox-layouts.webp)
+
+Four purpose-built variants so the overlay fits any stream composition:
+
+- **classic** — full card with rank, LP, and recent games
+- **minimal** — rank and LP only, subtle
+- **compact** — condensed horizontal strip
+- **topbar** — one-line top-of-screen ribbon
+
+Each layout is a standalone React component rendered at `/widget/[payload]`. The payload is an `lz-string`-compressed, schema-validated blob so widget URLs stay short but stable across versions.
+
+---
+
+## **Architecture Notes**
+
+- **Riot API access** goes through a server-side proxy at `/api/summoner/[payload]` to keep the API key off the client. `twisted` handles Riot's rate limits.
+- **Upstash Redis** provides distributed rate limiting and response caching so the API key stays inside Riot's limits even under traffic.
+- **TanStack Query** drives live polling inside the widget — the overlay stays fresh without a manual refresh.
+- **Zod** validates every inbound payload; malformed widget URLs fail closed instead of crashing the renderer.
+- **URL-encoded state** means a widget is just a link. No login, no cookies, no server session — which is exactly what OBS browser sources need.
