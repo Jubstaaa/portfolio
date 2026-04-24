@@ -1,42 +1,34 @@
 [
   {
     "label": "Github",
-    "href": "https://github.com/Jubstaaa",
-    "icon": "github"
+    "href": "https://github.com/Jubstaaa"
   },
   {
     "label": "LinkedIn",
-    "href": "https://www.linkedin.com/in/ilker-balcilar/",
-    "icon": "linkedin"
+    "href": "https://www.linkedin.com/in/ilker-balcilar/"
   },
   {
     "label": "Twitter",
-    "href": "https://x.com/jubstaa_dev",
-    "icon": "twitter"
+    "href": "https://x.com/jubstaa_dev"
   },
   {
     "label": "Reddit",
-    "href": "https://www.reddit.com/user/Jubstaa/",
-    "icon": "circle-user"
+    "href": "https://www.reddit.com/user/Jubstaa/"
   },
   {
     "label": "Instagram",
-    "href": "https://www.instagram.com/jubstaa/",
-    "icon": "instagram"
+    "href": "https://www.instagram.com/jubstaa/"
   },
   {
     "label": "Spotify",
-    "href": "https://open.spotify.com/user/11154024788?si=bed703eb571247dd",
-    "icon": "music"
+    "href": "https://open.spotify.com/user/11154024788?si=bed703eb571247dd"
   },
   {
     "label": "Discord",
-    "href": "https://discordapp.com/users/225769737655681024",
-    "icon": "message-square"
+    "href": "https://discordapp.com/users/225769737655681024"
   },
   {
     "label": "Mail",
-    "href": "mailto:ilkerbalcilartr@gmail.com",
-    "icon": "mail"
+    "href": "mailto:ilkerbalcilartr@gmail.com"
   }
 ]

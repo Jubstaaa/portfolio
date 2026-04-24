@@ -142,7 +142,6 @@ const socials = defineCollection({
   schema: s.object({
     label: s.string(),
     href: s.string().url(),
-    icon: s.string(),
   }),
 });
 
