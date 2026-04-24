@@ -36,17 +36,7 @@ export function Timeline({ items, className }: TimelineProps) {
               </span>
               <span className="text-muted-foreground">{exp.role}</span>
             </p>
-            <p className="text-muted-foreground text-xs">
-              {exp.location}
-              {exp.remote ? (
-                <>
-                  <span aria-hidden className="mx-2 select-none">
-                    ·
-                  </span>
-                  remote
-                </>
-              ) : null}
-            </p>
+            <p className="text-muted-foreground text-xs">{exp.location}</p>
             {exp.summary ? (
               <p className="text-muted-foreground max-w-prose text-sm">{exp.summary}</p>
             ) : null}
@@ -55,7 +45,7 @@ export function Timeline({ items, className }: TimelineProps) {
                 {exp.highlights.map((h) => (
                   <li
                     key={h}
-                    className="pl-[1.5ch] before:mr-[0.5ch] before:-ml-[1.5ch] before:content-['→'] before:select-none"
+                    className="pl-[1.5ch] before:mr-[0.5ch] before:ml-[-1.5ch] before:content-['→'] before:select-none"
                   >
                     {h}
                   </li>

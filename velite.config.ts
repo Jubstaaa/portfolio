@@ -86,7 +86,6 @@ const experiences = defineCollection({
       start: s.string(),
       end: s.string().optional(),
       location: s.string(),
-      remote: s.boolean().default(false),
       summary: s.string(),
       highlights: s.array(s.string()).default([]),
       stack: s.array(s.string()).default([]),
