@@ -24,7 +24,6 @@ const site = defineCollection({
     url: s.string().url(),
     email: s.string().email(),
     locale: s.literal("en"),
-    ogDefault: s.string(),
     nav: s.array(s.object({ label: s.string(), href: s.string() })),
   }),
 });

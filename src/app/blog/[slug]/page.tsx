@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
     title: post.title,
     description: post.description,
     path: post.path,
-    ogImage: `${post.path}/opengraph-image`,
+    ...(post.cover ? { ogImage: post.cover.src } : {}),
     type: "article",
     publishedTime: post.date,
     modifiedTime: post.updated ?? post.date,
