@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { NowPlaying } from "@/components/NowPlaying";
 import {
   TerminalBlock,
   TerminalLine,
@@ -36,6 +37,10 @@ export default function Home() {
               </Link>
             ))}
           </p>
+        </TerminalLine>
+
+        <TerminalLine command="now-playing">
+          <NowPlaying />
         </TerminalLine>
 
         <TerminalPrompt />
