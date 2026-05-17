@@ -1,0 +1,120 @@
+---
+title: "FontMapper"
+summary: "FontMapper is an open-source Chrome extension that lets you replace any website's fonts with your favorite locally-installed fonts — and it remembers your choices per domain so each site stays personalized on every visit. Built with React, TypeScript, Vite, and shadcn/ui."
+category: "Browser Extension"
+repo: "https://github.com/Jubstaaa/font-mapper"
+url: "https://chromewebstore.google.com/detail/gfdmhpidmomcbghfoejkcpjdklbdcdnn"
+stack:
+  [
+    "React",
+    "TypeScript",
+    "Vite",
+    "Tailwind CSS",
+    "shadcn/ui",
+    "Radix UI",
+    "Chrome Extension (MV3)",
+    "Bun",
+    "GitHub",
+    "Git",
+  ]
+highlights:
+  [
+    "Published on the Chrome Web Store with an end-to-end privacy review",
+    "Per-domain font mappings stored locally via chrome.storage — zero data collection",
+    "Native CSS @font-face local() substitution for fast, layout-preserving replacement",
+    "Searchable combobox built on cmdk + Radix Popover, each option previewed in its own typeface",
+    "Hover-to-identify highlights every element on the page using a given font",
+  ]
+images:
+  - src: "/images/projects/font-mapper/cover.webp"
+    alt: "FontMapper — Map any website's fonts to your local fonts"
+  - src: "/images/projects/font-mapper/font-mapper-popup.webp"
+    alt: "FontMapper popup detecting the fonts in use on a real website"
+---
+
+## **The Problem**
+
+Every website ships its own typography. Most of the time that is fine — but sometimes a site you read every day uses a font that feels wrong on your screen: too thin, too cramped, badly hinted, or just not to your taste. The browser gives you a single global font override; it cannot say "use my preferred font on Medium and a different one on Wikipedia."
+
+FontMapper closes that gap. It lets each website have its own typography that you personally control — and it remembers it forever.
+
+---
+
+## **What It Does**
+
+Click the FontMapper icon on any page and the popup shows you exactly which font families that site is using. Pick a replacement from your locally-installed fonts — the page updates instantly. Visit the same site tomorrow and FontMapper applies your preferences automatically. Visit a different site and only its mappings apply.
+
+![FontMapper popup detecting fonts on a live website](/images/projects/font-mapper/font-mapper-popup.webp)
+
+---
+
+## **Key Features**
+
+### **Per-Domain Mapping**
+
+Mappings are scoped to the hostname of the current page and persisted in `chrome.storage.local`. Every site keeps its own typography preferences, applied automatically on each visit — without any reload, account, or sync.
+
+### **Searchable Font Picker**
+
+The font picker is a custom combobox built on top of `cmdk` and Radix UI's Popover. It enumerates every font installed on the user's machine via the `chrome.fontSettings` API and renders each option in its own typeface, so you can read a preview before you pick.
+
+### **Hover to Identify**
+
+Hovering over a detected font row in the popup highlights every element on the page that uses that font. The popup uses a persistent message port (`chrome.tabs.connect`) so that highlights clean up automatically the moment the popup closes — even if the user closes it mid-hover.
+
+### **Instant Preview**
+
+Font swaps are applied through standard CSS `@font-face` substitution:
+
+```css
+@font-face {
+  font-family: "Arial";
+  src: local("Product Sans");
+}
+```
+
+This is the most efficient possible mechanism — the browser does the work natively, the page layout is preserved (no reflow, no FOUT), and there are no per-element DOM mutations.
+
+### **Zero Data Collection**
+
+Everything stays on the user's device. No network requests, no analytics, no accounts. The extension was submitted to the Chrome Web Store with a public privacy policy and full justifications for every permission requested.
+
+---
+
+## **Architecture**
+
+FontMapper is a Manifest V3 Chrome extension, but built with the same developer experience as a modern web app:
+
+- **Build tooling:** Vite + `@crxjs/vite-plugin` for hot module reloading inside the extension popup during development
+- **UI:** React 19 + TypeScript, styled with Tailwind CSS v4 and shadcn/ui's `new-york` theme
+- **State:** Co-located in the popup component; persistence handled by typed wrappers around `chrome.storage.local`
+- **Messaging:** Strongly-typed `sendToTab` and port-based protocols between the popup and the content script
+- **Content script:** Scans `getComputedStyle(...).fontFamily` on every element, caches `WeakRef`s by font family for instant hover highlighting, and injects a single `<style>` element with the user's mappings
+
+The end result is a ~117 KB packaged extension that loads instantly and does its job without ever talking to a server.
+
+---
+
+## **Tech Stack**
+
+- **Frontend:** React 19, TypeScript, Tailwind CSS v4
+- **Components:** shadcn/ui (new-york), Radix UI, cmdk, lucide-react
+- **Build:** Vite 8, @crxjs/vite-plugin, Bun
+- **Browser APIs:** `chrome.storage`, `chrome.fontSettings`, `chrome.tabs`, MV3 message ports
+- **Distribution:** Chrome Web Store, MIT-licensed source on GitHub
+
+---
+
+## **Status**
+
+FontMapper v0.2.0 is **live on the Chrome Web Store** and fully open source. The codebase is small, typed end-to-end, and ready to grow — planned ideas include heading vs. body distinctions, import/export of mappings, and a global "all sites" override.
+
+---
+
+## **Links**
+
+🛒 Chrome Web Store: [FontMapper on the Chrome Web Store](https://chromewebstore.google.com/detail/gfdmhpidmomcbghfoejkcpjdklbdcdnn)
+
+🔗 GitHub: [github.com/Jubstaaa/font-mapper](https://github.com/Jubstaaa/font-mapper)
+
+🔒 Privacy Policy: [PRIVACY.md](https://github.com/Jubstaaa/font-mapper/blob/main/PRIVACY.md)
