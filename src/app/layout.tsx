@@ -102,7 +102,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProvider>
           <Nav />
           <ScrollProgress />
-          <main id="main" className="flex-1">
+          <main id="main" className="flex flex-1 flex-col">
             {children}
           </main>
           <Footer />

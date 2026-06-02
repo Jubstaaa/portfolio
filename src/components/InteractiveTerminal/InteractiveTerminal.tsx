@@ -1,9 +1,9 @@
 "use client";
 
-import { useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 
-import { TerminalLine } from "@/components/TerminalBlock";
+import { TerminalCaret, TerminalLine } from "@/components/TerminalBlock";
 import { cn } from "@/lib/utils";
 import { COMMAND_NAMES, PAGE_TARGETS, commands, type CommandContext } from "./terminal-commands";
 
@@ -14,23 +14,35 @@ interface Entry {
 }
 
 export interface InteractiveTerminalProps {
+  introCommands?: string[];
   className?: string;
   children?: ReactNode;
 }
 
-export function InteractiveTerminal({ className, children }: InteractiveTerminalProps) {
+export function InteractiveTerminal({
+  introCommands,
+  className,
+  children,
+}: InteractiveTerminalProps) {
   const router = useRouter();
 
   const [entries, setEntries] = useState<Entry[]>([]);
   const [input, setInput] = useState("");
   const [cleared, setCleared] = useState(false);
   const [glitching, setGlitching] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const [intro, setIntro] = useState(false);
+  const [revealStatic, setRevealStatic] = useState(
+    () => !introCommands || introCommands.length === 0,
+  );
 
   const inputRef = useRef<HTMLInputElement>(null);
   const historyRef = useRef<string[]>([]);
   const historyIndexRef = useRef(-1);
   const draftRef = useRef("");
   const idRef = useRef(0);
+  const introRef = useRef(false);
+  const introCancelledRef = useRef(false);
 
   const append = (command: string, output: ReactNode) => {
     idRef.current += 1;
@@ -117,7 +129,15 @@ export function InteractiveTerminal({ className, children }: InteractiveTerminal
     return false;
   };
 
+  const skipIntro = () => {
+    if (introRef.current) introCancelledRef.current = true;
+  };
+
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (introRef.current) {
+      skipIntro();
+      return;
+    }
     if (event.nativeEvent.isComposing) return;
 
     if (event.key === "Enter") {
@@ -162,59 +182,133 @@ export function InteractiveTerminal({ className, children }: InteractiveTerminal
     }
   };
 
-  const handleBlockClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (window.getSelection()?.toString()) return;
-    if (event.target instanceof HTMLElement && event.target.closest("a, button, input")) return;
-    inputRef.current?.focus({ preventScroll: true });
-  };
+  useEffect(() => {
+    if (window.matchMedia("(pointer: fine)").matches) {
+      inputRef.current?.focus({ preventScroll: true });
+    }
+
+    const handleDocumentClick = (event: MouseEvent) => {
+      if (introRef.current) {
+        introCancelledRef.current = true;
+        return;
+      }
+      if (window.getSelection()?.toString()) return;
+      if (!(event.target instanceof HTMLElement)) return;
+      if (!event.target.closest("#main")) return;
+      if (event.target.closest("a, button, input, textarea, select, [role='button']")) return;
+      inputRef.current?.focus({ preventScroll: true });
+    };
+    document.addEventListener("click", handleDocumentClick);
+    return () => document.removeEventListener("click", handleDocumentClick);
+  }, []);
+
+  useEffect(() => {
+    if (!introCommands || introCommands.length === 0) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      queueMicrotask(() => setRevealStatic(true));
+      return;
+    }
+
+    introRef.current = true;
+    introCancelledRef.current = false;
+    let unmounted = false;
+
+    const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
+
+    const finish = (remaining: string[]) => {
+      introRef.current = false;
+      if (unmounted) return;
+      for (const command of remaining) execute(command);
+      setInput("");
+      setIntro(false);
+    };
+
+    void (async () => {
+      await sleep(0);
+      if (unmounted) return;
+      setIntro(true);
+      setCleared(true);
+      await sleep(400);
+
+      const queue = [...introCommands];
+      while (queue.length > 0) {
+        const command = queue[0] ?? "";
+        for (let index = 1; index <= command.length; index += 1) {
+          if (introCancelledRef.current || unmounted) {
+            finish(queue);
+            return;
+          }
+          setInput(command.slice(0, index));
+          await sleep(35 + Math.random() * 45);
+        }
+        if (introCancelledRef.current || unmounted) {
+          finish(queue);
+          return;
+        }
+        await sleep(200);
+        execute(command);
+        setInput("");
+        queue.shift();
+        await sleep(350);
+      }
+      introRef.current = false;
+      setIntro(false);
+    })();
+
+    return () => {
+      unmounted = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    inputRef.current?.scrollIntoView({ block: "nearest" });
+  }, [entries]);
 
   return (
     <div
       className={cn("flex flex-col gap-3", glitching && "terminal-glitch", className)}
-      onClick={handleBlockClick}
       onAnimationEnd={(event) => {
         if (event.animationName === "terminal-glitch") setGlitching(false);
       }}
     >
-      {cleared ? null : children}
+      {cleared ? null : (
+        <div className={cn("flex flex-col gap-3", !revealStatic && "hidden")}>{children}</div>
+      )}
 
-      <div aria-live="polite" className="flex flex-col gap-3">
-        {entries.map((entry) =>
-          entry.command ? (
-            <TerminalLine key={entry.id} command={entry.command}>
-              {entry.output}
-            </TerminalLine>
-          ) : (
-            <p key={entry.id}>
-              <span aria-hidden className="text-accent inline-block w-[2ch] select-none">
-                ❯
-              </span>
-            </p>
-          ),
-        )}
+      <div aria-live="polite" className="flex flex-col gap-3 empty:hidden">
+        {entries.map((entry) => (
+          <TerminalLine key={entry.id} command={entry.command}>
+            {entry.output}
+          </TerminalLine>
+        ))}
       </div>
 
-      <label className="flex cursor-text items-center">
-        <span aria-hidden className="text-accent w-[2ch] shrink-0 select-none">
-          ❯
-        </span>
+      <label className="flex cursor-default items-center">
+        <TerminalCaret />
         <input
           ref={inputRef}
           id="terminal-input"
           name="terminal-input"
           value={input}
+          readOnly={intro}
           autoCapitalize="off"
           autoComplete="off"
           autoCorrect="off"
           spellCheck={false}
           enterKeyHint="go"
           aria-label="terminal input — type 'help' for commands"
-          className="text-foreground min-w-0 bg-transparent p-0 caret-transparent"
+          className="text-foreground min-w-0 cursor-default bg-transparent p-0 caret-transparent outline-none"
           style={{ width: `${input.length}ch` }}
           onChange={(event) => setInput(event.target.value)}
           onKeyDown={handleKeyDown}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
         />
-        <span aria-hidden className="cursor-blink shrink-0 select-none">
+        <span
+          aria-hidden
+          className={cn("shrink-0 select-none", focused ? "cursor-blink" : "opacity-40")}
+        >
           _
         </span>
       </label>
