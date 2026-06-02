@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
+import localFont from "next/font/local";
 
 import { Footer } from "@/components/Footer";
 import { Nav } from "@/components/Nav";
@@ -9,6 +9,33 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { site } from "@/lib/content";
 
 import "./globals.css";
+
+const hermit = localFont({
+  src: [
+    {
+      path: "../fonts/hermit/Hermit-Regular.otf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../fonts/hermit/Hermit-RegularItalic.otf",
+      weight: "400",
+      style: "italic",
+    },
+    {
+      path: "../fonts/hermit/Hermit-Bold.otf",
+      weight: "700",
+      style: "normal",
+    },
+    {
+      path: "../fonts/hermit/Hermit-BoldItalic.otf",
+      weight: "700",
+      style: "italic",
+    },
+  ],
+  variable: "--font-hermit",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
@@ -71,7 +98,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html
       lang={site.locale}
       suppressHydrationWarning
-      className={`${GeistSans.variable} ${GeistMono.variable}`}
+      className={`${GeistSans.variable} ${hermit.variable}`}
     >
       <body
         suppressHydrationWarning
