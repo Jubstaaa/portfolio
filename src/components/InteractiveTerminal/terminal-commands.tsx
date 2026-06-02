@@ -46,6 +46,42 @@ function goTo(args: string, ctx: CommandContext): ReactNode {
 
 const VIM_ESCAPE = <Line>{"E37: no write since last change — just kidding, you're free."}</Line>;
 
+const NEOFETCH_ART = ["   ▲", "  ▲ ▲", " ▲▲▲▲▲"];
+
+const NEOFETCH_INFO = [
+  `${site.handle}@${HOST}`,
+  "─".repeat(26),
+  "os: next.js 16 (app router)",
+  "host: vercel",
+  "shell: interactive-terminal",
+  "font: hermit v2.0",
+  "theme: dark",
+  "uptime: shipping since 2023",
+];
+
+const NEOFETCH_OUTPUT = NEOFETCH_INFO.map(
+  (line, index) => `${(NEOFETCH_ART[index] ?? "").padEnd(11)}${line}`,
+).join("\n");
+
+const HIDDEN_FILES = [".env", ".git/", "secret.txt"];
+
+const ENV_OUTPUT = [
+  "SPOTIFY_CLIENT_SECRET=nice_try",
+  "AWS_ACCESS_KEY_ID=AKIA_JUST_KIDDING",
+  "DATABASE_URL=postgres://you:wish@localhost:5432/nope",
+].join("\n");
+
+const TOP_OUTPUT = [
+  "PID   COMMAND            CPU",
+  "1     next-server        1.2%",
+  "7     spotify-widget     2.4%",
+  "42    easter-egg-hunter  99.9%",
+].join("\n");
+
+function Pre({ children }: { children: ReactNode }) {
+  return <pre className="text-muted-foreground leading-snug">{children}</pre>;
+}
+
 export const commands: Record<string, TerminalCommand> = {
   help: {
     description: "list available commands",
@@ -59,12 +95,29 @@ export const commands: Record<string, TerminalCommand> = {
               <span className="text-muted-foreground">{command.description}</span>
             </p>
           ))}
+        <p className="text-muted-foreground pt-2 text-xs">
+          ...and a few undocumented ones. real terminals have hidden corners.
+        </p>
       </div>
     ),
   },
   ls: {
     description: "list pages",
-    run: () => <NavLinks />,
+    run: (args) => {
+      const showAll = /(^|\s)-\w*a/.test(args);
+      return (
+        <>
+          {showAll ? (
+            <p className="text-muted-foreground flex flex-wrap gap-x-6 gap-y-1">
+              {HIDDEN_FILES.map((file) => (
+                <span key={file}>{file}</span>
+              ))}
+            </p>
+          ) : null}
+          <NavLinks />
+        </>
+      );
+    },
   },
   cd: {
     description: "go to a page — cd blog",
@@ -148,28 +201,88 @@ export const commands: Record<string, TerminalCommand> = {
   neofetch: {
     description: "",
     hidden: true,
-    run: () => (
-      <pre className="text-muted-foreground leading-snug">
-        {`   ▲       ${site.handle}@${HOST}
-  ▲ ▲      ──────────────────────────
- ▲▲▲▲▲     os: next.js 16 (app router)
-           host: vercel
-           shell: interactive-terminal
-           font: hermit v2.0
-           theme: dark
-           uptime: shipping since 2023`}
-      </pre>
-    ),
+    run: () => <pre className="text-muted-foreground leading-snug">{NEOFETCH_OUTPUT}</pre>,
   },
   cat: {
     description: "",
     hidden: true,
     run: (args) => {
-      if (args.trim() === "secret.txt") {
+      const target = args.trim().replace(/^\.\//, "");
+      if (target === "secret.txt") {
         return <Line>{"you found it. now try 'rm -rf /' — what could go wrong?"}</Line>;
       }
-      return <Line>{`cat: ${args || "missing operand"}: no such file or directory`}</Line>;
+      if (target === ".env") {
+        return <Pre>{ENV_OUTPUT}</Pre>;
+      }
+      if (target === ".git" || target === ".git/") {
+        return <Line>{"cat: .git: Is a directory"}</Line>;
+      }
+      return <Line>{`cat: ${target || "missing operand"}: no such file or directory`}</Line>;
     },
+  },
+  git: {
+    description: "",
+    hidden: true,
+    run: (args) => {
+      const sub = args.trim().split(/\s+/)[0] ?? "";
+      if (sub === "status") {
+        return (
+          <>
+            <Line>{"on branch main"}</Line>
+            <Line>{"nothing to commit, working tree clean."}</Line>
+          </>
+        );
+      }
+      if (sub === "push") {
+        return <Line>{"push to main? not on my watch."}</Line>;
+      }
+      if (!sub) {
+        return <Line>{"usage: git <command>"}</Line>;
+      }
+      return <Line>{`git: '${sub}' is not a git command. but nice try.`}</Line>;
+    },
+  },
+  exit: {
+    description: "",
+    hidden: true,
+    run: () => <Line>{"logout: there is no escape."}</Line>,
+  },
+  man: {
+    description: "",
+    hidden: true,
+    run: (args) =>
+      args.trim() ? (
+        <Line>{"what do I look like, documentation? try 'help'."}</Line>
+      ) : (
+        <Line>{"what manual page do you want?"}</Line>
+      ),
+  },
+  top: {
+    description: "",
+    hidden: true,
+    run: () => <Pre>{TOP_OUTPUT}</Pre>,
+  },
+  htop: {
+    description: "",
+    hidden: true,
+    run: () => <Pre>{TOP_OUTPUT}</Pre>,
+  },
+  ping: {
+    description: "",
+    hidden: true,
+    run: (args) => (
+      <Line>{`PING ${args.trim() || "localhost"}: pong. 0% packet loss, 100% vibes.`}</Line>
+    ),
+  },
+  ssh: {
+    description: "",
+    hidden: true,
+    run: () => <Line>{"ssh: connection refused. this terminal doesn't go anywhere."}</Line>,
+  },
+  uname: {
+    description: "",
+    hidden: true,
+    run: () => <Line>{"ilkerOS 1.0 (web) hermit/2.0"}</Line>,
   },
 };
 
