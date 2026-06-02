@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 import { TerminalCaret, TerminalLine } from "@/components/TerminalBlock";
 import { cn } from "@/lib/utils";
-import { COMMAND_NAMES, PAGE_TARGETS, commands, type CommandContext } from "./terminal-commands";
+import { COMMAND_NAMES, PAGE_TARGETS, commands, type CommandContext } from "./TerminalCommands";
 
 interface Entry {
   id: number;
