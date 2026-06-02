@@ -50,15 +50,15 @@ export function InteractiveTerminal({ className, children }: InteractiveTerminal
 
     historyRef.current.push(trimmed);
 
-    if (trimmed === "clear") {
+    const spaceIndex = trimmed.indexOf(" ");
+    const name = (spaceIndex === -1 ? trimmed : trimmed.slice(0, spaceIndex)).toLowerCase();
+    const args = spaceIndex === -1 ? "" : trimmed.slice(spaceIndex + 1).trim();
+
+    if (name === "clear") {
       setEntries([]);
       setCleared(true);
       return;
     }
-
-    const spaceIndex = trimmed.indexOf(" ");
-    const name = (spaceIndex === -1 ? trimmed : trimmed.slice(0, spaceIndex)).toLowerCase();
-    const args = spaceIndex === -1 ? "" : trimmed.slice(spaceIndex + 1).trim();
 
     const command = commands[name];
     if (!command) {
@@ -88,31 +88,38 @@ export function InteractiveTerminal({ className, children }: InteractiveTerminal
     prefix: string,
     candidates: string[],
     build: (match: string) => string,
-  ) => {
+  ): boolean => {
+    if (!prefix) return false;
     const matches = candidates.filter((candidate) => candidate.startsWith(prefix));
     if (matches.length === 1 && matches[0]) {
       setInput(build(matches[0]));
-    } else if (matches.length > 1) {
-      append(input, <p className="text-muted-foreground">{matches.join("  ")}</p>);
+      return true;
     }
+    if (matches.length > 1) {
+      append(input, <p className="text-muted-foreground">{matches.join("  ")}</p>);
+      return true;
+    }
+    return false;
   };
 
-  const complete = () => {
+  const complete = (): boolean => {
     const spaceIndex = input.indexOf(" ");
 
     if (spaceIndex === -1) {
-      applyCompletion(input, COMMAND_NAMES, (match) => `${match} `);
-      return;
+      return applyCompletion(input, COMMAND_NAMES, (match) => `${match} `);
     }
 
     const name = input.slice(0, spaceIndex);
     const arg = input.slice(spaceIndex + 1).trimStart();
     if (name === "cd" || name === "open") {
-      applyCompletion(arg, PAGE_TARGETS, (match) => `${name} ${match}`);
+      return applyCompletion(arg, PAGE_TARGETS, (match) => `${name} ${match}`);
     }
+    return false;
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.nativeEvent.isComposing) return;
+
     if (event.key === "Enter") {
       event.preventDefault();
       execute(input);
@@ -120,9 +127,10 @@ export function InteractiveTerminal({ className, children }: InteractiveTerminal
       return;
     }
 
-    if (event.key === "Tab") {
-      event.preventDefault();
-      complete();
+    if (event.key === "Tab" && !event.shiftKey) {
+      if (complete()) {
+        event.preventDefault();
+      }
       return;
     }
 
@@ -164,7 +172,9 @@ export function InteractiveTerminal({ className, children }: InteractiveTerminal
     <div
       className={cn("flex flex-col gap-3", glitching && "terminal-glitch", className)}
       onClick={handleBlockClick}
-      onAnimationEnd={() => setGlitching(false)}
+      onAnimationEnd={(event) => {
+        if (event.animationName === "terminal-glitch") setGlitching(false);
+      }}
     >
       {cleared ? null : children}
 
