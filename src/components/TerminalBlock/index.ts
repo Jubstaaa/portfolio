@@ -4,5 +4,7 @@ export { TerminalMeta } from "./TerminalMeta";
 export type { TerminalMetaProps } from "./TerminalMeta";
 export { TerminalLine } from "./TerminalLine";
 export type { TerminalLineProps } from "./TerminalLine";
+export { TerminalCaret } from "./TerminalCaret";
+export type { TerminalCaretProps } from "./TerminalCaret";
 export { StatusDot } from "./StatusDot";
 export type { StatusDotProps, StatusTone } from "./StatusDot";

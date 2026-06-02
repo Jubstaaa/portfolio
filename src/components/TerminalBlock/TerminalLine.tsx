@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { TerminalCaret } from "./TerminalCaret";
 
 export interface TerminalLineProps {
   command: string;
@@ -9,12 +10,10 @@ export interface TerminalLineProps {
 export function TerminalLine({ command, className, children }: TerminalLineProps) {
   return (
     <div className={cn("flex flex-col gap-1", className)}>
-      <p className="pl-[2ch] -indent-[2ch] break-words">
-        <span aria-hidden className="text-accent inline-block w-[2ch] select-none">
-          ❯
-        </span>
-        <span className="text-foreground">{command}</span>
-      </p>
+      <div className="flex">
+        <TerminalCaret />
+        <span className="text-foreground min-w-0 break-all">{command}</span>
+      </div>
       {children ? (
         <div className="text-foreground space-y-0.5 pl-[2ch] break-words">{children}</div>
       ) : null}
