@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { GeistSans } from "geist/font/sans";
 import localFont from "next/font/local";
 
 import { Footer } from "@/components/Footer";
@@ -95,11 +94,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html
-      lang={site.locale}
-      suppressHydrationWarning
-      className={`${GeistSans.variable} ${hermit.variable}`}
-    >
+    <html lang={site.locale} suppressHydrationWarning className={hermit.variable}>
       <body
         suppressHydrationWarning
         className="bg-background text-foreground flex min-h-screen flex-col font-mono antialiased"
