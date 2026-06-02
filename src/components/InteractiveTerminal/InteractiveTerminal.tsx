@@ -200,6 +200,8 @@ export function InteractiveTerminal({ className, children }: InteractiveTerminal
         </span>
         <input
           ref={inputRef}
+          id="terminal-input"
+          name="terminal-input"
           value={input}
           autoCapitalize="off"
           autoComplete="off"
