@@ -9,13 +9,15 @@ export interface TerminalLineProps {
 export function TerminalLine({ command, className, children }: TerminalLineProps) {
   return (
     <div className={cn("flex flex-col gap-1", className)}>
-      <p>
-        <span aria-hidden className="text-accent mr-2 select-none">
+      <p className="pl-[2ch] -indent-[2ch] break-words">
+        <span aria-hidden className="text-accent inline-block w-[2ch] select-none">
           ❯
         </span>
         <span className="text-foreground">{command}</span>
       </p>
-      {children ? <div className="text-foreground space-y-0.5 pl-[2ch]">{children}</div> : null}
+      {children ? (
+        <div className="text-foreground space-y-0.5 pl-[2ch] break-words">{children}</div>
+      ) : null}
     </div>
   );
 }

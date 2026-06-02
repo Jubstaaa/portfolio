@@ -186,7 +186,7 @@ export function InteractiveTerminal({ className, children }: InteractiveTerminal
             </TerminalLine>
           ) : (
             <p key={entry.id}>
-              <span aria-hidden className="text-accent mr-2 select-none">
+              <span aria-hidden className="text-accent inline-block w-[2ch] select-none">
                 ❯
               </span>
             </p>
@@ -195,7 +195,7 @@ export function InteractiveTerminal({ className, children }: InteractiveTerminal
       </div>
 
       <label className="flex cursor-text items-center">
-        <span aria-hidden className="text-accent mr-2 select-none">
+        <span aria-hidden className="text-accent w-[2ch] shrink-0 select-none">
           ❯
         </span>
         <input
@@ -209,12 +209,12 @@ export function InteractiveTerminal({ className, children }: InteractiveTerminal
           spellCheck={false}
           enterKeyHint="go"
           aria-label="terminal input — type 'help' for commands"
-          className="text-foreground max-w-full bg-transparent p-0 caret-transparent"
+          className="text-foreground min-w-0 bg-transparent p-0 caret-transparent"
           style={{ width: `${input.length}ch` }}
           onChange={(event) => setInput(event.target.value)}
           onKeyDown={handleKeyDown}
         />
-        <span aria-hidden className="cursor-blink select-none">
+        <span aria-hidden className="cursor-blink shrink-0 select-none">
           _
         </span>
       </label>
