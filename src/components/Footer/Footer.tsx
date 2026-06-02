@@ -6,7 +6,7 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="hairline mt-24 border-t">
+    <footer className="hairline border-t">
       <div className="container-default text-muted-foreground flex h-14 items-center justify-between text-xs">
         <p>
           <span className="text-foreground">{site.name}</span> · portfolio · {year}
