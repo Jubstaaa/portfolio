@@ -118,6 +118,10 @@
     letter-spacing: -0.05em;
     user-select: none;
   }
+
+  .terminal-glitch {
+    animation: terminal-glitch 0.4s steps(2) both;
+  }
 }
 
 @keyframes cursor-blink {
@@ -129,9 +133,39 @@
   }
 }
 
+@keyframes terminal-glitch {
+  0% {
+    transform: translate(0);
+    opacity: 1;
+  }
+  20% {
+    transform: translate(-3px, 2px);
+    opacity: 0.6;
+  }
+  40% {
+    transform: translate(3px, -2px);
+  }
+  60% {
+    transform: translate(-2px, -1px);
+    opacity: 0.8;
+  }
+  80% {
+    transform: translate(2px, 1px);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate(0);
+    opacity: 1;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .cursor-blink {
     animation: none;
     opacity: 1;
+  }
+
+  .terminal-glitch {
+    animation: none;
   }
 }
