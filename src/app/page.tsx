@@ -1,11 +1,6 @@
-import { NavLinks } from "@/components/InteractiveTerminal/NavLinks";
+import { InteractiveTerminal, NavLinks } from "@/components/InteractiveTerminal";
 import { NowPlaying } from "@/components/NowPlaying";
-import {
-  TerminalBlock,
-  TerminalLine,
-  TerminalMeta,
-  TerminalPrompt,
-} from "@/components/TerminalBlock";
+import { TerminalBlock, TerminalLine, TerminalMeta } from "@/components/TerminalBlock";
 import { JsonLd } from "@/components/JsonLd";
 import { buildPersonJsonLd } from "@/lib/seo";
 import { site } from "@/lib/content";
@@ -17,22 +12,22 @@ export default function Home() {
       <TerminalBlock>
         <TerminalMeta path={`~/${site.handle}`} branch="main" />
 
-        <TerminalLine command="whoami">
-          <p>{site.name}</p>
-          <p className="text-muted-foreground">
-            {site.role} · {site.location}
-          </p>
-        </TerminalLine>
+        <InteractiveTerminal>
+          <TerminalLine command="whoami">
+            <p>{site.name}</p>
+            <p className="text-muted-foreground">
+              {site.role} · {site.location}
+            </p>
+          </TerminalLine>
 
-        <TerminalLine command="ls">
-          <NavLinks />
-        </TerminalLine>
+          <TerminalLine command="ls">
+            <NavLinks />
+          </TerminalLine>
 
-        <TerminalLine command="now-playing">
-          <NowPlaying />
-        </TerminalLine>
-
-        <TerminalPrompt />
+          <TerminalLine command="now-playing">
+            <NowPlaying />
+          </TerminalLine>
+        </InteractiveTerminal>
       </TerminalBlock>
     </section>
   );
