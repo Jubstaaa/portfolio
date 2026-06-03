@@ -162,7 +162,7 @@ function Callout({
         <span aria-hidden className="select-none">
           ╭─
         </span>
-        <span className={cn("text-xs tracking-[0.18em] uppercase", labelClass)}>{labelText}</span>
+        <span className={cn("label-caps", labelClass)}>{labelText}</span>
         <span
           aria-hidden
           className="term-rule flex-1 overflow-hidden whitespace-nowrap select-none"

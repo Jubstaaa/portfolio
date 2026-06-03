@@ -114,10 +114,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               <SectionHeading title="highlights" />
               <ul className="text-foreground space-y-2">
                 {project.highlights.map((h) => (
-                  <li
-                    key={h}
-                    className="before:text-muted-foreground pl-[1.5ch] before:mr-[0.5ch] before:ml-[-1.5ch] before:content-['→'] before:select-none"
-                  >
+                  <li key={h} className="arrow-bullet">
                     {h}
                   </li>
                 ))}
