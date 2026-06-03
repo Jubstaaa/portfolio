@@ -1,7 +1,5 @@
-import Link from "next/link";
-
+import { NavLinks } from "@/components/InteractiveTerminal";
 import { StatusDot, TerminalBlock, TerminalLine, TerminalMeta } from "@/components/TerminalBlock";
-import { site } from "@/lib/content";
 
 export default function NotFound() {
   return (
@@ -23,23 +21,7 @@ export default function NotFound() {
         </TerminalLine>
 
         <TerminalLine command="ls">
-          <p className="flex flex-wrap gap-x-6 gap-y-1">
-            <Link
-              href="/"
-              className="hover:text-accent transition-token underline-offset-4 hover:underline"
-            >
-              ./home
-            </Link>
-            {site.nav.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="hover:text-accent transition-token underline-offset-4 hover:underline"
-              >
-                .{item.href}
-              </Link>
-            ))}
-          </p>
+          <NavLinks includeHome />
         </TerminalLine>
       </TerminalBlock>
     </section>
