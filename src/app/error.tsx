@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect } from "react";
 
-import { StatusDot, TerminalBlock, TerminalLine, TerminalMeta } from "@/components/TerminalBlock";
+import { StatusDot, TerminalBlock, TerminalLine, TerminalMeta } from "@/components/terminal-block";
 
 export default function GlobalError({
   error,

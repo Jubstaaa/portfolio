@@ -1,6 +1,6 @@
-import { InteractiveTerminal, renderCommandOutput } from "@/components/InteractiveTerminal";
-import { TerminalBlock, TerminalLine, TerminalMeta } from "@/components/TerminalBlock";
-import { JsonLd } from "@/components/JsonLd";
+import { InteractiveTerminal, renderCommandOutput } from "@/components/interactive-terminal";
+import { TerminalBlock, TerminalLine, TerminalMeta } from "@/components/terminal-block";
+import { JsonLd } from "@/components/json-ld";
 import { buildPersonJsonLd } from "@/lib/seo";
 import { site } from "@/lib/content";
 

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
-import { BlogCard } from "@/components/BlogCard";
-import { PathBar } from "@/components/PathBar";
-import { SectionHeading } from "@/components/SectionHeading";
+import { BlogCard } from "@/components/blog-card";
+import { PathBar } from "@/components/path-bar";
+import { SectionHeading } from "@/components/section-heading";
 import { getPublishedPosts, site } from "@/lib/content";
 import { buildMetadata } from "@/lib/seo";
 

@@ -2,15 +2,15 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
-import { AdjacentNav } from "@/components/AdjacentNav";
-import { ArticleHeader } from "@/components/ArticleHeader";
-import { ExternalLink } from "@/components/ExternalLink";
-import { Mdx } from "@/components/Mdx";
-import { PathBar } from "@/components/PathBar";
-import { Prose } from "@/components/Prose";
-import { SectionHeading } from "@/components/SectionHeading";
+import { AdjacentNav } from "@/components/adjacent-nav";
+import { ArticleHeader } from "@/components/article-header";
+import { ExternalLink } from "@/components/external-link";
+import { Mdx } from "@/components/mdx";
+import { PathBar } from "@/components/path-bar";
+import { Prose } from "@/components/prose";
+import { SectionHeading } from "@/components/section-heading";
 import { getAdjacent, getAllProjects, getProjectBySlug, site } from "@/lib/content";
-import { JsonLd } from "@/components/JsonLd";
+import { JsonLd } from "@/components/json-ld";
 import { buildBreadcrumbJsonLd, buildMetadata, buildProjectJsonLd } from "@/lib/seo";
 
 export function generateStaticParams() {

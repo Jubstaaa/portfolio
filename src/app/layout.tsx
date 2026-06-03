@@ -1,10 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 
-import { Footer } from "@/components/Footer";
-import { Nav } from "@/components/Nav";
-import { ScrollProgress } from "@/components/ScrollProgress";
-import { ThemeProvider } from "@/components/ThemeProvider";
+import { Footer } from "@/components/footer";
+import { Nav } from "@/components/nav";
+import { ScrollProgress } from "@/components/scroll-progress";
+import { ThemeProvider } from "@/components/theme-provider";
 import { site } from "@/lib/content";
 
 import "./globals.css";

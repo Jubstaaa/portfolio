@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 
-import { EducationList } from "@/components/EducationList";
-import { PathBar } from "@/components/PathBar";
-import { SectionHeading } from "@/components/SectionHeading";
-import { SkillsGrid } from "@/components/SkillsGrid";
-import { StacksGrid } from "@/components/StacksGrid";
-import { Timeline } from "@/components/Timeline";
+import { EducationList } from "@/components/education-list";
+import { PathBar } from "@/components/path-bar";
+import { SectionHeading } from "@/components/section-heading";
+import { SkillsGrid } from "@/components/skills-grid";
+import { StacksGrid } from "@/components/stacks-grid";
+import { Timeline } from "@/components/timeline";
 import { getEducationSorted, getExperiencesSorted, site } from "@/lib/content";
 import { buildMetadata } from "@/lib/seo";
 

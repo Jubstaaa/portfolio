@@ -2,14 +2,14 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
-import { AdjacentNav } from "@/components/AdjacentNav";
-import { ArticleHeader } from "@/components/ArticleHeader";
-import { Mdx } from "@/components/Mdx";
-import { PathBar } from "@/components/PathBar";
-import { Prose } from "@/components/Prose";
+import { AdjacentNav } from "@/components/adjacent-nav";
+import { ArticleHeader } from "@/components/article-header";
+import { Mdx } from "@/components/mdx";
+import { PathBar } from "@/components/path-bar";
+import { Prose } from "@/components/prose";
 import { getAdjacent, getPostBySlug, getPublishedPosts, posts, site } from "@/lib/content";
 import { formatDate } from "@/lib/format";
-import { JsonLd } from "@/components/JsonLd";
+import { JsonLd } from "@/components/json-ld";
 import { buildArticleJsonLd, buildBreadcrumbJsonLd, buildMetadata } from "@/lib/seo";
 
 export function generateStaticParams() {

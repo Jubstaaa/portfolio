@@ -60,8 +60,8 @@ bun run velite:watch           # velite --watch (use alongside bun dev when edit
 
 ### Components
 
-- **Folder pattern:** `ComponentName/ComponentName.tsx` + `index.ts` re-export. Sub-components sit at the same level until they earn promotion to the top level via reuse. This overrides the global kebab-case rule for component folders only.
-- Non-component files (routes, lib, hooks, styles, content) are kebab-case.
+- **Folder pattern:** `component-name/component-name.tsx` + `index.ts` re-export. Sub-components sit at the same level until they earn promotion to the top level via reuse.
+- **Everything is kebab-case** — folders, component files, routes, lib, hooks, styles, content. React component identifiers stay PascalCase.
 - Server Components by default. Add `'use client'` only when unavoidable (state, effects, browser APIs, form inputs).
 - Client islands stay leaf-level; don't bubble `'use client'` upward.
 

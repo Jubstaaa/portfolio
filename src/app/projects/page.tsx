@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
-import { PathBar } from "@/components/PathBar";
-import { ProjectCard } from "@/components/ProjectCard";
-import { SectionHeading } from "@/components/SectionHeading";
+import { PathBar } from "@/components/path-bar";
+import { ProjectCard } from "@/components/project-card";
+import { SectionHeading } from "@/components/section-heading";
 import { getAllProjects, site } from "@/lib/content";
 import { buildMetadata } from "@/lib/seo";
 
