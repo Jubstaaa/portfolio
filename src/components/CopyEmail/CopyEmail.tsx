@@ -1,8 +1,8 @@
 "use client";
 
 import { Check, Copy } from "lucide-react";
-import { useCallback, useRef, useState } from "react";
 
+import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 import { cn } from "@/lib/utils";
 
 export interface CopyEmailProps {
@@ -11,16 +11,7 @@ export interface CopyEmailProps {
 }
 
 export function CopyEmail({ email, className }: CopyEmailProps) {
-  const [copied, setCopied] = useState(false);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const onCopy = useCallback(() => {
-    void navigator.clipboard.writeText(email).then(() => {
-      setCopied(true);
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-      timeoutRef.current = setTimeout(() => setCopied(false), 1600);
-    });
-  }, [email]);
+  const { copied, copy } = useCopyToClipboard();
 
   return (
     <div className={cn("inline-flex items-center gap-3", className)}>
@@ -32,7 +23,7 @@ export function CopyEmail({ email, className }: CopyEmailProps) {
       </a>
       <button
         type="button"
-        onClick={onCopy}
+        onClick={() => copy(email)}
         aria-label={copied ? "Email copied" : "Copy email"}
         className="hairline text-muted-foreground hover:text-foreground transition-token inline-flex size-7 items-center justify-center rounded border"
       >
