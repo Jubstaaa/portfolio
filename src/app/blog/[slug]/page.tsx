@@ -7,6 +7,7 @@ import { Mdx } from "@/components/Mdx";
 import { PathBar } from "@/components/PathBar";
 import { Prose } from "@/components/Prose";
 import { getPostBySlug, getPublishedPosts, posts, site, type Post } from "@/lib/content";
+import { formatDate } from "@/lib/format";
 import { JsonLd } from "@/components/JsonLd";
 import { buildArticleJsonLd, buildBreadcrumbJsonLd, buildMetadata } from "@/lib/seo";
 
@@ -44,10 +45,6 @@ function adjacent(current: Post): { prev?: Post; next?: Post } {
     ...(list[index + 1] ? { prev: list[index + 1]! } : {}),
     ...(list[index - 1] ? { next: list[index - 1]! } : {}),
   };
-}
-
-function formatDate(iso: string): string {
-  return new Date(iso).toISOString().slice(0, 10);
 }
 
 export default async function PostPage({ params }: PostPageProps) {

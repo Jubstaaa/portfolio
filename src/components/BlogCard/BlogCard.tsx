@@ -1,15 +1,12 @@
 import Link from "next/link";
 
 import type { Post } from "@/lib/content";
+import { formatDate } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 export interface BlogCardProps {
   post: Post;
   className?: string;
-}
-
-function formatDate(iso: string): string {
-  return new Date(iso).toISOString().slice(0, 10);
 }
 
 export function BlogCard({ post, className }: BlogCardProps) {
