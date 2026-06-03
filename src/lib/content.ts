@@ -66,3 +66,15 @@ export function getStacksByCategory(): Record<Stack["category"], Stack[]> {
   }
   return buckets;
 }
+
+// ───── Adjacency ──────────────────────────────────────────────────────────────
+export function getAdjacent<T extends { slug: string }>(
+  list: T[],
+  current: T,
+): { prev?: T; next?: T } {
+  const index = list.findIndex((item) => item.slug === current.slug);
+  return {
+    ...(list[index + 1] ? { prev: list[index + 1]! } : {}),
+    ...(list[index - 1] ? { next: list[index - 1]! } : {}),
+  };
+}
