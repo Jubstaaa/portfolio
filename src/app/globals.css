@@ -120,6 +120,25 @@
   .terminal-glitch {
     animation: terminal-glitch 0.4s steps(2) both;
   }
+
+  .arrow-bullet {
+    padding-left: 1.5ch;
+  }
+
+  .arrow-bullet::before {
+    content: "→";
+    margin-right: 0.5ch;
+    margin-left: -1.5ch;
+    color: var(--muted-foreground);
+    user-select: none;
+  }
+
+  .label-caps {
+    font-size: 0.75rem;
+    line-height: calc(1 / 0.75);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
 }
 
 @keyframes cursor-blink {

@@ -18,7 +18,7 @@ export function AdjacentNav({ prev, next, ariaLabel }: AdjacentNavProps) {
           href={prev.path}
           className="hover:text-foreground transition-token text-muted-foreground group block space-y-1"
         >
-          <span className="text-xs tracking-[0.18em] uppercase">← prev</span>
+          <span className="label-caps">← prev</span>
           <span className="text-foreground group-hover:text-accent transition-token block truncate">
             {prev.title}
           </span>
@@ -31,7 +31,7 @@ export function AdjacentNav({ prev, next, ariaLabel }: AdjacentNavProps) {
           href={next.path}
           className="hover:text-foreground transition-token text-muted-foreground group block space-y-1 md:text-right"
         >
-          <span className="text-xs tracking-[0.18em] uppercase">next →</span>
+          <span className="label-caps">next →</span>
           <span className="text-foreground group-hover:text-accent transition-token block truncate">
             {next.title}
           </span>

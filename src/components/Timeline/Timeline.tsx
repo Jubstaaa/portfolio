@@ -30,10 +30,7 @@ export function Timeline({ items, className }: TimelineProps) {
           {exp.highlights.length > 0 ? (
             <ul className="text-muted-foreground mt-2 space-y-1 text-sm">
               {exp.highlights.map((h) => (
-                <li
-                  key={h}
-                  className="pl-[1.5ch] before:mr-[0.5ch] before:ml-[-1.5ch] before:content-['→'] before:select-none"
-                >
+                <li key={h} className="arrow-bullet">
                   {h}
                 </li>
               ))}

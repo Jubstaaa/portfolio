@@ -15,9 +15,7 @@ export function LabeledGrid({ groups, className }: LabeledGridProps) {
     <dl className={cn("grid gap-x-10 gap-y-6 md:grid-cols-2", className)}>
       {groups.map((group) => (
         <div key={group.label} className="space-y-2">
-          <dt className="text-muted-foreground text-xs tracking-[0.18em] uppercase">
-            {group.label}
-          </dt>
+          <dt className="text-muted-foreground label-caps">{group.label}</dt>
           <dd>
             <ul className="text-foreground flex flex-wrap gap-x-3 gap-y-1 text-sm">
               {group.items.map((item) => (
