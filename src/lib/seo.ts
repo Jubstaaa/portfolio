@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 
 import { site, type Post, type Project } from "@/lib/content";
 
+function absoluteUrl(path: string): string {
+  return new URL(path, site.url).toString();
+}
+
 interface BuildMetadataInput {
   title: string;
   description?: string;
@@ -19,7 +23,7 @@ interface BuildMetadataInput {
 export function buildMetadata(input: BuildMetadataInput): Metadata {
   const description = input.description ?? site.description;
   const path = input.path ?? "/";
-  const url = new URL(path, site.url).toString();
+  const url = absoluteUrl(path);
   const images = input.ogImage ? [{ url: input.ogImage }] : undefined;
   const type = input.type ?? "website";
 
@@ -87,12 +91,12 @@ export function buildArticleJsonLd(post: Post): Record<string, unknown> {
     datePublished: post.date,
     ...(post.updated ? { dateModified: post.updated } : { dateModified: post.date }),
     author: { "@type": "Person", name: site.name, url: site.url },
-    url: new URL(post.path, site.url).toString(),
-    ...(post.cover ? { image: new URL(post.cover.src, site.url).toString() } : {}),
+    url: absoluteUrl(post.path),
+    ...(post.cover ? { image: absoluteUrl(post.cover.src) } : {}),
     keywords: post.tags.join(", "),
     articleSection: post.category,
     inLanguage: "en",
-    mainEntityOfPage: new URL(post.path, site.url).toString(),
+    mainEntityOfPage: absoluteUrl(post.path),
   };
 }
 
@@ -106,7 +110,7 @@ export function buildBreadcrumbJsonLd(
       "@type": "ListItem",
       position: i + 1,
       name: entry.name,
-      item: new URL(entry.path, site.url).toString(),
+      item: absoluteUrl(entry.path),
     })),
   };
 }
@@ -119,9 +123,9 @@ export function buildProjectJsonLd(project: Project): Record<string, unknown> {
     name: project.title,
     description: project.summary,
     creator: { "@type": "Person", name: site.name },
-    url: new URL(`/projects/${project.slug}`, site.url).toString(),
+    url: absoluteUrl(`/projects/${project.slug}`),
     ...(project.repo ? { codeRepository: project.repo } : {}),
-    ...(cover ? { image: new URL(cover.src, site.url).toString() } : {}),
+    ...(cover ? { image: absoluteUrl(cover.src) } : {}),
     keywords: project.stack.join(", "),
   };
 }
