@@ -1,0 +1,78 @@
+---
+title: "tailwind-hitslop"
+summary: "A pure-CSS Tailwind CSS v4 plugin that invisibly expands an element's touch area while its visual size stays the same — the web equivalent of React Native's hitSlop. Zero JavaScript, one @import, tested against the real Tailwind compiler."
+category: "Developer Tool"
+repo: "https://github.com/Jubstaaa/tailwind-hitslop"
+url: "https://tailwind-hitslop.vercel.app"
+stack:
+  [
+    "Tailwind CSS",
+    "CSS",
+    "TypeScript",
+    "Vitest",
+    "Bun",
+    "React",
+    "Vite",
+    "GitHub Actions",
+    "Vercel",
+    "npm",
+  ]
+highlights:
+  - "Pure CSS — built entirely on Tailwind v4's @utility and --value() primitives, no JS plugin API"
+  - "19 compile tests run through the real Tailwind compiler via @tailwindcss/node"
+  - "Published to npm with GitHub Actions provenance and an interactive demo site"
+images: []
+---
+
+## **Overview**
+
+Small visual targets — 16px icons, dense toolbars, close buttons — are miserable to tap. Making them visually bigger is not always an option. React Native solves this with the `hitSlop` prop; the web never had a first-class equivalent.
+
+`tailwind-hitslop` brings that concept to Tailwind CSS v4 as a set of utilities that expand the interactive area of an element without touching its layout:
+
+```html
+<button class="pointer-coarse:hit-slop-2">
+  <x-icon class="size-4" />
+</button>
+```
+
+---
+
+## **How It Works**
+
+Each utility renders an absolutely-positioned `::before` pseudo-element with negative offsets driven by per-side private custom properties. Because every directional utility sets only its own variable and repeats an identical pseudo-element block, utilities stack and merge cleanly in the cascade:
+
+```html
+<button class="hit-slop-x-1 hit-slop-y-3">4px horizontal, 12px vertical</button>
+```
+
+The whole plugin is a single hand-written CSS file built on Tailwind v4's CSS-first primitives — `@utility`, `--value()` and `--spacing()`. There is no JavaScript, no build step, and no configuration. Values resolve from the spacing scale (`hit-slop-2`), arbitrary lengths (`hit-slop-[10px]`) and an opt-in `--hit-slop-*` theme namespace.
+
+---
+
+## **Key Features**
+
+- **Directional control** — `hit-slop-t/r/b/l/x/y-*` mirror core's `inset` family and stack freely
+- **`::after` fallback family** — a full mirror for elements whose `::before` is already taken by icons, rings or gradients
+- **`hit-slop-debug`** — visualizes the expanded hit areas with a radius-faithful overlay
+- **Variant composition** — works with every core variant (`pointer-coarse:`, `hover:`, `md:`) because everything is a plain `@utility`
+
+---
+
+## **Honest Documentation as a Feature**
+
+The README documents the failure modes most utility libraries hide: ancestor `overflow: hidden` silently clipping the expanded area, overlapping slops in dense layouts, and — most importantly — the fact that invisible hit areas do **not** make WCAG 2.5.8 target-size audits pass. Users who need audit compliance are pointed at `min-h-11 min-w-11` instead, and the two approaches combine.
+
+---
+
+## **Testing Against the Real Compiler**
+
+Instead of asserting on hand-written expectations, the test suite compiles candidate classes through the actual Tailwind v4 compiler using `@tailwindcss/node` and asserts on the emitted CSS — value resolution, declaration dropping, variant wrapping, theme-token generation and the coexistence of both pseudo-element families.
+
+---
+
+## **Links**
+
+- GitHub: [github.com/Jubstaaa/tailwind-hitslop](https://github.com/Jubstaaa/tailwind-hitslop)
+- npm: [npmjs.com/package/tailwind-hitslop](https://www.npmjs.com/package/tailwind-hitslop)
+- Live demo: [tailwind-hitslop.vercel.app](https://tailwind-hitslop.vercel.app)
