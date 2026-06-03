@@ -11,10 +11,10 @@ interface CompletionSession {
 interface UseTabCompletionOptions {
   input: string;
   setInput: (value: string) => void;
-  append: (command: string, output: ReactNode) => void;
+  appendEntry: (command: string, output: ReactNode) => void;
 }
 
-export function useTabCompletion({ input, setInput, append }: UseTabCompletionOptions) {
+export function useTabCompletion({ input, setInput, appendEntry }: UseTabCompletionOptions) {
   const completionRef = useRef<CompletionSession | null>(null);
 
   const resetCompletion = useCallback(() => {
@@ -62,7 +62,7 @@ export function useTabCompletion({ input, setInput, append }: UseTabCompletionOp
       return true;
     }
 
-    append(input, <p className="text-muted-foreground">{matches.join("  ")}</p>);
+    appendEntry(input, <p className="text-muted-foreground">{matches.join("  ")}</p>);
     completionRef.current = { matches, index: 0, build };
     if (first) setInput(build(first));
     return true;
