@@ -1,7 +1,6 @@
 import { ContentCard } from "@/components/content-card";
 import type { Post } from "@/lib/content";
 import { formatDate } from "@/lib/format";
-import { cn } from "@/lib/utils";
 
 export interface BlogCardProps {
   post: Post;
@@ -24,7 +23,7 @@ export function BlogCard({ post, className }: BlogCardProps) {
       title={post.title}
       description={post.description}
       {...(post.tags.length > 0 ? { tags: post.tags.map((t) => <span key={t}>#{t}</span>) } : {})}
-      className={cn("transition-[border-color] duration-[--duration-base] ease-out", className)}
+      {...(className ? { className } : {})}
     />
   );
 }

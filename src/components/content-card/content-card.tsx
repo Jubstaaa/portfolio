@@ -14,7 +14,13 @@ export interface ContentCardProps {
 
 export function ContentCard({ href, meta, title, description, tags, className }: ContentCardProps) {
   return (
-    <Link href={href} className={cn("hairline group block border-b py-6", className)}>
+    <Link
+      href={href}
+      className={cn(
+        "hairline group transition-token block border-b py-6 transition-[border-color]",
+        className,
+      )}
+    >
       <p className="text-muted-foreground flex flex-wrap items-center gap-x-3 text-xs">{meta}</p>
       <h2 className="text-foreground group-hover:text-accent transition-token mt-2 text-lg font-semibold tracking-tight">
         {title}
