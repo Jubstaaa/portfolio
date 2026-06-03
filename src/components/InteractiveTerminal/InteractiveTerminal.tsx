@@ -13,6 +13,8 @@ interface Entry {
   output: ReactNode;
 }
 
+let introPlayed = false;
+
 export interface InteractiveTerminalProps {
   introCommands?: string[];
   className?: string;
@@ -204,7 +206,7 @@ export function InteractiveTerminal({
 
   useEffect(() => {
     if (!introCommands || introCommands.length === 0) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (introPlayed || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       queueMicrotask(() => setRevealStatic(true));
       return;
     }
@@ -226,6 +228,7 @@ export function InteractiveTerminal({
     void (async () => {
       await sleep(0);
       if (unmounted) return;
+      introPlayed = true;
       setIntro(true);
       setCleared(true);
       await sleep(400);
