@@ -7,6 +7,7 @@ export function formatMonth(value: string | undefined): string {
   const [year, month] = value.split("-");
   const monthName = new Date(`${year}-${month}-01T00:00:00Z`).toLocaleString("en", {
     month: "short",
+    timeZone: "UTC",
   });
   return `${monthName.toLowerCase()} ${year}`;
 }
