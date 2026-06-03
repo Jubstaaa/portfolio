@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { AnchorHTMLAttributes, HTMLAttributes, ImgHTMLAttributes } from "react";
 
 import { CodeBlock } from "@/components/CodeBlock";
+import { ExternalLink } from "@/components/ExternalLink";
 import { cn } from "@/lib/utils";
 
 const RULE = "─".repeat(240);
@@ -21,12 +22,12 @@ function Anchor({ href, children, className, ...rest }: AnchorHTMLAttributes<HTM
   if (!href) return <span className={linkClass}>{children}</span>;
   if (external) {
     return (
-      <a href={href} target="_blank" rel="noreferrer noopener" className={linkClass} {...rest}>
+      <ExternalLink href={href} className={linkClass} {...rest}>
         {children}
         <span aria-hidden className="text-muted-foreground ml-1 select-none">
           ↗
         </span>
-      </a>
+      </ExternalLink>
     );
   }
   return (
