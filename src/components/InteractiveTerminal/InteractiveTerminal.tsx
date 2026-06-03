@@ -11,7 +11,7 @@ import {
   PAGE_TARGETS,
   commands,
   type CommandContext,
-} from "./TerminalCommands";
+} from "./commands";
 
 interface Entry {
   id: number;

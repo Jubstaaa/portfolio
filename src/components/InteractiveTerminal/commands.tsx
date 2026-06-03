@@ -35,6 +35,22 @@ function Line({ children }: { children: ReactNode }) {
   return <p className="text-muted-foreground">{children}</p>;
 }
 
+function Pre({ children }: { children: ReactNode }) {
+  return <pre className="text-muted-foreground leading-snug">{children}</pre>;
+}
+
+function line(text: string): TerminalCommand["run"] {
+  return function LineRun() {
+    return <Line>{text}</Line>;
+  };
+}
+
+function pre(text: string): TerminalCommand["run"] {
+  return function PreRun() {
+    return <Pre>{text}</Pre>;
+  };
+}
+
 function goTo(args: string, ctx: CommandContext): ReactNode {
   const href = resolvePage(args);
   if (!href) {
@@ -44,7 +60,7 @@ function goTo(args: string, ctx: CommandContext): ReactNode {
   return null;
 }
 
-const VIM_ESCAPE = <Line>{"E37: no write since last change — just kidding, you're free."}</Line>;
+const VIM_ESCAPE = line("E37: no write since last change — just kidding, you're free.");
 
 const NEOFETCH_ART = ["   ▲", "  ▲ ▲", " ▲▲▲▲▲"];
 
@@ -77,10 +93,6 @@ const TOP_OUTPUT = [
   "7     spotify-widget     2.4%",
   "42    easter-egg-hunter  99.9%",
 ].join("\n");
-
-function Pre({ children }: { children: ReactNode }) {
-  return <pre className="text-muted-foreground leading-snug">{children}</pre>;
-}
 
 export const commands: Record<string, TerminalCommand> = {
   help: {
@@ -170,7 +182,7 @@ export const commands: Record<string, TerminalCommand> = {
   sudo: {
     description: "",
     hidden: true,
-    run: () => <Line>{"nice try. you're not root here."}</Line>,
+    run: line("nice try. you're not root here."),
   },
   rm: {
     description: "",
@@ -186,22 +198,22 @@ export const commands: Record<string, TerminalCommand> = {
   vim: {
     description: "",
     hidden: true,
-    run: () => <Line>{"you've entered vim. you can never leave. (hint: :q)"}</Line>,
+    run: line("you've entered vim. you can never leave. (hint: :q)"),
   },
   ":q": {
     description: "",
     hidden: true,
-    run: () => VIM_ESCAPE,
+    run: VIM_ESCAPE,
   },
   ":q!": {
     description: "",
     hidden: true,
-    run: () => VIM_ESCAPE,
+    run: VIM_ESCAPE,
   },
   neofetch: {
     description: "",
     hidden: true,
-    run: () => <pre className="text-muted-foreground leading-snug">{NEOFETCH_OUTPUT}</pre>,
+    run: pre(NEOFETCH_OUTPUT),
   },
   cat: {
     description: "",
@@ -245,7 +257,7 @@ export const commands: Record<string, TerminalCommand> = {
   exit: {
     description: "",
     hidden: true,
-    run: () => <Line>{"logout: there is no escape."}</Line>,
+    run: line("logout: there is no escape."),
   },
   man: {
     description: "",
@@ -260,12 +272,12 @@ export const commands: Record<string, TerminalCommand> = {
   top: {
     description: "",
     hidden: true,
-    run: () => <Pre>{TOP_OUTPUT}</Pre>,
+    run: pre(TOP_OUTPUT),
   },
   htop: {
     description: "",
     hidden: true,
-    run: () => <Pre>{TOP_OUTPUT}</Pre>,
+    run: pre(TOP_OUTPUT),
   },
   ping: {
     description: "",
@@ -277,15 +289,25 @@ export const commands: Record<string, TerminalCommand> = {
   ssh: {
     description: "",
     hidden: true,
-    run: () => <Line>{"ssh: connection refused. this terminal doesn't go anywhere."}</Line>,
+    run: line("ssh: connection refused. this terminal doesn't go anywhere."),
   },
   uname: {
     description: "",
     hidden: true,
-    run: () => <Line>{"ilkerOS 1.0 (web) hermit/2.0"}</Line>,
+    run: line("ilkerOS 1.0 (web) hermit/2.0"),
   },
 };
 
 export const COMMAND_NAMES = Object.entries(commands)
   .filter(([, command]) => !command.hidden)
   .map(([name]) => name);
+
+const STATIC_CTX: CommandContext = {
+  navigate: () => undefined,
+  glitch: () => undefined,
+  getHistory: () => [],
+};
+
+export function renderCommandOutput(name: string, args = ""): ReactNode {
+  return commands[name]?.run(args, STATIC_CTX) ?? null;
+}
