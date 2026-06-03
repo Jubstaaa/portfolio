@@ -1,6 +1,8 @@
 import { socials } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
+import { ExternalLink } from "@/components/ExternalLink";
+
 export interface SocialLinksProps {
   className?: string;
 }
@@ -10,10 +12,8 @@ export function SocialLinks({ className }: SocialLinksProps) {
     <ul className={cn("flex flex-col gap-1.5 text-sm", className)}>
       {socials.map((social) => (
         <li key={social.href}>
-          <a
+          <ExternalLink
             href={social.href}
-            target="_blank"
-            rel="noreferrer noopener"
             className="text-muted-foreground hover:text-foreground transition-token group inline-flex items-center gap-2"
           >
             <span aria-hidden className="text-muted-foreground group-hover:text-accent select-none">
@@ -23,7 +23,7 @@ export function SocialLinks({ className }: SocialLinksProps) {
             <span aria-hidden className="select-none">
               ↗
             </span>
-          </a>
+          </ExternalLink>
         </li>
       ))}
     </ul>

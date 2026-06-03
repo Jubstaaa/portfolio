@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 
 import { AdjacentNav } from "@/components/AdjacentNav";
 import { ArticleHeader } from "@/components/ArticleHeader";
+import { ExternalLink } from "@/components/ExternalLink";
 import { Mdx } from "@/components/Mdx";
 import { PathBar } from "@/components/PathBar";
 import { Prose } from "@/components/Prose";
@@ -66,30 +67,26 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           >
             <div className="flex flex-wrap items-center gap-x-6 gap-y-2 pt-2 text-sm">
               {project.url ? (
-                <a
+                <ExternalLink
                   href={project.url}
-                  target="_blank"
-                  rel="noreferrer noopener"
                   className="text-foreground hover:text-accent transition-token inline-flex items-center gap-1 underline underline-offset-4"
                 >
                   live
                   <span aria-hidden className="select-none">
                     ↗
                   </span>
-                </a>
+                </ExternalLink>
               ) : null}
               {project.repo ? (
-                <a
+                <ExternalLink
                   href={project.repo}
-                  target="_blank"
-                  rel="noreferrer noopener"
                   className="text-foreground hover:text-accent transition-token inline-flex items-center gap-1 underline underline-offset-4"
                 >
                   source
                   <span aria-hidden className="select-none">
                     ↗
                   </span>
-                </a>
+                </ExternalLink>
               ) : null}
             </div>
           </ArticleHeader>
