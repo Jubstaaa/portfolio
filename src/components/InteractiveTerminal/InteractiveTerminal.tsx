@@ -13,7 +13,13 @@ interface Entry {
   output: ReactNode;
 }
 
-let introPlayed = false;
+const session = {
+  introPlayed: false,
+  cleared: false,
+  nextId: 0,
+  entries: [] as Entry[],
+  history: [] as string[],
+};
 
 export interface InteractiveTerminalProps {
   introCommands?: string[];
@@ -28,9 +34,9 @@ export function InteractiveTerminal({
 }: InteractiveTerminalProps) {
   const router = useRouter();
 
-  const [entries, setEntries] = useState<Entry[]>([]);
+  const [entries, setEntries] = useState<Entry[]>(() => session.entries);
   const [input, setInput] = useState("");
-  const [cleared, setCleared] = useState(false);
+  const [cleared, setCleared] = useState(() => session.cleared);
   const [glitching, setGlitching] = useState(false);
   const [focused, setFocused] = useState(false);
   const [intro, setIntro] = useState(false);
@@ -39,16 +45,15 @@ export function InteractiveTerminal({
   );
 
   const inputRef = useRef<HTMLInputElement>(null);
-  const historyRef = useRef<string[]>([]);
+  const historyRef = useRef(session.history);
   const historyIndexRef = useRef(-1);
   const draftRef = useRef("");
-  const idRef = useRef(0);
   const introRef = useRef(false);
   const introCancelledRef = useRef(false);
 
   const append = (command: string, output: ReactNode) => {
-    idRef.current += 1;
-    const entry: Entry = { id: idRef.current, command, output };
+    session.nextId += 1;
+    const entry: Entry = { id: session.nextId, command, output };
     setEntries((prev) => [...prev, entry]);
   };
 
@@ -205,8 +210,16 @@ export function InteractiveTerminal({
   }, []);
 
   useEffect(() => {
+    session.entries = entries;
+  }, [entries]);
+
+  useEffect(() => {
+    session.cleared = cleared;
+  }, [cleared]);
+
+  useEffect(() => {
     if (!introCommands || introCommands.length === 0) return;
-    if (introPlayed || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (session.introPlayed || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       queueMicrotask(() => setRevealStatic(true));
       return;
     }
@@ -228,7 +241,7 @@ export function InteractiveTerminal({
     void (async () => {
       await sleep(0);
       if (unmounted) return;
-      introPlayed = true;
+      session.introPlayed = true;
       setIntro(true);
       setCleared(true);
       await sleep(400);
