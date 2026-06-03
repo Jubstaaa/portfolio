@@ -1,5 +1,5 @@
-import { NavLinks } from "@/components/InteractiveTerminal";
-import { StatusDot, TerminalBlock, TerminalLine, TerminalMeta } from "@/components/TerminalBlock";
+import { NavLinks } from "@/components/interactive-terminal";
+import { StatusDot, TerminalBlock, TerminalLine, TerminalMeta } from "@/components/terminal-block";
 
 export default function NotFound() {
   return (

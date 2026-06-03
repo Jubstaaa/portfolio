@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
-import { CopyEmail } from "@/components/CopyEmail";
-import { PathBar } from "@/components/PathBar";
-import { SectionHeading } from "@/components/SectionHeading";
-import { SocialLinks } from "@/components/SocialLinks";
+import { CopyEmail } from "@/components/copy-email";
+import { PathBar } from "@/components/path-bar";
+import { SectionHeading } from "@/components/section-heading";
+import { SocialLinks } from "@/components/social-links";
 import { site } from "@/lib/content";
 import { buildMetadata } from "@/lib/seo";
 
