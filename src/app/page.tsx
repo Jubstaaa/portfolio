@@ -1,9 +1,10 @@
-import { InteractiveTerminal, NavLinks } from "@/components/InteractiveTerminal";
-import { NowPlaying } from "@/components/NowPlaying";
+import { InteractiveTerminal, renderCommandOutput } from "@/components/InteractiveTerminal";
 import { TerminalBlock, TerminalLine, TerminalMeta } from "@/components/TerminalBlock";
 import { JsonLd } from "@/components/JsonLd";
 import { buildPersonJsonLd } from "@/lib/seo";
 import { site } from "@/lib/content";
+
+const INTRO_COMMANDS = ["whoami", "ls", "now-playing"];
 
 export default function Home() {
   return (
@@ -13,21 +14,12 @@ export default function Home() {
         <TerminalBlock>
           <TerminalMeta path={`~/${site.handle}`} branch="main" />
 
-          <InteractiveTerminal introCommands={["whoami", "ls", "now-playing"]}>
-            <TerminalLine command="whoami">
-              <p>{site.name}</p>
-              <p className="text-muted-foreground">
-                {site.role} · {site.location}
-              </p>
-            </TerminalLine>
-
-            <TerminalLine command="ls">
-              <NavLinks />
-            </TerminalLine>
-
-            <TerminalLine command="now-playing">
-              <NowPlaying />
-            </TerminalLine>
+          <InteractiveTerminal introCommands={INTRO_COMMANDS}>
+            {INTRO_COMMANDS.map((name) => (
+              <TerminalLine key={name} command={name}>
+                {renderCommandOutput(name)}
+              </TerminalLine>
+            ))}
           </InteractiveTerminal>
         </TerminalBlock>
       </div>
