@@ -76,7 +76,7 @@ const NEOFETCH_INFO = [
 ];
 
 const NEOFETCH_OUTPUT = NEOFETCH_INFO.map(
-  (line, index) => `${(NEOFETCH_ART[index] ?? "").padEnd(11)}${line}`,
+  (info, index) => `${(NEOFETCH_ART[index] ?? "").padEnd(11)}${info}`,
 ).join("\n");
 
 export const HIDDEN_FILES = [".env", ".git/", "secret.txt"];
