@@ -5,12 +5,24 @@ import { useRouter } from "next/navigation";
 
 import { TerminalCaret, TerminalLine } from "@/components/TerminalBlock";
 import { cn } from "@/lib/utils";
-import { COMMAND_NAMES, PAGE_TARGETS, commands, type CommandContext } from "./TerminalCommands";
+import {
+  COMMAND_NAMES,
+  HIDDEN_FILES,
+  PAGE_TARGETS,
+  commands,
+  type CommandContext,
+} from "./TerminalCommands";
 
 interface Entry {
   id: number;
   command: string;
   output: ReactNode;
+}
+
+interface CompletionSession {
+  matches: string[];
+  index: number;
+  build: (match: string) => string;
 }
 
 const session = {
@@ -45,6 +57,7 @@ export function InteractiveTerminal({
   );
 
   const inputRef = useRef<HTMLInputElement>(null);
+  const completionRef = useRef<CompletionSession | null>(null);
   const historyRef = useRef(session.history);
   const historyIndexRef = useRef(-1);
   const draftRef = useRef("");
@@ -103,37 +116,51 @@ export function InteractiveTerminal({
     append(trimmed, output);
   };
 
-  const applyCompletion = (
-    prefix: string,
-    candidates: string[],
-    build: (match: string) => string,
-  ): boolean => {
-    if (!prefix) return false;
-    const matches = candidates.filter((candidate) => candidate.startsWith(prefix));
-    if (matches.length === 1 && matches[0]) {
-      setInput(build(matches[0]));
-      return true;
-    }
-    if (matches.length > 1) {
-      append(input, <p className="text-muted-foreground">{matches.join("  ")}</p>);
-      return true;
-    }
-    return false;
-  };
-
   const complete = (): boolean => {
+    const active = completionRef.current;
+    if (active) {
+      active.index = (active.index + 1) % active.matches.length;
+      const match = active.matches[active.index];
+      if (match) setInput(active.build(match));
+      return true;
+    }
+
     const spaceIndex = input.indexOf(" ");
+    let prefix: string;
+    let candidates: string[];
+    let build: (match: string) => string;
 
     if (spaceIndex === -1) {
-      return applyCompletion(input, COMMAND_NAMES, (match) => `${match} `);
+      if (!input) return false;
+      prefix = input;
+      candidates = COMMAND_NAMES;
+      build = (match) => `${match} `;
+    } else {
+      const name = input.slice(0, spaceIndex);
+      prefix = input.slice(spaceIndex + 1).trimStart();
+      if (name === "cd" || name === "open") {
+        candidates = PAGE_TARGETS;
+      } else if (name === "cat") {
+        candidates = HIDDEN_FILES;
+      } else {
+        return false;
+      }
+      build = (match) => `${name} ${match}`;
     }
 
-    const name = input.slice(0, spaceIndex);
-    const arg = input.slice(spaceIndex + 1).trimStart();
-    if (name === "cd" || name === "open") {
-      return applyCompletion(arg, PAGE_TARGETS, (match) => `${name} ${match}`);
+    const matches = candidates.filter((candidate) => candidate.startsWith(prefix));
+    if (matches.length === 0) return false;
+
+    const first = matches[0];
+    if (matches.length === 1 && first) {
+      setInput(build(first));
+      return true;
     }
-    return false;
+
+    append(input, <p className="text-muted-foreground">{matches.join("  ")}</p>);
+    completionRef.current = { matches, index: 0, build };
+    if (first) setInput(build(first));
+    return true;
   };
 
   const skipIntro = () => {
@@ -149,6 +176,7 @@ export function InteractiveTerminal({
 
     if (event.key === "Enter") {
       event.preventDefault();
+      completionRef.current = null;
       execute(input);
       setInput("");
       return;
@@ -165,6 +193,7 @@ export function InteractiveTerminal({
       const history = historyRef.current;
       if (history.length === 0) return;
       event.preventDefault();
+      completionRef.current = null;
       if (historyIndexRef.current === -1) {
         draftRef.current = input;
         historyIndexRef.current = history.length - 1;
@@ -178,6 +207,7 @@ export function InteractiveTerminal({
     if (event.key === "ArrowDown") {
       if (historyIndexRef.current === -1) return;
       event.preventDefault();
+      completionRef.current = null;
       const history = historyRef.current;
       if (historyIndexRef.current < history.length - 1) {
         historyIndexRef.current += 1;
@@ -316,7 +346,10 @@ export function InteractiveTerminal({
           aria-label="terminal input — type 'help' for commands"
           className="text-foreground min-w-0 cursor-default bg-transparent p-0 caret-transparent outline-none"
           style={{ width: `${input.length}ch` }}
-          onChange={(event) => setInput(event.target.value)}
+          onChange={(event) => {
+            completionRef.current = null;
+            setInput(event.target.value);
+          }}
           onKeyDown={handleKeyDown}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}

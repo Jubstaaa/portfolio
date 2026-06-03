@@ -63,7 +63,7 @@ const NEOFETCH_OUTPUT = NEOFETCH_INFO.map(
   (line, index) => `${(NEOFETCH_ART[index] ?? "").padEnd(11)}${line}`,
 ).join("\n");
 
-const HIDDEN_FILES = [".env", ".git/", "secret.txt"];
+export const HIDDEN_FILES = [".env", ".git/", "secret.txt"];
 
 const ENV_OUTPUT = [
   "SPOTIFY_CLIENT_SECRET=nice_try",
