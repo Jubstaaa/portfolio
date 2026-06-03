@@ -88,7 +88,9 @@ export function useTerminalIntro({ introCommands, execute, setInput }: UseTermin
       unmounted = true;
       if (timeoutRef.current !== null) window.clearTimeout(timeoutRef.current);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only boot sequence; mirrors the original effect's contract
+    // intentionally captures execute/setInput/introCommands from the first render. Caller must
+    // keep execute referentially safe (close only over stable refs/store fns), never over render state.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only boot sequence;
   }, []);
 
   return { status, revealStatic, skipIntro };
