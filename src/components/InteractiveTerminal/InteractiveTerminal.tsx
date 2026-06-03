@@ -96,7 +96,7 @@ export function InteractiveTerminal({
   const { complete, resetCompletion } = useTabCompletion({
     input,
     setInput,
-    append: appendEntry,
+    appendEntry,
   });
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
