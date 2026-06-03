@@ -1,30 +1,20 @@
 "use client";
 
 import { Check, Copy } from "lucide-react";
-import { useCallback, useEffect, useRef, useState, type HTMLAttributes } from "react";
+import { useCallback, useRef, type HTMLAttributes } from "react";
 
+import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 import { cn } from "@/lib/utils";
 
 export function CodeBlock({ className, children, ...rest }: HTMLAttributes<HTMLPreElement>) {
   const preRef = useRef<HTMLPreElement>(null);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [copied, setCopied] = useState(false);
-
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    };
-  }, []);
+  const { copied, copy } = useCopyToClipboard();
 
   const onCopy = useCallback(() => {
     const text = preRef.current?.innerText ?? "";
     if (!text) return;
-    void navigator.clipboard.writeText(text).then(() => {
-      setCopied(true);
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-      timeoutRef.current = setTimeout(() => setCopied(false), 1600);
-    });
-  }, []);
+    copy(text);
+  }, [copy]);
 
   return (
     <div className="group relative my-6">
