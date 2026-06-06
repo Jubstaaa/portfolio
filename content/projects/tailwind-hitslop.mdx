@@ -1,6 +1,6 @@
 ---
 title: "tailwind-hitslop"
-summary: "A pure-CSS Tailwind CSS v4 plugin that invisibly expands an element's touch area while its visual size stays the same — the web equivalent of React Native's hitSlop. Zero JavaScript, one @import, tested against the real Tailwind compiler."
+summary: "A Tailwind CSS plugin that invisibly expands an element's touch area while its visual size stays the same — the web equivalent of React Native's hitSlop. Works on both v4 (pure-CSS @import) and v3 (config plugin) from one package, zero config, tested against the real Tailwind compiler."
 category: "Open Source Library"
 order: 6
 repo: "https://github.com/Jubstaaa/tailwind-hitslop"
@@ -19,8 +19,8 @@ stack:
     "npm",
   ]
 highlights:
-  - "Pure CSS — built entirely on Tailwind v4's @utility and --value() primitives, no JS plugin API"
-  - "19 compile tests run through the real Tailwind compiler via @tailwindcss/node"
+  - "One package, two Tailwind majors — a pure-CSS @import on v4 and a config plugin on v3, resolved automatically by the export map with identical utilities on both"
+  - "Compile-tested against the real Tailwind compiler via @tailwindcss/node — asserts on emitted CSS, not hand-written expectations"
   - "Published to npm with GitHub Actions provenance and an interactive demo site"
 images: []
 ---
@@ -29,7 +29,7 @@ images: []
 
 Small visual targets — 16px icons, dense toolbars, close buttons — are miserable to tap. Making them visually bigger is not always an option. React Native solves this with the `hitSlop` prop; the web never had a first-class equivalent.
 
-`tailwind-hitslop` brings that concept to Tailwind CSS v4 as a set of utilities that expand the interactive area of an element without touching its layout:
+`tailwind-hitslop` brings that concept to Tailwind CSS — both v4 and v3 — as a set of utilities that expand the interactive area of an element without touching its layout:
 
 ```html
 <button class="pointer-coarse:hit-slop-2">
@@ -47,7 +47,7 @@ Each utility renders an absolutely-positioned `::before` pseudo-element with neg
 <button class="hit-slop-x-1 hit-slop-y-3">4px horizontal, 12px vertical</button>
 ```
 
-The whole plugin is a single hand-written CSS file built on Tailwind v4's CSS-first primitives — `@utility`, `--value()` and `--spacing()`. There is no JavaScript, no build step, and no configuration. Values resolve from the spacing scale (`hit-slop-2`), arbitrary lengths (`hit-slop-[10px]`) and an opt-in `--hit-slop-*` theme namespace.
+On Tailwind v4 the whole thing is a single hand-written CSS file built on the CSS-first primitives — `@utility`, `--value()` and `--spacing()` — pulled in with one `@import "tailwind-hitslop"` and no JavaScript at all. On v3 the same package exposes a classic config plugin you register with `require("tailwind-hitslop")`, generating the identical utilities. The export map resolves the right entry per import style, so a single package name covers both majors with no configuration either way. Values resolve from the spacing scale (`hit-slop-2`), arbitrary lengths (`hit-slop-[10px]`) and an opt-in `--hit-slop-*` theme namespace.
 
 ---
 
@@ -56,7 +56,7 @@ The whole plugin is a single hand-written CSS file built on Tailwind v4's CSS-fi
 - **Directional control** — `hit-slop-t/r/b/l/x/y-*` mirror core's `inset` family and stack freely
 - **`::after` fallback family** — a full mirror for elements whose `::before` is already taken by icons, rings or gradients
 - **`hit-slop-debug`** — visualizes the expanded hit areas with a radius-faithful overlay
-- **Variant composition** — works with every core variant (`pointer-coarse:`, `hover:`, `md:`) because everything is a plain `@utility`
+- **Variant composition** — works with every core variant (`pointer-coarse:`, `hover:`, `md:`) since the output is just standard utilities on both v4 and v3
 
 ---
 
