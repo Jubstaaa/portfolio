@@ -96,7 +96,11 @@ export function NowPlaying({ className }: NowPlayingProps) {
         )}
       />
       <span className="text-foreground min-w-0 break-all">{label}</span>
-      {playing ? null : <span className="text-muted-foreground shrink-0 text-xs">(paused)</span>}
+      {playing ? null : (
+        <span className="text-muted-foreground mt-[calc((1lh-0.375rem)/2)] shrink-0 text-xs">
+          (paused)
+        </span>
+      )}
     </>
   );
 
