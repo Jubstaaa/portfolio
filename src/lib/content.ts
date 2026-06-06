@@ -46,12 +46,23 @@ export function getProjectBySlug(slug: string): Project | undefined {
 }
 
 // ───── Experience / Education ─────────────────────────────────────────────────
+const CURRENT = "9999-99";
+
+interface Datable {
+  start: string;
+  end?: string | undefined;
+}
+
+function byRecency(a: Datable, b: Datable): number {
+  return (b.end ?? CURRENT).localeCompare(a.end ?? CURRENT) || b.start.localeCompare(a.start);
+}
+
 export function getExperiencesSorted(): Experience[] {
-  return experiences.slice().sort((a, b) => b.start.localeCompare(a.start));
+  return experiences.slice().sort(byRecency);
 }
 
 export function getEducationSorted(): Education[] {
-  return education.slice().sort((a, b) => b.start.localeCompare(a.start));
+  return education.slice().sort(byRecency);
 }
 
 // ───── Data ───────────────────────────────────────────────────────────────────
