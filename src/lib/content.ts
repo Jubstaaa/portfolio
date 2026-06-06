@@ -34,7 +34,11 @@ export function getPostBySlug(slug: string): Post | undefined {
 
 // ───── Projects ───────────────────────────────────────────────────────────────
 export function getAllProjects(): Project[] {
-  return projects.slice();
+  return projects.slice().sort((a, b) => {
+    const ao = a.order ?? Number.POSITIVE_INFINITY;
+    const bo = b.order ?? Number.POSITIVE_INFINITY;
+    return ao - bo;
+  });
 }
 
 export function getProjectBySlug(slug: string): Project | undefined {

@@ -60,6 +60,7 @@ const projects = defineCollection({
       title: s.string(),
       summary: s.string(),
       category: s.string(),
+      order: s.number().optional(),
       stack: s.array(s.string()).default([]),
       repo: s.string().url().optional(),
       url: s.string().url().optional(),
