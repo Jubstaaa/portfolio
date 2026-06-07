@@ -47,6 +47,12 @@ interface OgInput {
 
 export async function renderOgImage({ segment, eyebrow, title, cover }: OgInput) {
   const path = segment ? `~/${site.handle}/${segment}` : `~/${site.handle}`;
+  const cta =
+    segment === "projects"
+      ? "View the project"
+      : segment === "blog"
+        ? "Read the post"
+        : "Explore the site";
   const [fonts, coverUrl] = await Promise.all([loadFonts(), loadCover(cover)]);
 
   const overlay = coverUrl
@@ -120,8 +126,21 @@ export async function renderOgImage({ segment, eyebrow, title, cover }: OgInput)
             color: "#8a93a1",
           }}
         >
-          <span>{`${site.name} · ${site.role}`}</span>
-          <span style={{ color: "#5aa6ea" }}>{`${site.url.replace(/^https?:\/\//, "")} ->`}</span>
+          <span>{`${site.name} · ${site.url.replace(/^https?:\/\//, "")}`}</span>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              background: "#5aa6ea",
+              color: "#16181d",
+              padding: "12px 24px",
+              borderRadius: 10,
+              fontSize: 26,
+              fontWeight: 700,
+            }}
+          >
+            {`${cta} ->`}
+          </div>
         </div>
       </div>
     </div>,
