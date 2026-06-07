@@ -71,7 +71,7 @@ export async function GET(): Promise<NextResponse> {
   const payload: NowPlayingPayload = {
     isPlaying: data.is_playing,
     title: data.item.name,
-    artist: data.item.artists.map((a) => a.name).join(", "),
+    artist: data.item.artists?.[0]?.name || "",
     url: data.item.external_urls.spotify,
   };
 
