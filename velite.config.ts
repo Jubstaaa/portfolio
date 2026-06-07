@@ -12,7 +12,26 @@ const prettyCode: PrettyCodeOptions = {
   keepBackground: false,
 };
 
-const image = s.object({ src: s.string(), alt: s.string(), caption: s.string().optional() });
+const image = s
+  .object({ src: s.string(), alt: s.string(), caption: s.string().optional() })
+  .transform(async (data) => {
+    // Stamp intrinsic dimensions on local images so next/image reserves the
+    // aspect-ratio box (no flicker on cover / gallery images).
+    const blank = {
+      ...data,
+      width: undefined as number | undefined,
+      height: undefined as number | undefined,
+    };
+    if (!data.src.startsWith("/")) return blank;
+    try {
+      const { width, height } = await sharp(
+        join(process.cwd(), "public", data.src.replace(/^\//, "")),
+      ).metadata();
+      return { ...data, width, height };
+    } catch {
+      return blank;
+    }
+  });
 
 interface HastNode {
   type?: string;

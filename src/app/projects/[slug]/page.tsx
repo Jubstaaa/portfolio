@@ -94,11 +94,11 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             <Image
               src={cover.src}
               alt={cover.alt}
-              width={0}
-              height={0}
+              width={cover.width ?? 0}
+              height={cover.height ?? 0}
               priority
               sizes="(min-width: 1024px) 720px, 100vw"
-              className="hairline max-h-[500px] w-full rounded-md border object-contain"
+              className="hairline h-auto max-h-[500px] w-full rounded-md border object-contain"
             />
           ) : null}
 
