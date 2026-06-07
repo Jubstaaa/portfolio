@@ -80,7 +80,7 @@ export default async function PostPage({ params }: PostPageProps) {
               : {})}
           />
 
-          {post.cover ? (
+          {post.cover && post.showCover ? (
             <Image
               src={post.cover.src}
               alt={post.cover.alt}

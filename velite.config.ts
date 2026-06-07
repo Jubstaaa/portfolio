@@ -10,6 +10,31 @@ const prettyCode: PrettyCodeOptions = {
 
 const image = s.object({ src: s.string(), alt: s.string(), caption: s.string().optional() });
 
+interface HastNode {
+  type?: string;
+  tagName?: string;
+  properties?: Record<string, unknown>;
+  children?: HastNode[];
+}
+
+// Flag the first image in the body so it can render eager/priority — it becomes the
+// LCP element on posts whose cover is hidden (showCover: false).
+function rehypeFirstImagePriority() {
+  return (tree: HastNode) => {
+    let done = false;
+    const walk = (node: HastNode) => {
+      if (done) return;
+      if (node.type === "element" && node.tagName === "img") {
+        node.properties = { ...node.properties, dataPriority: "true" };
+        done = true;
+        return;
+      }
+      for (const child of node.children ?? []) walk(child);
+    };
+    walk(tree);
+  };
+}
+
 const site = defineCollection({
   name: "Site",
   pattern: "site.json",
@@ -41,6 +66,7 @@ const posts = defineCollection({
       tags: s.array(s.string()).default([]),
       draft: s.boolean().default(false),
       cover: image.optional(),
+      showCover: s.boolean().default(true),
       slug: s.path(),
       body: s.mdx(),
       raw: s.raw(),
@@ -165,6 +191,6 @@ export default defineConfig({
   },
   mdx: {
     remarkPlugins: [remarkGfm],
-    rehypePlugins: [[rehypePrettyCode, prettyCode]],
+    rehypePlugins: [rehypeFirstImagePriority, [rehypePrettyCode, prettyCode]],
   },
 });

@@ -208,14 +208,16 @@ function Warn({ children, label }: { children: React.ReactNode; label?: string }
   );
 }
 
-function Img({ alt = "", src, className }: ImgHTMLAttributes<HTMLImageElement>) {
+function Img({ alt = "", src, className, ...rest }: ImgHTMLAttributes<HTMLImageElement>) {
   if (typeof src !== "string") return null;
+  const priority = (rest as Record<string, unknown>)["data-priority"] === "true";
   return (
     <Image
       src={src}
       alt={alt}
       width={0}
       height={0}
+      {...(priority ? { priority: true } : {})}
       sizes="100vw"
       className={cn("my-6 max-h-125 w-full object-contain object-left", className)}
     />
