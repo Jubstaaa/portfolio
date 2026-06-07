@@ -29,7 +29,6 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
     title: project.title,
     description: project.summary,
     path: `/projects/${project.slug}`,
-    ...(project.images[0] ? { ogImage: project.images[0].src } : {}),
     authors: [site.name],
     keywords: [project.title, project.category, ...project.stack],
   });
