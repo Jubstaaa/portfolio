@@ -208,9 +208,36 @@ function Warn({ children, label }: { children: React.ReactNode; label?: string }
   );
 }
 
-function Img({ alt = "", src, className, ...rest }: ImgHTMLAttributes<HTMLImageElement>) {
+function Img({
+  alt = "",
+  src,
+  className,
+  width,
+  height,
+  ...rest
+}: ImgHTMLAttributes<HTMLImageElement>) {
   if (typeof src !== "string") return null;
   const priority = (rest as Record<string, unknown>)["data-priority"] === "true";
+  const w = Number(width) || undefined;
+  const h = Number(height) || undefined;
+  const sharedClassName = cn("my-6 max-h-125 w-full object-contain object-left", className);
+
+  // With real intrinsic dimensions the browser reserves the aspect-ratio box up
+  // front (no reload flicker). Fall back to the responsive 0/0 hack otherwise.
+  if (w && h) {
+    return (
+      <Image
+        src={src}
+        alt={alt}
+        width={w}
+        height={h}
+        {...(priority ? { priority: true } : {})}
+        sizes="(min-width: 768px) 720px, 100vw"
+        className={cn(sharedClassName, "h-auto")}
+      />
+    );
+  }
+
   return (
     <Image
       src={src}
@@ -219,7 +246,7 @@ function Img({ alt = "", src, className, ...rest }: ImgHTMLAttributes<HTMLImageE
       height={0}
       {...(priority ? { priority: true } : {})}
       sizes="100vw"
-      className={cn("my-6 max-h-125 w-full object-contain object-left", className)}
+      className={sharedClassName}
     />
   );
 }

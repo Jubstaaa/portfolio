@@ -1,5 +1,9 @@
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
+
 import rehypePrettyCode, { type Options as PrettyCodeOptions } from "rehype-pretty-code";
 import remarkGfm from "remark-gfm";
+import sharp from "sharp";
 import { defineConfig, defineCollection, s } from "velite";
 
 const prettyCode: PrettyCodeOptions = {
@@ -32,6 +36,35 @@ function rehypeFirstImagePriority() {
       for (const child of node.children ?? []) walk(child);
     };
     walk(tree);
+  };
+}
+
+// Stamp intrinsic width/height on local body images so next/image reserves the
+// correct aspect-ratio box up front — kills the reload layout shift / flicker.
+function rehypeImageDimensions() {
+  return async (tree: HastNode) => {
+    const images: HastNode[] = [];
+    const collect = (node: HastNode) => {
+      if (node.type === "element" && node.tagName === "img") images.push(node);
+      for (const child of node.children ?? []) collect(child);
+    };
+    collect(tree);
+
+    await Promise.all(
+      images.map(async (node) => {
+        const props = node.properties ?? {};
+        const src = typeof props.src === "string" ? props.src : undefined;
+        if (!src || !src.startsWith("/") || (props.width && props.height)) return;
+        try {
+          const { width, height } = await sharp(
+            await readFile(join(process.cwd(), "public", src.replace(/^\//, ""))),
+          ).metadata();
+          if (width && height) node.properties = { ...props, width, height };
+        } catch {
+          // remote or missing asset — leave dimensions unset, Img falls back
+        }
+      }),
+    );
   };
 }
 
@@ -191,6 +224,10 @@ export default defineConfig({
   },
   mdx: {
     remarkPlugins: [remarkGfm],
-    rehypePlugins: [rehypeFirstImagePriority, [rehypePrettyCode, prettyCode]],
+    rehypePlugins: [
+      rehypeFirstImagePriority,
+      rehypeImageDimensions,
+      [rehypePrettyCode, prettyCode],
+    ],
   },
 });
