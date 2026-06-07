@@ -1,0 +1,126 @@
+---
+title: "Hit-Slop for the Web: Bigger Tap Targets in Tailwind CSS"
+description: "Tiny icons and dense toolbars are miserable to tap. Here's a pure-CSS Tailwind plugin that grows an element's touch area without touching its layout."
+date: 2026-06-07
+category: development
+tags: [tailwind, css, frontend, accessibility, ergonomics, open-source]
+draft: false
+---
+
+# Hit-Slop for the Web: Bigger Tap Targets in Tailwind CSS
+
+Small visual targets — 16px icons, dense toolbars, the little `✕` in a card corner — are miserable to tap. React Native solved this years ago with the [`hitSlop`](https://reactnative.dev/docs/pressable#hitslop) prop: grow the area that responds to a touch without changing how big the element _looks_. The web never had a first-class equivalent.
+
+So I built one. [`tailwind-hitslop`](https://github.com/Jubstaaa/tailwind-hitslop) is a set of Tailwind utilities that expand an element's interactive area while its visual size stays exactly the same. Pure CSS, zero JavaScript, and it works on both Tailwind v4 and v3.
+
+```html
+<button class="pointer-coarse:hit-slop-2">
+  <x-icon class="size-4" />
+</button>
+```
+
+That button still _looks_ 16px. But on a touch device it now catches taps in an 8px halo around itself — the difference between "why won't this work" and "just works."
+
+## Why a bigger hit area, not a bigger button
+
+This is [Fitts's Law](https://en.wikipedia.org/wiki/Fitts%27s_law) in practice: the time to hit a target shrinks as the target grows. The obvious fix is to make controls physically bigger — but you can't always do that. A toolbar has a fixed rhythm, an icon button has a deliberate size, a dense list can't afford 44px rows everywhere. You want the _ergonomics_ of a big target with the _layout_ of a small one.
+
+Hit-slop gives you exactly that: the visual box is untouched, so nothing reflows, but the tappable region grows.
+
+## Install
+
+It's one package; the export map resolves the right entry for your Tailwind major.
+
+```bash
+npm install tailwind-hitslop
+# or
+bun add tailwind-hitslop
+```
+
+**Tailwind v4** — import the CSS. No JavaScript, no config:
+
+```css
+@import "tailwindcss";
+@import "tailwind-hitslop";
+```
+
+**Tailwind v3** — register the plugin:
+
+```js
+// tailwind.config.js
+module.exports = {
+  plugins: [require("tailwind-hitslop")],
+};
+```
+
+Every utility below works identically on either version.
+
+## The API
+
+```html
+<!-- 8px on all sides (the default) -->
+<button class="hit-slop-2">save</button>
+
+<!-- single side / axis — stack freely -->
+<button class="hit-slop-x-1 hit-slop-y-3">4px horizontal, 12px vertical</button>
+
+<!-- arbitrary length -->
+<button class="hit-slop-[10px]">precise</button>
+```
+
+| Class                                | Effect                                     |
+| ------------------------------------ | ------------------------------------------ |
+| `hit-slop-<n>`                       | Spacing scale — `hit-slop-2` = 8px         |
+| `hit-slop-[10px]`                    | Arbitrary length                           |
+| `hit-slop-t/r/b/l-*`                 | A single side                              |
+| `hit-slop-x-*` / `hit-slop-y-*`      | An axis                                    |
+| `hit-slop-after`, `hit-slop-after-*` | Mirror family rendered via `::after`       |
+| `hit-slop-debug`                     | Visualize the expanded area while you work |
+
+And because everything compiles down to plain utilities, it composes with every core variant:
+
+```html
+<button class="pointer-coarse:hit-slop-2">touch devices only</button>
+<button class="md:hit-slop-0 hit-slop-3">smaller on desktop</button>
+```
+
+<Note>
+  Utilities apply on every pointer by default — a mouse user benefits from a forgiving click area
+  too. Wrap them in `pointer-coarse:` when you want the slop only on touch devices.
+</Note>
+
+## How it works under the hood
+
+Each utility renders an absolutely-positioned `::before` pseudo-element with negative offsets driven by per-side private custom properties. Because every directional utility sets only its own variable and repeats an identical pseudo-element block, the utilities merge cleanly in the cascade — that's why `hit-slop-x-1 hit-slop-y-3` just works instead of one overriding the other.
+
+The whole thing is a single hand-written CSS file built on Tailwind v4's CSS-first primitives — `@utility`, `--value()` and `--spacing()`. No JavaScript, no build step, no configuration. On v3 the same utilities are produced through the classic plugin API, so the authoring experience is identical across both majors.
+
+There's no runtime cost either: it's static CSS that ships with your stylesheet. The browser does the rest.
+
+## How much slop, and when
+
+- **`hit-slop-1` (4px)** — dense, adjacent targets (toolbars, list rows with multiple actions). Keep slops from overlapping their neighbors.
+- **`hit-slop-2` (8px)** — the default. Isolated icon buttons, chips, standalone controls.
+- **`hit-slop-3` (12px)** — a lone action in a wide area, like a single `✕` in a card corner.
+
+## Gotchas worth knowing
+
+<Warn>
+  An ancestor with `overflow: hidden` silently clips the slop — cards, modals and scroll containers
+  are the usual suspects. Toggle `hit-slop-debug` and look.
+</Warn>
+
+A few more things the README is honest about:
+
+- **The main family uses `::before`.** If your element already uses `::before` (icon fonts, rings, gradients), switch to the `hit-slop-after-*` family. Both coexist on one element.
+- **Adjacent slops overlap**, and DOM order decides who wins the overlap zone. In dense layouts use `hit-slop-1` and keep real spacing between targets.
+- **`pointer-events-none` on the host disables the slop too** — by design, so disabled buttons don't keep ghost tap areas.
+- **This does not make WCAG 2.5.8 audits pass.** Target-size checks measure the _rendered_ box, and an invisible hit area doesn't change that. If you need audit compliance, reach for `min-h-11 min-w-11`; hit-slop improves real-world ergonomics and combines fine with it.
+
+## Wrap-up
+
+Tiny targets don't have to be a tax on your users. `tailwind-hitslop` is pure CSS, zero JavaScript, works on Tailwind v4 and v3, and is one `@import` (or one `require`) away.
+
+- **npm:** [npmjs.com/package/tailwind-hitslop](https://www.npmjs.com/package/tailwind-hitslop)
+- **GitHub:** [github.com/Jubstaaa/tailwind-hitslop](https://github.com/Jubstaaa/tailwind-hitslop)
+- **Live demo:** [tailwind-hitslop.vercel.app](https://tailwind-hitslop.vercel.app)
