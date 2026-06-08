@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 import { site } from "@/lib/content";
 
 export function Footer() {
@@ -11,15 +9,17 @@ export function Footer() {
         <p>
           <span className="text-foreground">{site.name}</span> · portfolio · {year}
         </p>
-        <Link
+        <a
           href="/feed.xml"
+          target="_blank"
+          rel="noreferrer noopener"
           className="hover:text-foreground transition-token inline-flex items-center gap-1"
         >
           rss
           <span aria-hidden className="select-none">
             ↗
           </span>
-        </Link>
+        </a>
       </div>
     </footer>
   );
