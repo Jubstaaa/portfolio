@@ -1,63 +1,97 @@
 ---
 title: "Prosbase"
-summary: "I have completed the development of Prosbase, a web application designed to allow users to track all the information they need about LoL esports players."
+summary: "A League of Legends esports platform I built for a client and rebuilt from the ground up for v2 — leaderboards, pro builds, live game tracking, and esports data in one place."
 category: "Web App"
 order: 1
 url: "https://prosbase.com/"
 stack:
   [
-    "NextJS",
+    "Bun",
+    "Turborepo",
+    "Hono",
+    "React",
+    "Vite",
+    "Tailwind CSS",
+    "PostgreSQL",
+    "Drizzle",
+    "MongoDB",
+    "Redis",
+    "BullMQ",
+    "Riot API",
+    "Twitch API",
     "DigitalOcean",
-    "Cloudflare",
-    "Node.js",
-    "MySQL",
-    "Prisma",
-    "Python",
-    "Nginx",
-    "Ubuntu",
-    "Github Actions",
+    "Docker",
   ]
-highlights: []
+highlights:
+  [
+    "Full rewrite into a Bun + Turborepo monorepo: Hono API, React/Vite web, and a background sync worker",
+    "Real-time pro player leaderboards backed by the Riot API and cached with Redis",
+    "Live game tracking with a 30s Redis cache and batched queries to stay fast under load",
+    "Esports data (leagues, teams, rosters) synced from Fandom Wiki via a BullMQ worker",
+    "Streamer hub + Twitch integration, plus a broadcast overlay and a Tauri desktop companion",
+  ]
 images:
   - src: "/images/projects/prosbase/cover.webp"
     alt: "Prosbase Leaderboard"
 ---
 
-I recently completed the development of Prosbase, a robust web application designed to provide League of Legends esports fans with a centralized hub for all the information they need.
+Prosbase started as a client project and grew into something I ended up rebuilding entirely. The client wanted a single place where League of Legends fans could follow everything about pro players — rankings, builds, teams, and live games — instead of jumping between half a dozen fragmented sources. This is the story of **v2**: a full rewrite that took the original idea and rebuilt it for scale, speed, and long-term maintainability.
 
-## Client Goals:
+## Client Goals
 
-My client wanted a platform that would address the fragmented nature of existing LoL Pro Players Data resources. Their primary goals were to:
+The brief for v2 was to keep the product my client already loved, but fix everything that held it back:
 
-- **Consolidate Information:** Bring together disparate data sources into a single, easily accessible platform.
-- **Enhance Players Engagement:** Provide Players with a more engaging and informative experience.
-- **Strategic Pro Build Analysis:** Enable players to follow the champion builds and strategies used by professional players in the current meta, providing valuable insights into optimal gameplay.
-- **Streamer Hub:** Offer a centralized hub where users can discover all League of Legends streamers, with the added ability to see which platforms they are streaming on.
+- **Consolidate the data:** Bring leaderboards, pro builds, teams, leagues, streams, and live games into one coherent platform.
+- **Make it fast:** The original version got sluggish as the data grew. v2 had to stay quick even with heavy traffic and constant data updates.
+- **Keep esports data fresh:** Rosters, teams, and leagues change constantly — the platform needed a reliable, automated pipeline instead of manual updates.
+- **Give the client control:** A proper admin dashboard so they could manage players, images, and content without touching code.
 
-## My Solution:
+## My Solution
 
-ProsBase achieves these goals by offering a comprehensive suite of features:
+I rebuilt Prosbase as a **Bun + Turborepo monorepo** with three deployables sharing typed code: a **Hono** API, a **React + Vite** web app, and a background **worker**. Player and esports data lives in **PostgreSQL** (via Drizzle ORM), match history in **MongoDB**, and **Redis + BullMQ** power both caching and the sync queues. Everything ships in **Docker** on **DigitalOcean**.
 
-- **Real-time Leaderboards:** Dynamically updated leaderboards provide instant access to player rankings across various regions. Users can apply filters to view players by country, team affiliation, or league participation. Additionally, users can tailor their search based on the LoL server players play on, whether they belong to a team, and their specific role.
+### Real-time Leaderboards
+
+Dynamically updated leaderboards give instant access to player rankings across regions, filterable by country, team, league, server, and role. Rankings are pulled from the **Riot API** and cached in Redis, with pagination pushed down to the database so the page stays fast no matter how many players are tracked.
 
 ![Prosbase Leaderboard](/images/projects/prosbase/prosbase-leaderboard.webp)
 
-- **In-Depth Player Profiles:** Detailed player profiles provide extensive information, including peak rank history, team affiliations, and account details (such as alternate accounts they’ve played on). Additional information like age and other relevant player stats are also included.
+### In-Depth Player Profiles
+
+Each player profile brings together peak rank history, team affiliations, tracked accounts, and season-by-season records — all loaded concurrently so the page renders without waterfalls.
 
 ![Prosbase Player Profile](/images/projects/prosbase/prosbase-player-profile.webp)
 
-- **Team and League Overview:** Users can easily follow their favorite teams and leagues, with access to schedules, rosters, and results. This involved designing an intuitive interface that enables seamless navigation and real-time updates.
+### Live Game Tracking
 
-![Prosbase Teams and Leagues](/images/projects/prosbase/prosbase-teams-and-leagues.webp)
+When a pro is in a game, Prosbase shows the live match in real time — champions, runes, and matchup context. A 30-second Redis cache and batched database lookups keep it responsive even when many players are in game at once.
 
-- **Strategic Pro Build Analysis:** ProsBase allows users to analyze the champion builds and strategies used by professional players in the current meta. This feature provides valuable insights into optimal gameplay, helping players stay on top of the ever-evolving competitive scene. This feature required a robust backend to collect and display up-to-date build data.
+![Prosbase Live Game](/images/projects/prosbase/prosbase-live-game.webp)
+
+### Strategic Pro Build Analysis
+
+Users can study the exact champion builds and rune setups pros run in the current meta — a fast, sortable table backed by a trimmed query and memoized rows so it stays smooth while scrolling.
 
 ![Prosbase Probuilds](/images/projects/prosbase/prosbase-probuilds.webp)
 
-- **Streamer Hub:** ProsBase also serves as a central platform for discovering League of Legends streamers, enabling users to see all streamers in one place and find out which platforms they’re streaming on. This integration consolidates all relevant information, offering a seamless viewing experience for fans.
+### Teams, Leagues & Champions
+
+Team, league, and champion pages let users follow rosters, schedules, and results. All of this esports data syncs automatically from **Fandom Wiki** through a dedicated BullMQ worker — leagues, teams, and players each sync on their own loop for reliability.
+
+![Prosbase Teams and Leagues](/images/projects/prosbase/prosbase-teams-and-leagues.webp)
+
+### Pentakills Hall of Fame
+
+A curated feed of pro pentakills with highlight videos, managed by the client from the admin dashboard.
+
+![Prosbase Pentakills](/images/projects/prosbase/prosbase-pentakills.webp)
+
+### Streamer Hub & Overlay
+
+Prosbase is also a hub for discovering League of Legends streamers, integrated with the **Twitch API** to show who is live and where. On top of that, I built a broadcast **overlay** streamers can add to their scene and a **Tauri desktop companion** for the client's own workflow.
 
 ![Prosbase Streamer Hub](/images/projects/prosbase/prosbase-streamer-hub.webp)
 
-## Conclusion:
+## Conclusion
 
-This project demonstrates my ability to deliver high-quality solutions that meet client needs while leveraging my technical expertise in I'm actively seeking new opportunities to collaborate on challenging projects and contribute to innovative web applications. Please feel free to explore my portfolio and contact me to discuss how my skills and experience can benefit your next project.
+The v2 rewrite turned Prosbase from a promising prototype into a fast, maintainable product the client can grow. It brought real-time data, an automated esports pipeline, a full admin dashboard, and a monorepo architecture that keeps the API, web app, worker, overlay, and desktop app all in sync. I'm always open to collaborating on ambitious projects like this one — feel free to explore my portfolio and reach out.
