@@ -1,0 +1,79 @@
+---
+title: "Why I Keep Building League of Legends Tools"
+description: "I'm a Challenger jungle main who can't stop turning things I miss about League into side projects. Here's the collection — and what building for one game over and over has taught me."
+date: 2026-07-10
+category: development
+tags: [league-of-legends, side-projects, riot-api, indie-hacking, esports, automation]
+cover:
+  src: /images/projects/prosbase/cover.webp
+  alt: Prosbase — a League of Legends esports platform I built
+draft: false
+---
+
+I hit Challenger as a jungle main. I say that not to flex — okay, maybe a little — but because it explains everything that follows. When you play a game at that level, you stop seeing it as just a game. You start noticing every gap: the stat you wish you could pull up mid-champ-select, the overlay your favorite streamer doesn't have, the setting you keep re-typing on every fresh client install.
+
+Most people shrug those off. I open my editor.
+
+Over the last couple of years I've turned an embarrassing number of these small frustrations into real projects. Different stacks, different platforms — web, desktop, bots — but all orbiting the same game. Here's the collection, and why I keep coming back to it.
+
+---
+
+![Prosbase](/images/projects/prosbase/cover.webp)
+
+### Prosbase
+
+Prosbase is the big one. It's a full esports platform — pro player leaderboards, live game tracking, pro builds, teams, leagues, and a streamer hub, all in one place. It started as a client project and I ended up rebuilding it from the ground up for v2 as a Bun + Turborepo monorepo.
+
+The reason it exists is simple: following pro players meant bouncing between five different sites, none of which talked to each other. As a player, I already knew exactly what I wanted to see in one view. That domain knowledge is the whole advantage — I wasn't guessing what fans wanted, I _was_ the fan.
+
+---
+
+![StatBox](/images/projects/statbox/cover.webp)
+
+### StatBox
+
+StatBox is an open-source widget builder for streamers. You point it at a Riot ID, pick a layout, and it gives you an OBS-ready browser source that shows live rank, recent games, and session performance.
+
+This one came straight from watching streams. So many small streamers had no clean way to show their rank on screen without paying for a bloated overlay service. I wanted something lightweight and free, so I built it.
+
+---
+
+![LoL Config Editor](/images/projects/lol-config-editor/cover.webp)
+
+### LoL Config Editor
+
+An Electron desktop app to instantly swap, save, and share your League settings — no client required. Every time I reinstalled the game or hopped on a friend's PC, I'd lose my carefully tuned config and spend ten minutes rebuilding it from memory.
+
+So I made the frustration disappear. Export your perfect setup once, import it anywhere. It's the most "scratch my own itch" project on this list, and I use it constantly.
+
+---
+
+![Daily Lore Video Bot](/images/projects/league-of-legends-daily-lore-video-bot/cover.webp)
+
+### Daily Lore Video Bot
+
+This is a fully automated content machine. Every day it picks a random champion, pulls the latest lore from Riot's data, generates AI voice narration, stitches together a video, and posts it to Instagram — completely hands-free.
+
+I built it partly as an automation experiment and partly because League's lore is genuinely great and buried where casual players never see it. Setting it up to run itself on a schedule was half the fun.
+
+---
+
+![Pixel Guess Game](/images/projects/pixel-guess-game/cover.webp)
+
+### Pixel Guess Game
+
+The fun one. Players identify pixelated images across categories — League champions, Valorant, Demon Slayer — with difficulty levels and a global leaderboard. Less "tool," more "thing I wanted to build to see if people would play it."
+
+They did. It's a reminder that not every project needs a serious justification. Sometimes you build a game because building games is fun.
+
+---
+
+### What building for one game taught me
+
+Spending this much time in a single domain does something you don't get from jumping between random ideas. The Riot API stopped being documentation I had to look up and became something I know cold. Real-time data, background jobs, automated content pipelines, desktop packaging, streaming overlays — I learned all of it in a context I actually cared about, which is the only reason I stuck with the hard parts.
+
+There's also a compounding effect. Prosbase taught me the data layer that StatBox reused. The bot's automation habits showed up again in Prosbase's sync worker. Each project is a little easier because the last one paved the road.
+
+And honestly? Being good at the game keeps me honest. It's hard to build a bad League tool when you'd immediately notice the thing feels wrong as a player.
+
+I don't think I'm done. There's always one more gap, one more "why doesn't this exist yet." As long as I'm still in the jungle at 2am, I'll probably keep shipping.
