@@ -10,6 +10,7 @@ import {
     TerminalLine,
     TerminalMeta,
 } from '@/components/terminal-block'
+import { LINK_CLASS } from '@/lib/utils'
 
 export default function GlobalError({
     error,
@@ -51,7 +52,7 @@ export default function GlobalError({
                 <TerminalLine command="retry">
                     <p>
                         <button
-                            className="text-foreground hover:text-accent transition-token underline underline-offset-4"
+                            className={LINK_CLASS}
                             type="button"
                             onClick={reset}>
                             ./reset

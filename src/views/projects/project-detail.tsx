@@ -87,23 +87,13 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
                             : {})}>
                         <div className="flex flex-wrap items-center gap-x-6 gap-y-2 pt-2 text-sm">
                             {project.url ? (
-                                <ExternalLink
-                                    className="text-foreground hover:text-accent transition-token inline-flex items-center gap-1 underline underline-offset-4"
-                                    href={project.url}>
+                                <ExternalLink showArrow href={project.url}>
                                     live
-                                    <span aria-hidden className="select-none">
-                                        ↗
-                                    </span>
                                 </ExternalLink>
                             ) : null}
                             {project.repo ? (
-                                <ExternalLink
-                                    className="text-foreground hover:text-accent transition-token inline-flex items-center gap-1 underline underline-offset-4"
-                                    href={project.repo}>
+                                <ExternalLink showArrow href={project.repo}>
                                     source
-                                    <span aria-hidden className="select-none">
-                                        ↗
-                                    </span>
                                 </ExternalLink>
                             ) : null}
                         </div>

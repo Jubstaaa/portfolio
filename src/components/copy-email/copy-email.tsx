@@ -3,7 +3,7 @@
 import { Check, Copy } from 'lucide-react'
 
 import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard'
-import { cn } from '@/lib/utils'
+import { cn, LINK_CLASS } from '@/lib/utils'
 
 export interface CopyEmailProps {
     className?: string
@@ -15,9 +15,7 @@ export function CopyEmail({ className, email }: CopyEmailProps) {
 
     return (
         <div className={cn('inline-flex items-center gap-3', className)}>
-            <a
-                className="text-foreground hover:text-accent transition-token underline underline-offset-4"
-                href={`mailto:${email}`}>
+            <a className={LINK_CLASS} href={`mailto:${email}`}>
                 {email}
             </a>
             <button

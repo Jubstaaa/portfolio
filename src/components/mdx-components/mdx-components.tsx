@@ -5,11 +5,11 @@ import type {
 } from 'react'
 
 import Image from 'next/image'
-import Link from 'next/link'
 
 import { CodeBlock } from '@/components/code-block'
 import { ExternalLink } from '@/components/external-link'
-import { cn } from '@/lib/utils'
+import { StyledLink } from '@/components/styled-link'
+import { cn, LINK_CLASS } from '@/lib/utils'
 
 const RULE = '─'.repeat(240)
 
@@ -25,10 +25,7 @@ function Anchor({
     ...rest
 }: AnchorHTMLAttributes<HTMLAnchorElement>) {
     const external = isExternal(href)
-    const linkClass = cn(
-        'text-foreground hover:text-accent transition-token underline underline-offset-4',
-        className
-    )
+    const linkClass = cn(LINK_CLASS, className)
     if (!href) return <span className={linkClass}>{children}</span>
     if (external) {
         return (
@@ -43,9 +40,9 @@ function Anchor({
         )
     }
     return (
-        <Link className={linkClass} href={href}>
+        <StyledLink className={className} href={href}>
             {children}
-        </Link>
+        </StyledLink>
     )
 }
 
