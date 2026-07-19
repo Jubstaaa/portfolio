@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
+import { ContentCard } from '@/components/content-card'
 import { PathBar } from '@/components/path-bar'
-import { ProjectCard } from '@/components/project-card'
 import { SectionHeading } from '@/components/section-heading'
 import { getAllProjects, site } from '@/lib/content'
 import { buildMetadata } from '@/lib/seo'
@@ -41,7 +41,19 @@ export default function ProjectsListPage() {
                 <ol className="divide-border hairline flex flex-col divide-y border-t">
                     {projects.map(project => (
                         <li key={project.slug}>
-                            <ProjectCard project={project} />
+                            <ContentCard
+                                description={project.summary}
+                                href={`/projects/${project.slug}`}
+                                meta={<span>{project.category}</span>}
+                                title={project.title}
+                                {...(project.stack.length > 0
+                                    ? {
+                                          tags: project.stack.map(s => (
+                                              <span key={s}>{s}</span>
+                                          )),
+                                      }
+                                    : {})}
+                            />
                         </li>
                     ))}
                 </ol>

@@ -1,9 +1,10 @@
 import type { Metadata } from 'next'
 
-import { BlogCard } from '@/components/blog-card'
+import { ContentCard } from '@/components/content-card'
 import { PathBar } from '@/components/path-bar'
 import { SectionHeading } from '@/components/section-heading'
 import { getPublishedPosts, site } from '@/lib/content'
+import { formatDate } from '@/lib/format'
 import { buildMetadata } from '@/lib/seo'
 
 export const metadata: Metadata = buildMetadata({
@@ -48,7 +49,31 @@ export default function BlogListPage() {
                     <ol className="divide-border hairline flex flex-col divide-y border-t">
                         {posts.map(post => (
                             <li key={post.slug}>
-                                <BlogCard post={post} />
+                                <ContentCard
+                                    description={post.description}
+                                    href={post.path}
+                                    title={post.title}
+                                    meta={
+                                        <>
+                                            <span className="font-mono tracking-tight">
+                                                {formatDate(post.date)}
+                                            </span>
+                                            <span
+                                                aria-hidden
+                                                className="select-none">
+                                                ·
+                                            </span>
+                                            <span>{post.category}</span>
+                                        </>
+                                    }
+                                    {...(post.tags.length > 0
+                                        ? {
+                                              tags: post.tags.map(t => (
+                                                  <span key={t}>#{t}</span>
+                                              )),
+                                          }
+                                        : {})}
+                                />
                             </li>
                         ))}
                     </ol>
