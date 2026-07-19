@@ -1,107 +1,129 @@
-import type { Metadata } from "next";
-import Image from "next/image";
-import { notFound } from "next/navigation";
+import type { Metadata } from 'next'
 
-import { AdjacentNav } from "@/components/adjacent-nav";
-import { ArticleHeader } from "@/components/article-header";
-import { Mdx } from "@/components/mdx";
-import { PathBar } from "@/components/path-bar";
-import { Prose } from "@/components/prose";
-import { getAdjacent, getPostBySlug, getPublishedPosts, posts, site } from "@/lib/content";
-import { formatDate } from "@/lib/format";
-import { JsonLd } from "@/components/json-ld";
-import { buildArticleJsonLd, buildBreadcrumbJsonLd, buildMetadata } from "@/lib/seo";
+import Image from 'next/image'
+import { notFound } from 'next/navigation'
+
+import { AdjacentNav } from '@/components/adjacent-nav'
+import { ArticleHeader } from '@/components/article-header'
+import { JsonLd } from '@/components/json-ld'
+import { Mdx } from '@/components/mdx'
+import { PathBar } from '@/components/path-bar'
+import { Prose } from '@/components/prose'
+import {
+    getAdjacent,
+    getPostBySlug,
+    getPublishedPosts,
+    posts,
+    site,
+} from '@/lib/content'
+import { formatDate } from '@/lib/format'
+import {
+    buildArticleJsonLd,
+    buildBreadcrumbJsonLd,
+    buildMetadata,
+} from '@/lib/seo'
 
 export function generateStaticParams() {
-  return posts.map((post) => ({ slug: post.slug }));
+    return posts.map(post => ({ slug: post.slug }))
 }
 
 interface PostPageProps {
-  params: Promise<{ slug: string }>;
+    params: Promise<{ slug: string }>
 }
 
-export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
-  const { slug } = await params;
-  const post = getPostBySlug(slug);
-  if (!post) return {};
-  return buildMetadata({
-    title: post.title,
-    description: post.description,
-    path: post.path,
-    type: "article",
-    publishedTime: post.date,
-    modifiedTime: post.updated ?? post.date,
-    authors: [site.name],
-    section: post.category,
-    tags: post.tags,
-    keywords: post.tags,
-  });
+export async function generateMetadata({
+    params,
+}: PostPageProps): Promise<Metadata> {
+    const { slug } = await params
+    const post = getPostBySlug(slug)
+    if (!post) return {}
+    return buildMetadata({
+        authors: [site.name],
+        description: post.description,
+        keywords: post.tags,
+        modifiedTime: post.updated ?? post.date,
+        path: post.path,
+        publishedTime: post.date,
+        section: post.category,
+        tags: post.tags,
+        title: post.title,
+        type: 'article',
+    })
 }
 
 export default async function PostPage({ params }: PostPageProps) {
-  const { slug } = await params;
-  const post = getPostBySlug(slug);
-  if (!post) notFound();
+    const { slug } = await params
+    const post = getPostBySlug(slug)
+    if (!post) notFound()
 
-  const { prev, next } = getAdjacent(getPublishedPosts(), post);
+    const { next, prev } = getAdjacent(getPublishedPosts(), post)
 
-  return (
-    <>
-      <JsonLd id={`ld-article-${post.slug}`} data={buildArticleJsonLd(post)} />
-      <JsonLd
-        id={`ld-breadcrumb-${post.slug}`}
-        data={buildBreadcrumbJsonLd([
-          { name: "Home", path: "/" },
-          { name: "Blog", path: "/blog" },
-          { name: post.title, path: post.path },
-        ])}
-      />
-      <PathBar
-        path={`~/${site.handle}/blog/${post.slug}`}
-        meta={`${formatDate(post.date)} · ${post.category}`}
-      />
-      <section className="container-default section-pad">
-        <article className="mx-auto max-w-3xl min-w-0 space-y-8">
-          <ArticleHeader
-            meta={
-              <>
-                <span className="font-mono tracking-tight">{formatDate(post.date)}</span>
-                <span aria-hidden className="select-none">
-                  ·
-                </span>
-                <span>{post.category}</span>
-              </>
-            }
-            title={post.title}
-            lead={post.description}
-            {...(post.tags.length > 0
-              ? { tags: post.tags.map((tag) => <span key={tag}>#{tag}</span>) }
-              : {})}
-          />
-
-          {post.cover && post.showCover ? (
-            <Image
-              src={post.cover.src}
-              alt={post.cover.alt}
-              width={post.cover.width ?? 0}
-              height={post.cover.height ?? 0}
-              priority
-              sizes="(min-width: 1024px) 720px, 100vw"
-              className="hairline h-auto max-h-125 w-full rounded-md border object-contain"
+    return (
+        <>
+            <JsonLd
+                data={buildArticleJsonLd(post)}
+                id={`ld-article-${post.slug}`}
             />
-          ) : null}
+            <JsonLd
+                id={`ld-breadcrumb-${post.slug}`}
+                data={buildBreadcrumbJsonLd([
+                    { name: 'Home', path: '/' },
+                    { name: 'Blog', path: '/blog' },
+                    { name: post.title, path: post.path },
+                ])}
+            />
+            <PathBar
+                meta={`${formatDate(post.date)} · ${post.category}`}
+                path={`~/${site.handle}/blog/${post.slug}`}
+            />
+            <section className="container-default section-pad">
+                <article className="mx-auto max-w-3xl min-w-0 space-y-8">
+                    <ArticleHeader
+                        lead={post.description}
+                        title={post.title}
+                        meta={
+                            <>
+                                <span className="font-mono tracking-tight">
+                                    {formatDate(post.date)}
+                                </span>
+                                <span aria-hidden className="select-none">
+                                    ·
+                                </span>
+                                <span>{post.category}</span>
+                            </>
+                        }
+                        {...(post.tags.length > 0
+                            ? {
+                                  tags: post.tags.map(tag => (
+                                      <span key={tag}>#{tag}</span>
+                                  )),
+                              }
+                            : {})}
+                    />
 
-          <Prose>
-            <Mdx code={post.body} />
-          </Prose>
+                    {post.cover && post.showCover ? (
+                        <Image
+                            priority
+                            alt={post.cover.alt}
+                            className="hairline h-auto max-h-125 w-full rounded-md border object-contain"
+                            height={post.cover.height ?? 0}
+                            sizes="(min-width: 1024px) 720px, 100vw"
+                            src={post.cover.src}
+                            width={post.cover.width ?? 0}
+                        />
+                    ) : null}
 
-          <AdjacentNav
-            {...(prev ? { prev } : {})}
-            {...(next ? { next } : {})}
-            ariaLabel="Post navigation"
-          />
-        </article>
-      </section>
-    </>
-  );
+                    <Prose>
+                        <Mdx code={post.body} />
+                    </Prose>
+
+                    <AdjacentNav
+                        {...(prev ? { prev } : {})}
+                        {...(next ? { next } : {})}
+                        ariaLabel="Post navigation"
+                    />
+                </article>
+            </section>
+        </>
+    )
 }

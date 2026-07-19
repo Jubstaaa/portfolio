@@ -1,31 +1,29 @@
-import Link from "next/link";
+import Link from 'next/link'
 
-import { site } from "@/lib/content";
+import { site } from '@/lib/content'
 
 export interface NavLinksProps {
-  includeHome?: boolean;
+    includeHome?: boolean
 }
 
 export function NavLinks({ includeHome = false }: NavLinksProps) {
-  return (
-    <p className="flex flex-wrap gap-x-6 gap-y-1">
-      {includeHome ? (
-        <Link
-          href="/"
-          className="hover:text-accent transition-token underline-offset-4 hover:underline"
-        >
-          ./home
-        </Link>
-      ) : null}
-      {site.nav.map((item) => (
-        <Link
-          key={item.href}
-          href={item.href}
-          className="hover:text-accent transition-token underline-offset-4 hover:underline"
-        >
-          .{item.href}
-        </Link>
-      ))}
-    </p>
-  );
+    return (
+        <p className="flex flex-wrap gap-x-6 gap-y-1">
+            {includeHome ? (
+                <Link
+                    className="hover:text-accent transition-token underline-offset-4 hover:underline"
+                    href="/">
+                    ./home
+                </Link>
+            ) : null}
+            {site.nav.map(item => (
+                <Link
+                    key={item.href}
+                    className="hover:text-accent transition-token underline-offset-4 hover:underline"
+                    href={item.href}>
+                    .{item.href}
+                </Link>
+            ))}
+        </p>
+    )
 }

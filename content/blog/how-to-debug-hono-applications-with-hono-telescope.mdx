@@ -1,13 +1,23 @@
 ---
-title: "How to Debug Hono Applications with Telescope — Laravel Telescope for Bun & Node.js"
-description: "A Laravel Telescope–style debugging tool for Hono.js applications. Monitor requests, queries, logs, and exceptions in real-time with a beautiful dashboard. Works with Bun & Node.js."
+title: 'How to Debug Hono Applications with Telescope — Laravel Telescope for Bun & Node.js'
+description: 'A Laravel Telescope–style debugging tool for Hono.js applications. Monitor requests, queries, logs, and exceptions in real-time with a beautiful dashboard. Works with Bun & Node.js.'
 date: 2025-10-31
 category: development
-tags: [hono, debugging, bun, nodejs, typescript, developer-tools, open-source, laravel-telescope]
+tags:
+    [
+        hono,
+        debugging,
+        bun,
+        nodejs,
+        typescript,
+        developer-tools,
+        open-source,
+        laravel-telescope,
+    ]
 draft: false
 cover:
-  src: /images/blog/how-to-debug-hono-applications-with-hono-telescope/cover.webp
-  alt: "Hono Telescope Dashboard"
+    src: /images/blog/how-to-debug-hono-applications-with-hono-telescope/cover.webp
+    alt: 'Hono Telescope Dashboard'
 ---
 
 # How to Debug Hono Applications with Telescope
@@ -60,21 +70,21 @@ npm install hono-telescope
 ### Use it
 
 ```ts
-import { Hono } from "hono";
-import { setupTelescope } from "hono-telescope";
+import { Hono } from 'hono'
+import { setupTelescope } from 'hono-telescope'
 
-const app = new Hono();
+const app = new Hono()
 
 // One line – that's it!
-setupTelescope(app);
+setupTelescope(app)
 
-app.get("/api/users", async (c) => {
-  console.log("Fetching users");
-  const users = await db.query("SELECT * FROM users");
-  return c.json(users);
-});
+app.get('/api/users', async c => {
+    console.log('Fetching users')
+    const users = await db.query('SELECT * FROM users')
+    return c.json(users)
+})
 
-export default app;
+export default app
 ```
 
 ### Run it with Bun
@@ -142,17 +152,17 @@ Want fine-grained control?
 
 ```ts
 setupTelescope(app, {
-  enabled: true, // Enable/disable
-  path: "/telescope", // Dashboard URL
-  max_entries: 1000, // Max entries to store
-  ignored_paths: ["/health"], // Paths to skip
-  watchers: {
-    requests: true, // Monitor requests
-    exceptions: true, // Monitor errors
-    logs: true, // Monitor logs
-    queries: true, // Monitor queries
-  },
-});
+    enabled: true, // Enable/disable
+    path: '/telescope', // Dashboard URL
+    max_entries: 1000, // Max entries to store
+    ignored_paths: ['/health'], // Paths to skip
+    watchers: {
+        requests: true, // Monitor requests
+        exceptions: true, // Monitor errors
+        logs: true, // Monitor logs
+        queries: true, // Monitor queries
+    },
+})
 ```
 
 ## Live Demo — Try It Now

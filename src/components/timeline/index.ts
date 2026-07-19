@@ -1,2 +1,2 @@
-export { Timeline } from "./timeline";
-export type { TimelineProps } from "./timeline";
+export { Timeline } from './timeline'
+export type { TimelineProps } from './timeline'

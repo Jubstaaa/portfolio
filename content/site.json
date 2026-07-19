@@ -1,29 +1,29 @@
 {
-  "name": "ilker balcilar",
-  "handle": "ilker-balcilar",
-  "role": "software engineer",
-  "location": "istanbul",
-  "title": "ilker balcilar — software engineer",
-  "description": "Software engineer based in Istanbul. Full-stack web development with Next.js, React, TypeScript, Node.js, React Native, and cloud infrastructure.",
-  "url": "https://ilkerbalcilar.com",
-  "email": "ilkerbalcilartr@gmail.com",
-  "locale": "en",
-  "nav": [
-    {
-      "label": "projects",
-      "href": "/projects"
-    },
-    {
-      "label": "about",
-      "href": "/about"
-    },
-    {
-      "label": "blog",
-      "href": "/blog"
-    },
-    {
-      "label": "contact",
-      "href": "/contact"
-    }
-  ]
+    "name": "ilker balcilar",
+    "handle": "ilker-balcilar",
+    "role": "software engineer",
+    "location": "istanbul",
+    "title": "ilker balcilar — software engineer",
+    "description": "Software engineer based in Istanbul. Full-stack web development with Next.js, React, TypeScript, Node.js, React Native, and cloud infrastructure.",
+    "url": "https://ilkerbalcilar.com",
+    "email": "ilkerbalcilartr@gmail.com",
+    "locale": "en",
+    "nav": [
+        {
+            "label": "projects",
+            "href": "/projects"
+        },
+        {
+            "label": "about",
+            "href": "/about"
+        },
+        {
+            "label": "blog",
+            "href": "/blog"
+        },
+        {
+            "label": "contact",
+            "href": "/contact"
+        }
+    ]
 }

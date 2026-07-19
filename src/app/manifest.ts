@@ -1,15 +1,15 @@
-import type { MetadataRoute } from "next";
+import type { MetadataRoute } from 'next'
 
-import { site } from "@/lib/content";
+import { site } from '@/lib/content'
 
 export default function manifest(): MetadataRoute.Manifest {
-  return {
-    name: site.name,
-    short_name: site.name,
-    description: site.description,
-    start_url: "/",
-    display: "standalone",
-    background_color: "#0a0a0f",
-    theme_color: "#0a0a0f",
-  };
+    return {
+        background_color: '#0a0a0f',
+        description: site.description,
+        display: 'standalone',
+        name: site.name,
+        short_name: site.name,
+        start_url: '/',
+        theme_color: '#0a0a0f',
+    }
 }

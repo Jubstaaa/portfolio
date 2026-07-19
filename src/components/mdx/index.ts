@@ -1,2 +1,2 @@
-export { Mdx } from "./mdx";
-export type { MdxProps } from "./mdx";
+export { Mdx } from './mdx'
+export type { MdxProps } from './mdx'

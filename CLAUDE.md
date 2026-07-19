@@ -115,8 +115,8 @@ category: engineering # single category
 tags: [next, react, perf] # multiple tags
 draft: false # true hides from production builds
 cover:
-  src: /images/blog/my-post/cover.jpg
-  alt: Descriptive alt text
+    src: /images/blog/my-post/cover.jpg
+    alt: Descriptive alt text
 ---
 # Heading
 
@@ -131,19 +131,19 @@ Body is standard MDX. Fenced code blocks are highlighted via Shiki.
 
 ```yaml
 ---
-title: "Prosbase V2"
-summary: "LoL esports stats platform — real-time ingest + analytics."
+title: 'Prosbase V2'
+summary: 'LoL esports stats platform — real-time ingest + analytics.'
 category: web
-repo: "https://github.com/you/prosbase"
-url: "https://prosbase.example.com"
-stack: ["Next.js", "Hono", "PostgreSQL", "BullMQ"]
+repo: 'https://github.com/you/prosbase'
+url: 'https://prosbase.example.com'
+stack: ['Next.js', 'Hono', 'PostgreSQL', 'BullMQ']
 highlights:
-  - "Ingest pipeline scales to 10k events/sec"
-  - "TypeScript monorepo with shared contracts"
-  - "Tauri desktop companion"
+    - 'Ingest pipeline scales to 10k events/sec'
+    - 'TypeScript monorepo with shared contracts'
+    - 'Tauri desktop companion'
 images:
-  - src: /images/projects/prosbase/cover.webp
-    alt: "Dashboard"
+    - src: /images/projects/prosbase/cover.webp
+      alt: 'Dashboard'
 ---
 # Overview
 

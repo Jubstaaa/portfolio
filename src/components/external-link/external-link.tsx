@@ -1,13 +1,13 @@
-import type { AnchorHTMLAttributes } from "react";
+import type { AnchorHTMLAttributes } from 'react'
 
 export interface ExternalLinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
-  href: string;
+    href: string
 }
 
-export function ExternalLink({ href, children, ...rest }: ExternalLinkProps) {
-  return (
-    <a href={href} target="_blank" rel="noreferrer noopener" {...rest}>
-      {children}
-    </a>
-  );
+export function ExternalLink({ children, href, ...rest }: ExternalLinkProps) {
+    return (
+        <a href={href} rel="noreferrer noopener" target="_blank" {...rest}>
+            {children}
+        </a>
+    )
 }

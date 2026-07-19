@@ -1,23 +1,22 @@
-import Link from "next/link";
+import Link from 'next/link'
 
-import { site } from "@/lib/content";
-import { cn } from "@/lib/utils";
+import { site } from '@/lib/content'
+import { cn } from '@/lib/utils'
 
 export interface LogoProps {
-  className?: string;
+    className?: string
 }
 
 export function Logo({ className }: LogoProps) {
-  return (
-    <Link
-      href="/"
-      aria-label={`${site.name} — home`}
-      className={cn(
-        "text-foreground hover:text-accent transition-token text-sm tracking-tight",
-        className,
-      )}
-    >
-      ~/{site.handle}
-    </Link>
-  );
+    return (
+        <Link
+            aria-label={`${site.name} — home`}
+            href="/"
+            className={cn(
+                'text-foreground hover:text-accent transition-token text-sm tracking-tight',
+                className
+            )}>
+            ~/{site.handle}
+        </Link>
+    )
 }

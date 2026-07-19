@@ -1,5 +1,5 @@
 ---
-title: "Hit-Slop for the Web: Bigger Tap Targets in Tailwind CSS"
+title: 'Hit-Slop for the Web: Bigger Tap Targets in Tailwind CSS'
 description: "Tiny icons and dense toolbars are miserable to tap. Here's a pure-CSS Tailwind plugin that grows an element's touch area without touching its layout."
 date: 2026-06-07
 category: development
@@ -15,7 +15,7 @@ So I built one. [`tailwind-hitslop`](https://github.com/Jubstaaa/tailwind-hitslo
 
 ```html
 <button class="pointer-coarse:hit-slop-2">
-  <x-icon class="size-4" />
+    <x-icon class="size-4" />
 </button>
 ```
 
@@ -40,8 +40,8 @@ bun add tailwind-hitslop
 **Tailwind v4** — import the CSS. No JavaScript, no config:
 
 ```css
-@import "tailwindcss";
-@import "tailwind-hitslop";
+@import 'tailwindcss';
+@import 'tailwind-hitslop';
 ```
 
 **Tailwind v3** — register the plugin:
@@ -49,8 +49,8 @@ bun add tailwind-hitslop
 ```js
 // tailwind.config.js
 module.exports = {
-  plugins: [require("tailwind-hitslop")],
-};
+    plugins: [require('tailwind-hitslop')],
+}
 ```
 
 Every utility below works identically on either version.
@@ -85,8 +85,9 @@ And because everything compiles down to plain utilities, it composes with every 
 ```
 
 <Note>
-  Utilities apply on every pointer by default — a mouse user benefits from a forgiving click area
-  too. Wrap them in `pointer-coarse:` when you want the slop only on touch devices.
+    Utilities apply on every pointer by default — a mouse user benefits from a
+    forgiving click area too. Wrap them in `pointer-coarse:` when you want the
+    slop only on touch devices.
 </Note>
 
 ## How it works under the hood
@@ -106,8 +107,9 @@ There's no runtime cost either: it's static CSS that ships with your stylesheet.
 ## Gotchas worth knowing
 
 <Warn>
-  An ancestor with `overflow: hidden` silently clips the slop — cards, modals and scroll containers
-  are the usual suspects. Toggle `hit-slop-debug` and look.
+    An ancestor with `overflow: hidden` silently clips the slop — cards, modals
+    and scroll containers are the usual suspects. Toggle `hit-slop-debug` and
+    look.
 </Warn>
 
 A few more things the README is honest about:

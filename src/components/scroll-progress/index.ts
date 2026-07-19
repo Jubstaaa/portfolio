@@ -1,1 +1,1 @@
-export { ScrollProgress } from "./scroll-progress";
+export { ScrollProgress } from './scroll-progress'

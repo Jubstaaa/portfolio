@@ -1,89 +1,89 @@
 :root,
 .dark {
-  --background: oklch(0.17 0.013 255);
-  --foreground: oklch(0.93 0.008 85);
+    --background: oklch(0.17 0.013 255);
+    --foreground: oklch(0.93 0.008 85);
 
-  --card: oklch(0.21 0.013 255);
-  --card-foreground: oklch(0.93 0.008 85);
-  --popover: oklch(0.21 0.013 255);
-  --popover-foreground: oklch(0.93 0.008 85);
+    --card: oklch(0.21 0.013 255);
+    --card-foreground: oklch(0.93 0.008 85);
+    --popover: oklch(0.21 0.013 255);
+    --popover-foreground: oklch(0.93 0.008 85);
 
-  --muted: oklch(0.23 0.013 255);
-  --muted-foreground: oklch(0.62 0.02 250);
+    --muted: oklch(0.23 0.013 255);
+    --muted-foreground: oklch(0.62 0.02 250);
 
-  --primary: oklch(0.93 0.008 85);
-  --primary-foreground: oklch(0.17 0.013 255);
-  --secondary: oklch(0.23 0.013 255);
-  --secondary-foreground: oklch(0.9 0.01 85);
+    --primary: oklch(0.93 0.008 85);
+    --primary-foreground: oklch(0.17 0.013 255);
+    --secondary: oklch(0.23 0.013 255);
+    --secondary-foreground: oklch(0.9 0.01 85);
 
-  --accent: oklch(0.76 0.14 240);
-  --accent-foreground: oklch(0.14 0.013 255);
+    --accent: oklch(0.76 0.14 240);
+    --accent-foreground: oklch(0.14 0.013 255);
 
-  --border: oklch(0.3 0.013 250);
-  --input: oklch(0.3 0.013 250);
-  --ring: oklch(0.72 0.15 240);
+    --border: oklch(0.3 0.013 250);
+    --input: oklch(0.3 0.013 250);
+    --ring: oklch(0.72 0.15 240);
 
-  --destructive: oklch(0.71 0.18 15);
-  --destructive-foreground: oklch(0.99 0 0);
-  --success: oklch(0.76 0.14 145);
-  --warning: oklch(0.82 0.16 75);
+    --destructive: oklch(0.71 0.18 15);
+    --destructive-foreground: oklch(0.99 0 0);
+    --success: oklch(0.76 0.14 145);
+    --warning: oklch(0.82 0.16 75);
 
-  --radius: 0.5rem;
+    --radius: 0.5rem;
 
-  --duration-fast: 150ms;
-  --duration-base: 240ms;
+    --duration-fast: 150ms;
+    --duration-base: 240ms;
 
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 
-  --space-gutter: 1.25rem;
-  --space-section: 5rem;
-  --content-max: 80rem;
-  --prose-max: 72ch;
+    --space-gutter: 1.25rem;
+    --space-section: 5rem;
+    --content-max: 80rem;
+    --prose-max: 72ch;
 }
 
 @media (min-width: 768px) {
-  :root,
-  .dark {
-    --space-gutter: 2rem;
-    --space-section: 8rem;
-  }
+    :root,
+    .dark {
+        --space-gutter: 2rem;
+        --space-section: 8rem;
+    }
 }
 
 .light {
-  --background: oklch(0.985 0.005 85);
-  --foreground: oklch(0.22 0.02 255);
+    --background: oklch(0.985 0.005 85);
+    --foreground: oklch(0.22 0.02 255);
 
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.22 0.02 255);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.22 0.02 255);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.22 0.02 255);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.22 0.02 255);
 
-  --muted: oklch(0.96 0.008 85);
-  --muted-foreground: oklch(0.48 0.02 250);
+    --muted: oklch(0.96 0.008 85);
+    --muted-foreground: oklch(0.48 0.02 250);
 
-  --primary: oklch(0.22 0.02 255);
-  --primary-foreground: oklch(0.985 0.005 85);
-  --secondary: oklch(0.96 0.008 85);
-  --secondary-foreground: oklch(0.22 0.02 255);
+    --primary: oklch(0.22 0.02 255);
+    --primary-foreground: oklch(0.985 0.005 85);
+    --secondary: oklch(0.96 0.008 85);
+    --secondary-foreground: oklch(0.22 0.02 255);
 
-  --accent: oklch(0.52 0.17 240);
-  --accent-foreground: oklch(0.99 0 0);
+    --accent: oklch(0.52 0.17 240);
+    --accent-foreground: oklch(0.99 0 0);
 
-  --border: oklch(0.9 0.01 250);
-  --input: oklch(0.9 0.01 250);
-  --ring: oklch(0.52 0.17 240);
+    --border: oklch(0.9 0.01 250);
+    --input: oklch(0.9 0.01 250);
+    --ring: oklch(0.52 0.17 240);
 
-  --destructive: oklch(0.55 0.2 15);
-  --destructive-foreground: oklch(0.99 0 0);
-  --success: oklch(0.5 0.14 145);
-  --warning: oklch(0.62 0.17 75);
+    --destructive: oklch(0.55 0.2 15);
+    --destructive-foreground: oklch(0.99 0 0);
+    --success: oklch(0.5 0.14 145);
+    --warning: oklch(0.62 0.17 75);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  :root,
-  .dark,
-  .light {
-    --duration-fast: 0ms;
-    --duration-base: 0ms;
-  }
+    :root,
+    .dark,
+    .light {
+        --duration-fast: 0ms;
+        --duration-base: 0ms;
+    }
 }

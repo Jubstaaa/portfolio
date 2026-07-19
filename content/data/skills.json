@@ -1,29 +1,29 @@
 [
-  { "name": "Full-Stack Development", "category": "other" },
-  { "name": "TypeScript End-to-End", "category": "lang" },
+    { "name": "Full-Stack Development", "category": "other" },
+    { "name": "TypeScript End-to-End", "category": "lang" },
 
-  { "name": "React Architecture", "category": "frontend" },
-  { "name": "Next.js App Router", "category": "frontend" },
-  { "name": "State Management", "category": "frontend" },
-  { "name": "Responsive Design", "category": "frontend" },
-  { "name": "Web Animations", "category": "frontend" },
-  { "name": "Performance Optimization", "category": "frontend" },
-  { "name": "Accessibility", "category": "frontend" },
+    { "name": "React Architecture", "category": "frontend" },
+    { "name": "Next.js App Router", "category": "frontend" },
+    { "name": "State Management", "category": "frontend" },
+    { "name": "Responsive Design", "category": "frontend" },
+    { "name": "Web Animations", "category": "frontend" },
+    { "name": "Performance Optimization", "category": "frontend" },
+    { "name": "Accessibility", "category": "frontend" },
 
-  { "name": "REST API Design", "category": "backend" },
-  { "name": "Real-Time Systems (WebSocket)", "category": "backend" },
-  { "name": "Relational & Document Data Modeling", "category": "backend" },
-  { "name": "Authentication & Authorization", "category": "backend" },
-  { "name": "Server-Side Rendering", "category": "backend" },
+    { "name": "REST API Design", "category": "backend" },
+    { "name": "Real-Time Systems (WebSocket)", "category": "backend" },
+    { "name": "Relational & Document Data Modeling", "category": "backend" },
+    { "name": "Authentication & Authorization", "category": "backend" },
+    { "name": "Server-Side Rendering", "category": "backend" },
 
-  { "name": "Mobile Development (React Native / Expo)", "category": "other" },
-  { "name": "Desktop Apps (Electron)", "category": "other" },
-  { "name": "Open-Source Maintenance", "category": "other" },
+    { "name": "Mobile Development (React Native / Expo)", "category": "other" },
+    { "name": "Desktop Apps (Electron)", "category": "other" },
+    { "name": "Open-Source Maintenance", "category": "other" },
 
-  { "name": "CI/CD Pipelines", "category": "devops" },
-  { "name": "VPS Deployment (Nginx / Ubuntu)", "category": "devops" },
-  { "name": "Serverless Deployment", "category": "devops" },
+    { "name": "CI/CD Pipelines", "category": "devops" },
+    { "name": "VPS Deployment (Nginx / Ubuntu)", "category": "devops" },
+    { "name": "Serverless Deployment", "category": "devops" },
 
-  { "name": "Component-Driven Design", "category": "design" },
-  { "name": "Figma to Code", "category": "design" }
+    { "name": "Component-Driven Design", "category": "design" },
+    { "name": "Figma to Code", "category": "design" }
 ]
