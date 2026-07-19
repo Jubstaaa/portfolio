@@ -12,6 +12,8 @@ import { ExternalLink } from '@/components/external-link'
 import { StyledLink } from '@/components/styled-link'
 import { cn, LINK_CLASS } from '@/lib/utils'
 
+import { HEADING_CLASS } from './mdx-components.constants'
+
 const RULE = '─'.repeat(240)
 
 function isExternal(href: string | undefined): boolean {
@@ -47,53 +49,20 @@ function Anchor({
     )
 }
 
-function H1({ className, ...props }: HTMLAttributes<HTMLHeadingElement>) {
-    return (
-        <h1
-            className={cn(
-                'text-foreground mt-10 mb-4 text-xl font-semibold tracking-tight',
-                className
-            )}
-            {...props}
-        />
-    )
+function makeHeading(tag: keyof typeof HEADING_CLASS) {
+    const Tag = tag
+    return function MdxHeading({
+        className,
+        ...props
+    }: HTMLAttributes<HTMLHeadingElement>) {
+        return <Tag className={cn(HEADING_CLASS[tag], className)} {...props} />
+    }
 }
 
-function H2({ className, ...props }: HTMLAttributes<HTMLHeadingElement>) {
-    return (
-        <h2
-            className={cn(
-                'text-foreground mt-10 mb-3 text-lg font-semibold tracking-tight',
-                className
-            )}
-            {...props}
-        />
-    )
-}
-
-function H3({ className, ...props }: HTMLAttributes<HTMLHeadingElement>) {
-    return (
-        <h3
-            className={cn(
-                'text-foreground mt-8 mb-2 text-base font-semibold tracking-tight',
-                className
-            )}
-            {...props}
-        />
-    )
-}
-
-function H4({ className, ...props }: HTMLAttributes<HTMLHeadingElement>) {
-    return (
-        <h4
-            className={cn(
-                'text-foreground mt-6 mb-2 text-sm font-semibold tracking-tight',
-                className
-            )}
-            {...props}
-        />
-    )
-}
+const H1 = makeHeading('h1')
+const H2 = makeHeading('h2')
+const H3 = makeHeading('h3')
+const H4 = makeHeading('h4')
 
 function P({ className, ...props }: HTMLAttributes<HTMLParagraphElement>) {
     return (
@@ -175,6 +144,33 @@ function Pre(props: HTMLAttributes<HTMLPreElement>) {
 
 type CalloutTone = 'note' | 'warn'
 
+function BorderRow({
+    label,
+    left,
+    right,
+}: {
+    label?: React.ReactNode
+    left: string
+    right: string
+}) {
+    return (
+        <div className="text-muted-foreground flex items-baseline gap-2 text-sm leading-none">
+            <span aria-hidden className="select-none">
+                {left}
+            </span>
+            {label}
+            <span
+                aria-hidden
+                className="term-rule flex-1 overflow-hidden whitespace-nowrap select-none">
+                {RULE}
+            </span>
+            <span aria-hidden className="select-none">
+                {right}
+            </span>
+        </div>
+    )
+}
+
 function Callout({
     children,
     label,
@@ -189,41 +185,19 @@ function Callout({
         tone === 'warn' ? 'text-warning' : 'text-muted-foreground'
     return (
         <aside
-            data-callout={tone}
-            className={cn(
-                'my-6 text-sm leading-relaxed',
-                tone === 'warn' ? 'text-foreground' : 'text-foreground'
-            )}>
-            <div className="text-muted-foreground flex items-baseline gap-2 text-sm leading-none">
-                <span aria-hidden className="select-none">
-                    ╭─
-                </span>
-                <span className={cn('label-caps', labelClass)}>
-                    {labelText}
-                </span>
-                <span
-                    aria-hidden
-                    className="term-rule flex-1 overflow-hidden whitespace-nowrap select-none">
-                    {RULE}
-                </span>
-                <span aria-hidden className="select-none">
-                    ╮
-                </span>
-            </div>
+            className={cn('my-6 text-sm leading-relaxed', 'text-foreground')}
+            data-callout={tone}>
+            <BorderRow
+                left="╭─"
+                right="╮"
+                label={
+                    <span className={cn('label-caps', labelClass)}>
+                        {labelText}
+                    </span>
+                }
+            />
             <div className="px-1 py-3">{children}</div>
-            <div className="text-muted-foreground flex items-baseline gap-2 text-sm leading-none">
-                <span aria-hidden className="select-none">
-                    ╰
-                </span>
-                <span
-                    aria-hidden
-                    className="term-rule flex-1 overflow-hidden whitespace-nowrap select-none">
-                    {RULE}
-                </span>
-                <span aria-hidden className="select-none">
-                    ╯
-                </span>
-            </div>
+            <BorderRow left="╰" right="╯" />
         </aside>
     )
 }
