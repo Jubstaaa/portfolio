@@ -1,10 +1,10 @@
+import { NavLinks } from '@/components/nav-links'
 import {
     StatusDot,
     TerminalBlock,
     TerminalLine,
     TerminalMeta,
 } from '@/components/terminal-block'
-import { NavLinks } from '@/views/home/terminal/nav-links'
 
 export default function NotFound() {
     return (

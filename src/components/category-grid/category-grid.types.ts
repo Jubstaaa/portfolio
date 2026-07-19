@@ -1,9 +1,6 @@
-export interface CategoryGridGroup {
-    items: string[]
-    label: string
-}
-
-export interface CategoryGridProps {
+export interface CategoryGridProps<T extends string> {
+    buckets: Record<T, { name: string }[]>
     className?: string
-    groups: CategoryGridGroup[]
+    label: Record<T, string>
+    order: T[]
 }

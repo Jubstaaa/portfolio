@@ -2,6 +2,7 @@ import type {
     AnchorHTMLAttributes,
     HTMLAttributes,
     ImgHTMLAttributes,
+    ReactNode,
 } from 'react'
 
 import Image from 'next/image'
@@ -146,7 +147,7 @@ function BorderRow({
     left,
     right,
 }: {
-    label?: React.ReactNode
+    label?: ReactNode
     left: string
     right: string
 }) {
@@ -173,7 +174,7 @@ function Callout({
     label,
     tone = 'note',
 }: {
-    children: React.ReactNode
+    children: ReactNode
     label?: string
     tone?: CalloutTone
 }) {
@@ -199,13 +200,7 @@ function Callout({
     )
 }
 
-function Note({
-    children,
-    label,
-}: {
-    children: React.ReactNode
-    label?: string
-}) {
+function Note({ children, label }: { children: ReactNode; label?: string }) {
     return (
         <Callout tone="note" {...(label !== undefined ? { label } : {})}>
             {children}
@@ -213,13 +208,7 @@ function Note({
     )
 }
 
-function Warn({
-    children,
-    label,
-}: {
-    children: React.ReactNode
-    label?: string
-}) {
+function Warn({ children, label }: { children: ReactNode; label?: string }) {
     return (
         <Callout tone="warn" {...(label !== undefined ? { label } : {})}>
             {children}

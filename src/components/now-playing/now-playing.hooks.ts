@@ -11,6 +11,7 @@ export function useNowPlaying() {
         },
         queryKey: ['now-playing'],
         refetchInterval: 30_000,
+        refetchOnWindowFocus: false,
         staleTime: 30_000,
     })
 }

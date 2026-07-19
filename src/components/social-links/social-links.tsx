@@ -10,7 +10,7 @@ export function SocialLinks({ className }: SocialLinksProps) {
             {socials.map(social => (
                 <li key={social.href}>
                     <ExternalLink
-                        className="text-muted-foreground hover:text-foreground transition-token group inline-flex items-center gap-2"
+                        className="text-muted-foreground hover:text-foreground transition-token group inline-flex items-center gap-2 no-underline"
                         href={social.href}>
                         <span
                             aria-hidden

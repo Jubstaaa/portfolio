@@ -10,35 +10,27 @@ import {
 } from './skills.constants'
 
 export function Skills() {
-    const buckets = getSkillsByCategory()
-    const groups = SKILL_CATEGORY_ORDER.filter(
-        cat => (buckets[cat] ?? []).length > 0
-    ).map(cat => ({
-        items: (buckets[cat] ?? []).map(skill => skill.name),
-        label: SKILL_CATEGORY_LABEL[cat],
-    }))
-
     return (
         <div className="space-y-6">
             <SectionHeading number="04" title="skills" />
-            <CategoryGrid groups={groups} />
+            <CategoryGrid
+                buckets={getSkillsByCategory()}
+                label={SKILL_CATEGORY_LABEL}
+                order={SKILL_CATEGORY_ORDER}
+            />
         </div>
     )
 }
 
 export function Stacks() {
-    const buckets = getStacksByCategory()
-    const groups = STACK_CATEGORY_ORDER.filter(
-        cat => (buckets[cat] ?? []).length > 0
-    ).map(cat => ({
-        items: (buckets[cat] ?? []).map(stack => stack.name),
-        label: STACK_CATEGORY_LABEL[cat],
-    }))
-
     return (
         <div className="space-y-6">
             <SectionHeading number="05" title="stacks" />
-            <CategoryGrid groups={groups} />
+            <CategoryGrid
+                buckets={getStacksByCategory()}
+                label={STACK_CATEGORY_LABEL}
+                order={STACK_CATEGORY_ORDER}
+            />
         </div>
     )
 }

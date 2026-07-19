@@ -1,11 +1,11 @@
 import type { ReactNode } from 'react'
 
+import { NavLinks } from '@/components/nav-links'
 import { NowPlaying } from '@/components/now-playing'
 import { site } from '@/lib/content'
 import { handlePath } from '@/lib/site'
 
 import type { CommandContext, TerminalCommand } from './commands.types'
-import { NavLinks } from './nav-links'
 import {
     ENV_OUTPUT,
     HIDDEN_FILES,
