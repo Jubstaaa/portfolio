@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import { ContentCard } from '@/components/content-card'
 import { PathBar } from '@/components/path-bar'
 import { SectionHeading } from '@/components/section-heading'
-import { getAllProjects, site } from '@/lib/content'
+import { getAllProjects } from '@/lib/content'
 import { buildMetadata } from '@/lib/seo'
 
 export const metadata: Metadata = buildMetadata({
@@ -29,7 +29,7 @@ export default function ProjectsListPage() {
         <>
             <PathBar
                 meta={`${projects.length} ${projects.length === 1 ? 'entry' : 'entries'}`}
-                path={`~/${site.handle}/projects`}
+                segment="projects"
             />
             <section className="container-default section-pad space-y-10">
                 <SectionHeading

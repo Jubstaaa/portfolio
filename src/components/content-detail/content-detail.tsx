@@ -33,7 +33,7 @@ export interface ContentDetailProps {
         idPrefix: string
         slug: string
     }
-    pathBar: { meta: string; path: string }
+    pathBar: { meta: string; segment: string }
 }
 
 export function ContentDetail({
@@ -55,7 +55,7 @@ export function ContentDetail({
                 data={jsonLd.breadcrumb}
                 id={`ld-breadcrumb-${jsonLd.slug}`}
             />
-            <PathBar meta={pathBar.meta} path={pathBar.path} />
+            <PathBar meta={pathBar.meta} segment={pathBar.segment} />
             <section className="container-default section-pad">
                 <article className="mx-auto max-w-3xl min-w-0 space-y-8">
                     <ArticleHeader

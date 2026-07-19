@@ -29,10 +29,7 @@ export const metadata: Metadata = buildMetadata({
 export default function AboutPage() {
     return (
         <>
-            <PathBar
-                meta={`${site.role} · ${site.location}`}
-                path={`~/${site.handle}/about`}
-            />
+            <PathBar meta={`${site.role} · ${site.location}`} segment="about" />
             <section className="container-default section-pad space-y-20">
                 <div className="max-w-3xl space-y-10">
                     <SectionHeading as="h1" number="01" title="bio" />

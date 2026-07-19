@@ -1,12 +1,9 @@
+import { site } from '@/lib/content'
 import { cn } from '@/lib/utils'
 
-export interface PathBarProps {
-    className?: string
-    meta?: string
-    path: string
-}
+import type { PathBarProps } from './path-bar.types'
 
-export function PathBar({ className, meta, path }: PathBarProps) {
+export function PathBar({ className, meta, segment }: PathBarProps) {
     return (
         <div className={cn('border-b', className)}>
             <div className="container-default text-muted-foreground flex h-10 items-center justify-between text-xs">
@@ -15,7 +12,7 @@ export function PathBar({ className, meta, path }: PathBarProps) {
                         ~/
                     </span>
                     <span className="text-foreground">
-                        {path.replace(/^~\//, '')}
+                        {segment ? `${site.handle}/${segment}` : site.handle}
                     </span>
                 </span>
                 {meta ? <span className="truncate pl-4">· {meta}</span> : null}

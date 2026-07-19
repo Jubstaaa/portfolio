@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import { ContentCard } from '@/components/content-card'
 import { PathBar } from '@/components/path-bar'
 import { SectionHeading } from '@/components/section-heading'
-import { getPublishedPosts, site } from '@/lib/content'
+import { getPublishedPosts } from '@/lib/content'
 import { formatDate } from '@/lib/format'
 import { buildMetadata } from '@/lib/seo'
 
@@ -29,7 +29,7 @@ export default function BlogListPage() {
         <>
             <PathBar
                 meta={`${posts.length} ${posts.length === 1 ? 'post' : 'posts'}`}
-                path={`~/${site.handle}/blog`}
+                segment="blog"
             />
             <section className="container-default section-pad space-y-10">
                 <SectionHeading

@@ -22,10 +22,7 @@ export const metadata: Metadata = buildMetadata({
 export default function ContactPage() {
     return (
         <>
-            <PathBar
-                meta="email · sociallinks"
-                path={`~/${site.handle}/contact`}
-            />
+            <PathBar meta="email · sociallinks" segment="contact" />
             <section className="container-default section-pad space-y-12">
                 <SectionHeading
                     as="h1"

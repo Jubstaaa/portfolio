@@ -6,6 +6,7 @@ import { ImageResponse } from 'next/og'
 import sharp from 'sharp'
 
 import { site } from '@/lib/content'
+import { handlePath } from '@/lib/site'
 
 export const OG_SIZE = { height: 630, width: 1200 } as const
 export const OG_CONTENT_TYPE = 'image/jpeg'
@@ -62,7 +63,7 @@ export async function renderOgImage({
     segment,
     title,
 }: OgInput) {
-    const path = segment ? `~/${site.handle}/${segment}` : `~/${site.handle}`
+    const path = handlePath(segment)
     const cta =
         segment === 'projects'
             ? 'View the project'

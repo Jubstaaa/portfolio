@@ -4,8 +4,8 @@ import {
     TerminalLine,
     TerminalMeta,
 } from '@/components/terminal-block'
-import { site } from '@/lib/content'
 import { buildPersonJsonLd } from '@/lib/seo'
+import { handlePath } from '@/lib/site'
 
 import { renderCommandOutput } from './terminal/commands'
 import { InteractiveTerminal } from './terminal/interactive-terminal'
@@ -18,7 +18,7 @@ export default function HomePage() {
             <JsonLd data={buildPersonJsonLd()} id="ld-person" />
             <div className="min-h-0 flex-1 overflow-y-auto">
                 <TerminalBlock>
-                    <TerminalMeta branch="main" path={`~/${site.handle}`} />
+                    <TerminalMeta branch="main" path={handlePath()} />
 
                     <InteractiveTerminal introCommands={INTRO_COMMANDS}>
                         {INTRO_COMMANDS.map(name => (

@@ -93,7 +93,7 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
             }}
             pathBar={{
                 meta: project.category,
-                path: `~/${site.handle}/projects/${project.slug}`,
+                segment: `projects/${project.slug}`,
             }}
             {...(project.body ? { body: project.body } : {})}
             {...(cover

@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 
 import { NowPlaying } from '@/components/now-playing'
 import { site } from '@/lib/content'
+import { handlePath } from '@/lib/site'
 
 import type { CommandContext, TerminalCommand } from './commands.types'
 import { NavLinks } from './nav-links'
@@ -220,7 +221,7 @@ export const commands: Record<string, TerminalCommand> = {
     },
     'pwd': {
         description: 'print working directory',
-        run: () => <p>{`~/${site.handle}`}</p>,
+        run: () => <p>{handlePath()}</p>,
     },
     'rm': {
         description: '',

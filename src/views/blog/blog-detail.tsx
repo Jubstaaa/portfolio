@@ -94,7 +94,7 @@ export default async function BlogDetailPage({ params }: PostPageProps) {
             }}
             pathBar={{
                 meta: `${formatDate(post.date)} · ${post.category}`,
-                path: `~/${site.handle}/blog/${post.slug}`,
+                segment: `blog/${post.slug}`,
             }}
             {...(post.cover && post.showCover
                 ? {

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 
 import { type Post, type Project, site } from '@/lib/content'
+import { ogLocale } from '@/lib/site'
 
 function absoluteUrl(path: string): string {
     return new URL(path, site.url).toString()
@@ -31,7 +32,7 @@ export function buildMetadata(input: BuildMetadataInput): Metadata {
         type === 'article'
             ? {
                   description,
-                  locale: 'en_US',
+                  locale: ogLocale,
                   siteName: site.name,
                   title: input.title,
                   type: 'article',
@@ -49,7 +50,7 @@ export function buildMetadata(input: BuildMetadataInput): Metadata {
               }
             : {
                   description,
-                  locale: 'en_US',
+                  locale: ogLocale,
                   siteName: site.name,
                   title: input.title,
                   type: 'website',

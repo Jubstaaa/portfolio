@@ -6,6 +6,7 @@ import { Footer } from '@/components/footer'
 import { Nav } from '@/components/nav'
 import { ScrollProgress } from '@/components/scroll-progress'
 import { site } from '@/lib/content'
+import { ogLocale } from '@/lib/site'
 
 import { Providers } from './providers'
 import './globals.css'
@@ -65,7 +66,7 @@ export const metadata: Metadata = {
     metadataBase: new URL(site.url),
     openGraph: {
         description: site.description,
-        locale: 'en_US',
+        locale: ogLocale,
         siteName: site.name,
         title: site.title,
         type: 'website',
