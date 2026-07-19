@@ -22,7 +22,9 @@ export function ArticleHeader({
             <p className="text-muted-foreground flex flex-wrap items-center gap-x-3 text-xs">
                 {meta}
             </p>
-            <Heading as="h1" title={title} />
+            <div className="relative space-y-3">
+                <Heading as="h1" title={title} />
+            </div>
             <p className="text-foreground max-w-prose text-base leading-relaxed">
                 {lead}
             </p>
