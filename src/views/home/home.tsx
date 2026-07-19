@@ -1,0 +1,31 @@
+import { JsonLd } from '@/components/json-ld/json-ld'
+import { TerminalBlock } from '@/components/terminal-block/terminal-block'
+import { TerminalLine } from '@/components/terminal-block/terminal-line'
+import { TerminalMeta } from '@/components/terminal-block/terminal-meta'
+import { buildPersonJsonLd } from '@/lib/seo'
+import { handlePath } from '@/lib/site'
+
+import { INTRO_COMMANDS } from './home.constants'
+import { renderCommandOutput } from './terminal/commands'
+import { InteractiveTerminal } from './terminal/interactive-terminal'
+
+export default function HomePage() {
+    return (
+        <section className="container-default section-pad flex min-h-0 flex-1 flex-col">
+            <JsonLd data={buildPersonJsonLd()} id="ld-person" />
+            <div className="min-h-0 flex-1 overflow-y-auto">
+                <TerminalBlock>
+                    <TerminalMeta branch="main" path={handlePath()} />
+
+                    <InteractiveTerminal introCommands={INTRO_COMMANDS}>
+                        {INTRO_COMMANDS.map(name => (
+                            <TerminalLine key={name} command={name}>
+                                {renderCommandOutput(name)}
+                            </TerminalLine>
+                        ))}
+                    </InteractiveTerminal>
+                </TerminalBlock>
+            </div>
+        </section>
+    )
+}

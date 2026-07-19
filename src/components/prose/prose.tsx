@@ -1,10 +1,9 @@
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils'
 
-export interface ProseProps {
-  className?: string;
-  children: React.ReactNode;
-}
+import type { ProseProps } from './prose.types'
 
-export function Prose({ className, children }: ProseProps) {
-  return <div className={cn("prose text-foreground", className)}>{children}</div>;
+export function Prose({ children, className }: ProseProps) {
+    return (
+        <div className={cn('prose text-foreground', className)}>{children}</div>
+    )
 }

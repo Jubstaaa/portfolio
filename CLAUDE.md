@@ -58,12 +58,19 @@ bun run velite:watch           # velite --watch (use alongside bun dev when edit
 
 ## Repository Standards
 
-### Components
+> A global `frontend-standards` skill holds the canonical, project-agnostic version of these conventions. This section is the project-specific application of it — when in doubt, the skill wins.
 
-- **Folder pattern:** `component-name/component-name.tsx` + `index.ts` re-export. Sub-components sit at the same level until they earn promotion to the top level via reuse.
-- **Everything is kebab-case** — folders, component files, routes, lib, hooks, styles, content. React component identifiers stay PascalCase.
-- Server Components by default. Add `'use client'` only when unavoidable (state, effects, browser APIs, form inputs).
-- Client islands stay leaf-level; don't bubble `'use client'` upward.
+### View-based structure
+
+- Route logic lives in `src/views/<feature>/`, not in `src/app/`. Each `app/**/page.tsx` (and `layout.tsx`, `opengraph-image.tsx`, etc.) is a thin re-export:
+    ```ts
+    export { default, metadata } from '@/views/blog/blog-list'
+    ```
+- Inside a view folder, files sit flat and share the feature's base name with a dot suffix: `blog-list.tsx`, `blog-list.types.ts`, `blog-list.constants.ts`, `blog-list.hooks.ts`. No `ui/`, `lib/`, or other subfolders.
+- **No `index.ts` barrels anywhere** — not under `src/views/`, not under `src/components/`. Components live at `component-name/component-name.tsx` (+ `component-name.types.ts` / `component-name.constants.ts` as needed); each `.tsx` file holds exactly one component and one export. Importers use the direct file path (`@/components/foo/foo`, types from `@/components/foo/foo.types`), never a folder-level import.
+- Sub-components stay at the same level inside the component/view folder until reuse elsewhere earns them promotion to `src/components/`.
+- **Everything is kebab-case** — folders, files, routes, lib, hooks, styles, content. React component identifiers stay PascalCase.
+- Server Components by default. Add `'use client'` only when unavoidable (state, effects, browser APIs, form inputs). Client islands stay leaf-level; don't bubble `'use client'` upward.
 
 ### TypeScript
 
@@ -71,12 +78,22 @@ bun run velite:watch           # velite --watch (use alongside bun dev when edit
 - No `any`. Use `unknown` + narrow, or model the type properly.
 - Prefer `interface` for object shapes; `type` for unions, intersections, mapped/conditional types.
 - `import type { … }` for type-only imports.
+- **No inline type or constant definitions inside `.tsx` files.** A component's props/local types go in a sibling `.types.ts`; magic strings, enums, or lookup tables go in a sibling `.constants.ts`. The `.tsx` file imports both.
+- ESLint's `perfectionist` plugin sorts interface/object-type members, object literals, named imports, and JSX props automatically — don't hand-order them against a `--fix` run.
+
+### Data fetching
+
+- Client-side GET requests (e.g. now-playing) go through TanStack Query, not ad-hoc `useEffect` + `fetch`. A form submission or mutation would use a Next.js Server Action instead — this is a static site with no database, so that path isn't currently exercised.
+- Don't mirror query results into local state or context; read from the query cache directly.
+- `lodash-es` is allowed for utility functions (e.g. `groupBy`) where it's clearer than hand-rolling — import named functions only, never the default `lodash` bundle.
 
 ### Styling
 
 - Tailwind utilities first. Custom CSS goes into `src/styles/tokens.css` via `@theme` or into a co-located `.module.css` only if a utility answer doesn't exist.
 - Never inline `style={{ … }}` for anything a class can express.
-- **Prettier (project override of global rule):** double quotes, semicolons, 2-space indent, trailing comma `all`. This matches the Next.js / Vercel / shadcn ecosystem so snippets copy in clean. Prettier enforces; do not hand-format.
+- No off-scale arbitrary pixel values (`w-[437px]`, `mt-[13px]`, etc.) — use the Tailwind v4 scale, including its half-step utilities (`px-4.5`, `gap-2.5`, …), instead of reaching for a one-off arbitrary. Deliberate typographic values with no clean scale equivalent (a `rem`/`em` code-block font size tuned for readability, a `ch`-based monospace width) are fine and should stay as arbitrary values — the rule targets arbitrary spacing, not considered exceptions.
+- Important overrides use the Tailwind v4 trailing `!` suffix (`text-red-500!`), not the old leading `!` prefix.
+- **Prettier:** single quotes, no semicolons, 4-space indent, `arrowParens: avoid`, `bracketSameLine: true`, `quoteProps: consistent`, `trailingComma: es5`, default `printWidth` (80). Matches the rest of İlker's projects. Prettier enforces; do not hand-format.
 
 ### Motion
 
@@ -115,8 +132,8 @@ category: engineering # single category
 tags: [next, react, perf] # multiple tags
 draft: false # true hides from production builds
 cover:
-  src: /images/blog/my-post/cover.jpg
-  alt: Descriptive alt text
+    src: /images/blog/my-post/cover.jpg
+    alt: Descriptive alt text
 ---
 # Heading
 
@@ -131,19 +148,19 @@ Body is standard MDX. Fenced code blocks are highlighted via Shiki.
 
 ```yaml
 ---
-title: "Prosbase V2"
-summary: "LoL esports stats platform — real-time ingest + analytics."
+title: 'Prosbase V2'
+summary: 'LoL esports stats platform — real-time ingest + analytics.'
 category: web
-repo: "https://github.com/you/prosbase"
-url: "https://prosbase.example.com"
-stack: ["Next.js", "Hono", "PostgreSQL", "BullMQ"]
+repo: 'https://github.com/you/prosbase'
+url: 'https://prosbase.example.com'
+stack: ['Next.js', 'Hono', 'PostgreSQL', 'BullMQ']
 highlights:
-  - "Ingest pipeline scales to 10k events/sec"
-  - "TypeScript monorepo with shared contracts"
-  - "Tauri desktop companion"
+    - 'Ingest pipeline scales to 10k events/sec'
+    - 'TypeScript monorepo with shared contracts'
+    - 'Tauri desktop companion'
 images:
-  - src: /images/projects/prosbase/cover.webp
-    alt: "Dashboard"
+    - src: /images/projects/prosbase/cover.webp
+      alt: 'Dashboard'
 ---
 # Overview
 
@@ -205,6 +222,9 @@ Use `superpowers:systematic-debugging` for anything non-trivial. No guessing fix
 - Don't import JSON from `content/` directly — go through velite.
 - Don't ship `console.log` — ESLint flags it.
 - Don't write package versions by hand. `bun add <pkg>` or `bun add <pkg>@latest`.
-- Don't mirror RTK Query / fetch results into local state or context.
+- Don't mirror TanStack Query results into local state or context — read from the query cache.
+- Don't add an `index.ts` barrel anywhere — under `src/views/` the `app/**/page.tsx` re-export is the only consumer, and under `src/components/` importers use the direct file path instead.
+- Don't define types or constants inline in a `.tsx` file — split them into `.types.ts` / `.constants.ts`.
+- Don't reach for an arbitrary pixel value when a Tailwind v4 scale step (including half-steps) covers it.
 - Don't add emoji anywhere in UI or content unless explicitly asked.
 - Don't introduce a database, auth, or API layer — this is a static site.

@@ -1,17 +1,12 @@
-import type { ReactNode } from "react";
+import type { TimelineRowProps } from './timeline-row.types'
 
-export interface TimelineRowProps {
-  dateRange: string;
-  children: ReactNode;
-}
-
-export function TimelineRow({ dateRange, children }: TimelineRowProps) {
-  return (
-    <li className="hairline grid grid-cols-[minmax(0,1fr)] gap-x-6 gap-y-2 border-b py-6 last:border-b-0 md:grid-cols-[14rem,minmax(0,1fr)]">
-      <div className="text-muted-foreground flex items-start gap-3 text-xs">
-        <span className="font-mono tracking-tight">{dateRange}</span>
-      </div>
-      <div className="space-y-1.5">{children}</div>
-    </li>
-  );
+export function TimelineRow({ children, dateRange }: TimelineRowProps) {
+    return (
+        <li className="hairline grid grid-cols-[minmax(0,1fr)] gap-x-6 gap-y-2 border-b py-6 last:border-b-0 md:grid-cols-[14rem,minmax(0,1fr)]">
+            <div className="text-muted-foreground flex items-start gap-3 text-xs">
+                <span className="font-mono tracking-tight">{dateRange}</span>
+            </div>
+            <div className="space-y-1.5">{children}</div>
+        </li>
+    )
 }

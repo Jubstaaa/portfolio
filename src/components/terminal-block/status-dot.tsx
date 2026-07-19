@@ -1,23 +1,20 @@
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils'
 
-export type StatusTone = "success" | "warning" | "danger" | "muted";
-
-export interface StatusDotProps {
-  tone?: StatusTone;
-  className?: string;
-}
+import type { StatusDotProps, StatusTone } from './status-dot.types'
 
 const toneClass: Record<StatusTone, string> = {
-  success: "text-success",
-  warning: "text-warning",
-  danger: "text-destructive",
-  muted: "text-muted-foreground",
-};
+    danger: 'text-destructive',
+    muted: 'text-muted-foreground',
+    success: 'text-success',
+    warning: 'text-warning',
+}
 
-export function StatusDot({ tone = "success", className }: StatusDotProps) {
-  return (
-    <span aria-hidden className={cn("mr-2 select-none", toneClass[tone], className)}>
-      ●
-    </span>
-  );
+export function StatusDot({ className, tone = 'success' }: StatusDotProps) {
+    return (
+        <span
+            aria-hidden
+            className={cn('mr-2 select-none', toneClass[tone], className)}>
+            ●
+        </span>
+    )
 }

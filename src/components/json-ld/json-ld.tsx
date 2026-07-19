@@ -1,16 +1,13 @@
-interface JsonLdProps {
-  id: string;
-  data: Record<string, unknown>;
-}
+import type { JsonLdProps } from './json-ld.types'
 
-export function JsonLd({ id, data }: JsonLdProps) {
-  return (
-    <script
-      id={id}
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{
-        __html: JSON.stringify(data).replace(/</g, "\\u003c"),
-      }}
-    />
-  );
+export function JsonLd({ data, id }: JsonLdProps) {
+    return (
+        <script
+            id={id}
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+                __html: JSON.stringify(data).replace(/</g, '\\u003c'),
+            }}
+        />
+    )
 }

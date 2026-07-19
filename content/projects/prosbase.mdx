@@ -1,38 +1,38 @@
 ---
-title: "Prosbase"
-summary: "A League of Legends esports platform I built for a client and rebuilt from the ground up for v2 — leaderboards, pro builds, live game tracking, and esports data in one place."
-category: "Web App"
+title: 'Prosbase'
+summary: 'A League of Legends esports platform I built for a client and rebuilt from the ground up for v2 — leaderboards, pro builds, live game tracking, and esports data in one place.'
+category: 'Web App'
 order: 1
-url: "https://prosbase.com/"
+url: 'https://prosbase.com/'
 stack:
-  [
-    "Bun",
-    "Turborepo",
-    "Hono",
-    "React",
-    "Vite",
-    "Tailwind CSS",
-    "PostgreSQL",
-    "Drizzle",
-    "MongoDB",
-    "Redis",
-    "BullMQ",
-    "Riot API",
-    "Twitch API",
-    "DigitalOcean",
-    "Docker",
-  ]
+    [
+        'Bun',
+        'Turborepo',
+        'Hono',
+        'React',
+        'Vite',
+        'Tailwind CSS',
+        'PostgreSQL',
+        'Drizzle',
+        'MongoDB',
+        'Redis',
+        'BullMQ',
+        'Riot API',
+        'Twitch API',
+        'DigitalOcean',
+        'Docker',
+    ]
 highlights:
-  [
-    "Full rewrite into a Bun + Turborepo monorepo: Hono API, React/Vite web, and a background sync worker",
-    "Real-time pro player leaderboards backed by the Riot API and cached with Redis",
-    "Live game tracking with a 30s Redis cache and batched queries to stay fast under load",
-    "Esports data (leagues, teams, rosters) synced from Fandom Wiki via a BullMQ worker",
-    "Streamer hub + Twitch integration, plus a broadcast overlay and a Tauri desktop companion",
-  ]
+    [
+        'Full rewrite into a Bun + Turborepo monorepo: Hono API, React/Vite web, and a background sync worker',
+        'Real-time pro player leaderboards backed by the Riot API and cached with Redis',
+        'Live game tracking with a 30s Redis cache and batched queries to stay fast under load',
+        'Esports data (leagues, teams, rosters) synced from Fandom Wiki via a BullMQ worker',
+        'Streamer hub + Twitch integration, plus a broadcast overlay and a Tauri desktop companion',
+    ]
 images:
-  - src: "/images/projects/prosbase/cover.webp"
-    alt: "Prosbase Leaderboard"
+    - src: '/images/projects/prosbase/cover.webp'
+      alt: 'Prosbase Leaderboard'
 ---
 
 Prosbase started as a client project and grew into something I ended up rebuilding entirely. The client wanted a single place where League of Legends fans could follow everything about pro players — rankings, builds, teams, and live games — instead of jumping between half a dozen fragmented sources. This is the story of **v2**: a full rewrite that took the original idea and rebuilt it for scale, speed, and long-term maintainability.

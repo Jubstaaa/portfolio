@@ -1,19 +1,21 @@
-"use client";
+'use client'
 
-import { ThemeProvider as NextThemesProvider, type ThemeProviderProps } from "next-themes";
+import {
+    ThemeProvider as NextThemesProvider,
+    type ThemeProviderProps,
+} from 'next-themes'
 
 export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
-  return (
-    <NextThemesProvider
-      attribute="class"
-      defaultTheme="dark"
-      enableSystem
-      disableTransitionOnChange
-      themes={["light", "dark"]}
-      storageKey="theme"
-      {...props}
-    >
-      {children}
-    </NextThemesProvider>
-  );
+    return (
+        <NextThemesProvider
+            disableTransitionOnChange
+            enableSystem
+            attribute="class"
+            defaultTheme="dark"
+            storageKey="theme"
+            themes={['light', 'dark']}
+            {...props}>
+            {children}
+        </NextThemesProvider>
+    )
 }
