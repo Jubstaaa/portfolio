@@ -1,3 +1,4 @@
+import { Heading } from '@/components/heading'
 import { cn } from '@/lib/utils'
 
 export interface SectionHeadingProps {
@@ -9,7 +10,7 @@ export interface SectionHeadingProps {
 }
 
 export function SectionHeading({
-    as: Tag = 'h2',
+    as = 'h2',
     className,
     description,
     number,
@@ -24,13 +25,7 @@ export function SectionHeading({
                     {number}
                 </span>
             ) : null}
-            <Tag className="text-foreground flex items-baseline gap-2 text-lg font-normal">
-                <span aria-hidden className="text-muted-foreground select-none">
-                    #
-                </span>
-                <span>{title}</span>
-            </Tag>
-            <hr className="border-foreground my-2 border-t" />
+            <Heading as={as} title={title} />
             {description ? (
                 <p className="text-muted-foreground prose-max text-sm">
                     {description}
