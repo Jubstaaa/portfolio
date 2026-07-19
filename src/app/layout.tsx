@@ -5,9 +5,9 @@ import localFont from 'next/font/local'
 import { Footer } from '@/components/footer'
 import { Nav } from '@/components/nav'
 import { ScrollProgress } from '@/components/scroll-progress'
-import { ThemeProvider } from '@/components/theme-provider'
 import { site } from '@/lib/content'
 
+import { Providers } from './providers'
 import './globals.css'
 
 const hermit = localFont({
@@ -112,14 +112,14 @@ export default function RootLayout({
             <body
                 suppressHydrationWarning
                 className="bg-background text-foreground flex min-h-screen flex-col font-mono antialiased">
-                <ThemeProvider>
+                <Providers>
                     <Nav />
                     <ScrollProgress />
                     <main className="flex flex-1 flex-col" id="main">
                         {children}
                     </main>
                     <Footer />
-                </ThemeProvider>
+                </Providers>
             </body>
         </html>
     )

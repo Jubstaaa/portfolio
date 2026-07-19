@@ -87,3 +87,7 @@
         --duration-base: 0ms;
     }
 }
+
+.dot-nudge {
+    margin-top: calc((1lh - 0.375rem) / 2);
+}
