@@ -1,19 +1,11 @@
-import { type ReactNode, useCallback, useRef } from 'react'
+import { useCallback, useRef } from 'react'
 
 import { COMMAND_NAMES, PAGE_TARGETS } from './commands'
 import { HIDDEN_FILES } from './terminal-output.constants'
-
-interface CompletionSession {
-    build: (match: string) => string
-    index: number
-    matches: string[]
-}
-
-interface UseTabCompletionOptions {
-    appendEntry: (command: string, output: ReactNode) => void
-    input: string
-    setInput: (value: string) => void
-}
+import type {
+    CompletionSession,
+    UseTabCompletionOptions,
+} from './use-tab-completion.types'
 
 export function useTabCompletion({
     appendEntry,

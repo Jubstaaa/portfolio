@@ -1,11 +1,6 @@
 import { cn } from '@/lib/utils'
 
-export type StatusTone = 'success' | 'warning' | 'danger' | 'muted'
-
-export interface StatusDotProps {
-    className?: string
-    tone?: StatusTone
-}
+import type { StatusDotProps, StatusTone } from './status-dot.types'
 
 const toneClass: Record<StatusTone, string> = {
     danger: 'text-destructive',

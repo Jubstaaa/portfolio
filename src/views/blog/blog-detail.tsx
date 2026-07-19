@@ -17,12 +17,10 @@ import {
     buildMetadata,
 } from '@/lib/seo'
 
+import type { PostPageProps } from './blog-detail.types'
+
 export function generateStaticParams() {
     return posts.map(post => ({ slug: post.slug }))
-}
-
-interface PostPageProps {
-    params: Promise<{ slug: string }>
 }
 
 export async function generateMetadata({

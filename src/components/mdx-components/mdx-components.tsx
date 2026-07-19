@@ -12,9 +12,8 @@ import { ExternalLink } from '@/components/external-link'
 import { StyledLink } from '@/components/styled-link'
 import { cn, LINK_CLASS } from '@/lib/utils'
 
-import { HEADING_CLASS } from './mdx-components.constants'
-
-const RULE = '─'.repeat(240)
+import { HEADING_CLASS, RULE } from './mdx-components.constants'
+import type { CalloutTone } from './mdx-components.types'
 
 function isExternal(href: string | undefined): boolean {
     if (!href) return false
@@ -141,8 +140,6 @@ function InlineCode({ className, ...props }: HTMLAttributes<HTMLElement>) {
 function Pre(props: HTMLAttributes<HTMLPreElement>) {
     return <CodeBlock {...props} />
 }
-
-type CalloutTone = 'note' | 'warn'
 
 function BorderRow({
     label,

@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils'
 
 import { commands } from './commands'
 import type { CommandContext } from './commands.types'
+import type { InteractiveTerminalProps } from './interactive-terminal.types'
 import {
     appendEntry,
     clearTerminal,
@@ -19,12 +20,6 @@ import {
 import { useCommandHistory } from './use-command-history'
 import { useTabCompletion } from './use-tab-completion'
 import { useTerminalIntro } from './use-terminal-intro'
-
-export interface InteractiveTerminalProps {
-    children?: ReactNode
-    className?: string
-    introCommands?: string[]
-}
 
 export function InteractiveTerminal({
     children,

@@ -1,10 +1,6 @@
 import { cn } from '@/lib/utils'
 
-export interface TerminalMetaProps {
-    branch?: string
-    className?: string
-    path: string
-}
+import type { TerminalMetaProps } from './terminal-meta.types'
 
 export function TerminalMeta({ branch, className, path }: TerminalMetaProps) {
     return (

@@ -16,12 +16,10 @@ import {
     buildProjectJsonLd,
 } from '@/lib/seo'
 
+import type { ProjectPageProps } from './project-detail.types'
+
 export function generateStaticParams() {
     return getAllProjects().map(project => ({ slug: project.slug }))
-}
-
-interface ProjectPageProps {
-    params: Promise<{ slug: string }>
 }
 
 export async function generateMetadata({

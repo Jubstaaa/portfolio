@@ -1,7 +1,4 @@
-interface JsonLdProps {
-    id: string
-    data: Record<string, unknown>
-}
+import type { JsonLdProps } from './json-ld.types'
 
 export function JsonLd({ data, id }: JsonLdProps) {
     return (

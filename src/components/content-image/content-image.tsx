@@ -2,22 +2,8 @@ import Image from 'next/image'
 
 import { cn } from '@/lib/utils'
 
-export const CONTENT_IMAGE_MAX_HEIGHT_CLASS = 'max-h-125'
-
-export const CONTENT_IMAGE_CLASS = cn(
-    'hairline h-auto',
-    CONTENT_IMAGE_MAX_HEIGHT_CLASS,
-    'w-full rounded-md border object-contain'
-)
-
-export interface ContentImageProps {
-    alt: string
-    className?: string
-    height: number
-    priority?: boolean
-    src: string
-    width: number
-}
+import { CONTENT_IMAGE_CLASS } from './content-image.constants'
+import type { ContentImageProps } from './content-image.types'
 
 export function ContentImage({
     alt,

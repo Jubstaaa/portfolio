@@ -4,9 +4,7 @@ import { site } from '@/lib/content'
 import { handlePath } from '@/lib/site'
 import { cn } from '@/lib/utils'
 
-export interface LogoProps {
-    className?: string
-}
+import type { LogoProps } from './logo.types'
 
 export function Logo({ className }: LogoProps) {
     return (

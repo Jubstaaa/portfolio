@@ -5,10 +5,7 @@ import { Check, Copy } from 'lucide-react'
 import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard'
 import { cn, LINK_CLASS } from '@/lib/utils'
 
-export interface CopyEmailProps {
-    className?: string
-    email: string
-}
+import type { CopyEmailProps } from './copy-email.types'
 
 export function CopyEmail({ className, email }: CopyEmailProps) {
     const { copied, copy } = useCopyToClipboard()

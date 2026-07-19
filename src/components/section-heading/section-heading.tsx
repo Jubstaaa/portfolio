@@ -1,13 +1,7 @@
 import { Heading } from '@/components/heading'
 import { cn } from '@/lib/utils'
 
-export interface SectionHeadingProps {
-    as?: 'h1' | 'h2' | 'h3'
-    className?: string
-    description?: string
-    number?: string
-    title: string
-}
+import type { SectionHeadingProps } from './section-heading.types'
 
 export function SectionHeading({
     as = 'h2',

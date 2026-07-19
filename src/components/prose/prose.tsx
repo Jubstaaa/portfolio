@@ -1,9 +1,6 @@
 import { cn } from '@/lib/utils'
 
-export interface ProseProps {
-    children: React.ReactNode
-    className?: string
-}
+import type { ProseProps } from './prose.types'
 
 export function Prose({ children, className }: ProseProps) {
     return (

@@ -4,3 +4,5 @@ export const HEADING_CLASS = {
     h3: 'text-foreground mt-8 mb-2 text-base font-semibold tracking-tight',
     h4: 'text-foreground mt-6 mb-2 text-sm font-semibold tracking-tight',
 } as const
+
+export const RULE = '─'.repeat(240)

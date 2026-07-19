@@ -1,8 +1,6 @@
 import { cn } from '@/lib/utils'
 
-export interface TerminalCaretProps {
-    className?: string
-}
+import type { TerminalCaretProps } from './terminal-caret.types'
 
 export function TerminalCaret({ className }: TerminalCaretProps) {
     return (

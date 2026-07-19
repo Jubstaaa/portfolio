@@ -1,9 +1,4 @@
-import type { ReactNode } from 'react'
-
-export interface TimelineRowProps {
-    children: ReactNode
-    dateRange: string
-}
+import type { TimelineRowProps } from './timeline-row.types'
 
 export function TimelineRow({ children, dateRange }: TimelineRowProps) {
     return (

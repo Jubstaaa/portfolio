@@ -1,9 +1,6 @@
 import { cn } from '@/lib/utils'
 
-export interface TerminalBlockProps {
-    children: React.ReactNode
-    className?: string
-}
+import type { TerminalBlockProps } from './terminal-block.types'
 
 export function TerminalBlock({ children, className }: TerminalBlockProps) {
     return (
