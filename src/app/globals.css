@@ -87,18 +87,15 @@
 
 @layer utilities {
     .container-default {
-        width: 100%;
-        max-width: var(--content-max);
-        margin-inline: auto;
-        padding-inline: var(--space-gutter);
+        @apply mx-auto w-full max-w-(--content-max) px-(--space-gutter);
     }
 
     .section-pad {
-        padding-block: var(--space-section);
+        @apply py-(--space-section);
     }
 
     .prose-max {
-        max-width: var(--prose-max);
+        @apply max-w-(--prose-max);
     }
 
     .hairline {
@@ -106,8 +103,7 @@
     }
 
     .transition-token {
-        transition-duration: var(--duration-base);
-        transition-timing-function: var(--ease-out);
+        @apply duration-(--duration-base) ease-(--ease-out);
     }
 
     .cursor-blink {
@@ -125,7 +121,7 @@
     }
 
     .arrow-bullet {
-        padding-left: 1.5ch;
+        @apply pl-[1.5ch];
     }
 
     .arrow-bullet::before {
@@ -137,10 +133,7 @@
     }
 
     .label-caps {
-        font-size: 0.75rem;
-        line-height: calc(1 / 0.75);
-        letter-spacing: 0.18em;
-        text-transform: uppercase;
+        @apply text-xs tracking-[0.18em] uppercase;
     }
 }
 
