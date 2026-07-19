@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
 
-import Image from 'next/image'
 import { notFound } from 'next/navigation'
 
 import { AdjacentNav } from '@/components/adjacent-nav'
 import { ArticleHeader } from '@/components/article-header'
+import { ContentImage } from '@/components/content-image'
 import { ExternalLink } from '@/components/external-link'
 import { JsonLd } from '@/components/json-ld'
 import { Mdx } from '@/components/mdx'
@@ -100,12 +100,10 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
                     </ArticleHeader>
 
                     {cover ? (
-                        <Image
+                        <ContentImage
                             priority
                             alt={cover.alt}
-                            className="hairline h-auto max-h-[500px] w-full rounded-md border object-contain"
                             height={cover.height ?? 0}
-                            sizes="(min-width: 1024px) 720px, 100vw"
                             src={cover.src}
                             width={cover.width ?? 0}
                         />

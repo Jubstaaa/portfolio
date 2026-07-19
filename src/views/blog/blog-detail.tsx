@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
 
-import Image from 'next/image'
 import { notFound } from 'next/navigation'
 
 import { AdjacentNav } from '@/components/adjacent-nav'
 import { ArticleHeader } from '@/components/article-header'
+import { ContentImage } from '@/components/content-image'
 import { JsonLd } from '@/components/json-ld'
 import { Mdx } from '@/components/mdx'
 import { PathBar } from '@/components/path-bar'
@@ -102,12 +102,10 @@ export default async function BlogDetailPage({ params }: PostPageProps) {
                     />
 
                     {post.cover && post.showCover ? (
-                        <Image
+                        <ContentImage
                             priority
                             alt={post.cover.alt}
-                            className="hairline h-auto max-h-125 w-full rounded-md border object-contain"
                             height={post.cover.height ?? 0}
-                            sizes="(min-width: 1024px) 720px, 100vw"
                             src={post.cover.src}
                             width={post.cover.width ?? 0}
                         />

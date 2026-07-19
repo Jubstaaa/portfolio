@@ -7,6 +7,7 @@ import type {
 import Image from 'next/image'
 
 import { CodeBlock } from '@/components/code-block'
+import { CONTENT_IMAGE_MAX_HEIGHT_CLASS } from '@/components/content-image'
 import { ExternalLink } from '@/components/external-link'
 import { StyledLink } from '@/components/styled-link'
 import { cn, LINK_CLASS } from '@/lib/utils'
@@ -269,7 +270,8 @@ function Img({
     const w = Number(width) || undefined
     const h = Number(height) || undefined
     const sharedClassName = cn(
-        'my-6 max-h-125 w-full object-contain object-left',
+        'my-6 w-full object-contain object-left',
+        CONTENT_IMAGE_MAX_HEIGHT_CLASS,
         className
     )
 
