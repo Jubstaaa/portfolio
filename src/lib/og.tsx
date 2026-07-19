@@ -8,8 +8,8 @@ import sharp from 'sharp'
 import { site } from '@/lib/content'
 import { handlePath } from '@/lib/site'
 
-export const OG_SIZE = { height: 630, width: 1200 } as const
-export const OG_CONTENT_TYPE = 'image/jpeg'
+const OG_SIZE = { height: 630, width: 1200 } as const
+const OG_CONTENT_TYPE = 'image/jpeg'
 
 const FONT_DIR = join(process.cwd(), 'src/fonts/hermit')
 

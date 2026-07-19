@@ -19,16 +19,7 @@ import {
     stacks,
 } from '#site/content'
 
-export {
-    education,
-    experiences,
-    posts,
-    projects,
-    site,
-    skills,
-    socials,
-    stacks,
-}
+export { posts, projects, site, socials }
 export type { Education, Experience, Post, Project, Site, Skill, Social, Stack }
 
 export function getPublishedPosts(): Post[] {

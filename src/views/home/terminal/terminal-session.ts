@@ -1,6 +1,6 @@
 import { type ReactNode, useSyncExternalStore } from 'react'
 
-export interface TerminalEntry {
+interface TerminalEntry {
     id: number
     command: string
     output: ReactNode
