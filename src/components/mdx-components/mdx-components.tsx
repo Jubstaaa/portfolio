@@ -270,8 +270,9 @@ function Img({
     const w = Number(width) || undefined
     const h = Number(height) || undefined
     const sharedClassName = cn(
-        'my-6 w-full object-contain object-left',
+        'my-6',
         CONTENT_IMAGE_MAX_HEIGHT_CLASS,
+        'w-full object-contain object-left',
         className
     )
 
