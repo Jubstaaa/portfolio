@@ -7,7 +7,8 @@ import { buildMetadata } from '@/lib/seo'
 
 import { Education } from './education'
 import { Experience } from './experience'
-import { Skills, Stacks } from './skills'
+import { Skills } from './skills'
+import { Stacks } from './stacks'
 
 export const metadata: Metadata = buildMetadata({
     description:

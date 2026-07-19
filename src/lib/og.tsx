@@ -5,7 +5,7 @@ import { ImageResponse } from 'next/og'
 
 import sharp from 'sharp'
 
-import { site } from '@/lib/content'
+import { OgCard } from '@/components/og-card/og-card'
 import { handlePath } from '@/lib/site'
 
 const OG_SIZE = { height: 630, width: 1200 } as const
@@ -70,110 +70,14 @@ export async function renderOgImage({
               : 'Explore the site'
     const [fonts, coverUrl] = await Promise.all([loadFonts(), loadCover(cover)])
 
-    const overlay = coverUrl
-        ? 'linear-gradient(90deg, rgba(18,20,25,0.95) 0%, rgba(18,20,25,0.88) 52%, rgba(18,20,25,0.6) 100%)'
-        : '#16181d'
-
     const image = new ImageResponse(
-        <div
-            style={{
-                display: 'flex',
-                height: '100%',
-                position: 'relative',
-                width: '100%',
-            }}>
-            {coverUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                    alt=""
-                    height={OG_SIZE.height}
-                    src={coverUrl}
-                    width={OG_SIZE.width}
-                    style={{
-                        left: 0,
-                        objectFit: 'cover',
-                        position: 'absolute',
-                        top: 0,
-                    }}
-                />
-            ) : null}
-            <div
-                style={{
-                    background: overlay,
-                    height: '100%',
-                    left: 0,
-                    position: 'absolute',
-                    top: 0,
-                    width: '100%',
-                }}
-            />
-
-            <div
-                style={{
-                    borderTop: '10px solid #5aa6ea',
-                    color: '#ece9e1',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    fontFamily: 'Hermit',
-                    height: '100%',
-                    justifyContent: 'space-between',
-                    padding: '72px',
-                    position: 'relative',
-                    width: '100%',
-                }}>
-                <div
-                    style={{ color: '#8a93a1', display: 'flex', fontSize: 30 }}>
-                    {path}
-                </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    <div
-                        style={{
-                            color: '#5aa6ea',
-                            display: 'flex',
-                            fontSize: 30,
-                            marginBottom: 24,
-                        }}>
-                        {eyebrow}
-                    </div>
-                    <div
-                        style={{
-                            color: '#ece9e1',
-                            display: 'flex',
-                            fontSize: 60,
-                            fontWeight: 700,
-                            letterSpacing: '-0.02em',
-                            lineHeight: 1.12,
-                        }}>
-                        {title}
-                    </div>
-                </div>
-
-                <div
-                    style={{
-                        alignItems: 'center',
-                        color: '#8a93a1',
-                        display: 'flex',
-                        fontSize: 28,
-                        justifyContent: 'space-between',
-                    }}>
-                    <span>{`${site.name} · ${site.url.replace(/^https?:\/\//, '')}`}</span>
-                    <div
-                        style={{
-                            alignItems: 'center',
-                            background: '#5aa6ea',
-                            borderRadius: 10,
-                            color: '#16181d',
-                            display: 'flex',
-                            fontSize: 26,
-                            fontWeight: 700,
-                            padding: '12px 24px',
-                        }}>
-                        {`${cta} ->`}
-                    </div>
-                </div>
-            </div>
-        </div>,
+        <OgCard
+            coverUrl={coverUrl}
+            cta={cta}
+            eyebrow={eyebrow}
+            path={path}
+            title={title}
+        />,
         { ...OG_SIZE, fonts }
     )
 

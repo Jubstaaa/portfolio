@@ -5,6 +5,8 @@ import { NowPlaying } from '@/components/now-playing'
 import { site } from '@/lib/content'
 import { handlePath } from '@/lib/site'
 
+import { Line } from './command-line'
+import { Pre } from './command-pre'
 import type { CommandContext, TerminalCommand } from './commands.types'
 import {
     ENV_OUTPUT,
@@ -286,12 +288,4 @@ const STATIC_CTX: CommandContext = {
 
 export function renderCommandOutput(name: string, args = ''): ReactNode {
     return commands[name]?.run(args, STATIC_CTX) ?? null
-}
-
-function Line({ children }: { children: ReactNode }) {
-    return <p className="text-muted-foreground">{children}</p>
-}
-
-function Pre({ children }: { children: ReactNode }) {
-    return <pre className="text-muted-foreground leading-snug">{children}</pre>
 }
