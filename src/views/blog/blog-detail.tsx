@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 
 import { notFound } from 'next/navigation'
 
-import { ContentDetail } from '@/components/content-detail'
+import { ContentDetail } from '@/components/content-detail/content-detail'
 import {
     getAdjacent,
     getPostBySlug,

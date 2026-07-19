@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/static-components -- MDX runtime: the Content component is compiled from a code string and memoized by hash; not constructed per render. */
 import * as runtime from 'react/jsx-runtime'
 
-import { mdxComponents } from '@/components/mdx-components'
+import { mdxComponents } from '@/components/mdx-components/mdx-components'
 
 import type { MdxComponent, MdxProps } from './mdx.types'
 

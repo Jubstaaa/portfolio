@@ -71,13 +71,7 @@ export async function renderOgImage({
     const [fonts, coverUrl] = await Promise.all([loadFonts(), loadCover(cover)])
 
     const image = new ImageResponse(
-        <OgCard
-            coverUrl={coverUrl}
-            cta={cta}
-            eyebrow={eyebrow}
-            path={path}
-            title={title}
-        />,
+        OgCard({ coverUrl, cta, eyebrow, path, title }),
         { ...OG_SIZE, fonts }
     )
 

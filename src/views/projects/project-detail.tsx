@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 
 import { notFound } from 'next/navigation'
 
-import { ContentDetail } from '@/components/content-detail'
-import { ExternalLink } from '@/components/external-link'
+import { ContentDetail } from '@/components/content-detail/content-detail'
+import { ExternalLink } from '@/components/external-link/external-link'
 import {
     getAdjacent,
     getAllProjects,

@@ -1,4 +1,4 @@
-import { ExternalLink } from '@/components/external-link'
+import { ExternalLink } from '@/components/external-link/external-link'
 import { socials } from '@/lib/content'
 import { cn } from '@/lib/utils'
 

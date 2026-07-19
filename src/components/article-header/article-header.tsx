@@ -1,4 +1,4 @@
-import { Heading } from '@/components/heading'
+import { Heading } from '@/components/heading/heading'
 
 import type { ArticleHeaderProps } from './article-header.types'
 

@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 
-import { ContentCard } from '@/components/content-card'
-import { PathBar } from '@/components/path-bar'
-import { SectionHeading } from '@/components/section-heading'
+import { ContentCard } from '@/components/content-card/content-card'
+import { PathBar } from '@/components/path-bar/path-bar'
+import { SectionHeading } from '@/components/section-heading/section-heading'
 import { getPublishedPosts } from '@/lib/content'
 import { formatDate } from '@/lib/format'
 import { buildMetadata } from '@/lib/seo'

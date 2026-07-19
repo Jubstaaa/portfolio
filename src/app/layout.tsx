@@ -4,9 +4,9 @@ import type { Metadata, Viewport } from 'next'
 
 import localFont from 'next/font/local'
 
-import { Footer } from '@/components/footer'
-import { Nav } from '@/components/nav'
-import { ScrollProgress } from '@/components/scroll-progress'
+import { Footer } from '@/components/footer/footer'
+import { Nav } from '@/components/nav/nav'
+import { ScrollProgress } from '@/components/scroll-progress/scroll-progress'
 import { site } from '@/lib/content'
 import { ogLocale } from '@/lib/site'
 

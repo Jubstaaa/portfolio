@@ -2,7 +2,7 @@ import type { ImgHTMLAttributes } from 'react'
 
 import Image from 'next/image'
 
-import { CONTENT_IMAGE_MAX_HEIGHT_CLASS } from '@/components/content-image'
+import { CONTENT_IMAGE_MAX_HEIGHT_CLASS } from '@/components/content-image/content-image.constants'
 import { cn } from '@/lib/utils'
 
 export function Img({

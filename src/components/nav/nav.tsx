@@ -5,8 +5,8 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
-import { Logo } from '@/components/logo'
-import { ThemeToggle } from '@/components/theme-toggle'
+import { Logo } from '@/components/logo/logo'
+import { ThemeToggle } from '@/components/theme-toggle/theme-toggle'
 import { site } from '@/lib/content'
 import { cn } from '@/lib/utils'
 

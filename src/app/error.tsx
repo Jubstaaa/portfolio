@@ -4,12 +4,10 @@ import { useEffect } from 'react'
 
 import Link from 'next/link'
 
-import {
-    StatusDot,
-    TerminalBlock,
-    TerminalLine,
-    TerminalMeta,
-} from '@/components/terminal-block'
+import { StatusDot } from '@/components/terminal-block/status-dot'
+import { TerminalBlock } from '@/components/terminal-block/terminal-block'
+import { TerminalLine } from '@/components/terminal-block/terminal-line'
+import { TerminalMeta } from '@/components/terminal-block/terminal-meta'
 import { LINK_CLASS } from '@/lib/utils'
 
 export default function GlobalError({

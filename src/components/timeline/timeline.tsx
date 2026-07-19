@@ -1,4 +1,4 @@
-import { TimelineRow } from '@/components/timeline-row'
+import { TimelineRow } from '@/components/timeline-row/timeline-row'
 import { formatMonth } from '@/lib/format'
 import { cn } from '@/lib/utils'
 

@@ -1,5 +1,5 @@
-import { SectionHeading } from '@/components/section-heading'
-import { Timeline } from '@/components/timeline'
+import { SectionHeading } from '@/components/section-heading/section-heading'
+import { Timeline } from '@/components/timeline/timeline'
 import { getEducationSorted } from '@/lib/content'
 
 export function Education() {

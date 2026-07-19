@@ -1,4 +1,4 @@
-import { Heading } from '@/components/heading'
+import { Heading } from '@/components/heading/heading'
 import { cn } from '@/lib/utils'
 
 import type { SectionHeadingProps } from './section-heading.types'

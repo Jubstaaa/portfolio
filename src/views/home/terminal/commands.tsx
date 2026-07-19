@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 
-import { NavLinks } from '@/components/nav-links'
-import { NowPlaying } from '@/components/now-playing'
+import { NavLinks } from '@/components/nav-links/nav-links'
+import { NowPlaying } from '@/components/now-playing/now-playing'
 import { site } from '@/lib/content'
 import { handlePath } from '@/lib/site'
 

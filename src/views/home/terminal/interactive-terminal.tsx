@@ -4,7 +4,8 @@ import { type ReactNode, useEffect, useRef, useState } from 'react'
 
 import { useRouter } from 'next/navigation'
 
-import { TerminalCaret, TerminalLine } from '@/components/terminal-block'
+import { TerminalCaret } from '@/components/terminal-block/terminal-caret'
+import { TerminalLine } from '@/components/terminal-block/terminal-line'
 import { cn } from '@/lib/utils'
 
 import { commands } from './commands'

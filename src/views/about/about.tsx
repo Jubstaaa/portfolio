@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
-import { PathBar } from '@/components/path-bar'
-import { SectionHeading } from '@/components/section-heading'
+import { PathBar } from '@/components/path-bar/path-bar'
+import { SectionHeading } from '@/components/section-heading/section-heading'
 import { site } from '@/lib/content'
 import { buildMetadata } from '@/lib/seo'
 

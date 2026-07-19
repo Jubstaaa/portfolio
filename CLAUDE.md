@@ -67,7 +67,7 @@ bun run velite:watch           # velite --watch (use alongside bun dev when edit
     export { default, metadata } from '@/views/blog/blog-list'
     ```
 - Inside a view folder, files sit flat and share the feature's base name with a dot suffix: `blog-list.tsx`, `blog-list.types.ts`, `blog-list.constants.ts`, `blog-list.hooks.ts`. No `ui/`, `lib/`, or other subfolders.
-- **No `index.ts` barrel under `src/views/`** — views are only ever imported by their matching `app/` re-export, so a barrel adds indirection with no consumer. Components under `src/components/` keep the barrel (`component-name/component-name.tsx` + `index.ts` re-export) because they're imported from multiple call sites.
+- **No `index.ts` barrels anywhere** — not under `src/views/`, not under `src/components/`. Components live at `component-name/component-name.tsx` (+ `component-name.types.ts` / `component-name.constants.ts` as needed); each `.tsx` file holds exactly one component and one export. Importers use the direct file path (`@/components/foo/foo`, types from `@/components/foo/foo.types`), never a folder-level import.
 - Sub-components stay at the same level inside the component/view folder until reuse elsewhere earns them promotion to `src/components/`.
 - **Everything is kebab-case** — folders, files, routes, lib, hooks, styles, content. React component identifiers stay PascalCase.
 - Server Components by default. Add `'use client'` only when unavoidable (state, effects, browser APIs, form inputs). Client islands stay leaf-level; don't bubble `'use client'` upward.
@@ -223,7 +223,7 @@ Use `superpowers:systematic-debugging` for anything non-trivial. No guessing fix
 - Don't ship `console.log` — ESLint flags it.
 - Don't write package versions by hand. `bun add <pkg>` or `bun add <pkg>@latest`.
 - Don't mirror TanStack Query results into local state or context — read from the query cache.
-- Don't add an `index.ts` barrel under `src/views/` — the `app/**/page.tsx` re-export is the only consumer.
+- Don't add an `index.ts` barrel anywhere — under `src/views/` the `app/**/page.tsx` re-export is the only consumer, and under `src/components/` importers use the direct file path instead.
 - Don't define types or constants inline in a `.tsx` file — split them into `.types.ts` / `.constants.ts`.
 - Don't reach for an arbitrary pixel value when a Tailwind v4 scale step (including half-steps) covers it.
 - Don't add emoji anywhere in UI or content unless explicitly asked.

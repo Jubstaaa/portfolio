@@ -1,4 +1,4 @@
-import { LabeledGrid } from '@/components/labeled-grid'
+import { LabeledGrid } from '@/components/labeled-grid/labeled-grid'
 
 import type { CategoryGridProps } from './category-grid.types'
 

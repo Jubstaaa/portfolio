@@ -1,9 +1,7 @@
-import { JsonLd } from '@/components/json-ld'
-import {
-    TerminalBlock,
-    TerminalLine,
-    TerminalMeta,
-} from '@/components/terminal-block'
+import { JsonLd } from '@/components/json-ld/json-ld'
+import { TerminalBlock } from '@/components/terminal-block/terminal-block'
+import { TerminalLine } from '@/components/terminal-block/terminal-line'
+import { TerminalMeta } from '@/components/terminal-block/terminal-meta'
 import { buildPersonJsonLd } from '@/lib/seo'
 import { handlePath } from '@/lib/site'
 
