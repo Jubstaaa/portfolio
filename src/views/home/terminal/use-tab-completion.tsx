@@ -1,6 +1,7 @@
 import { type ReactNode, useCallback, useRef } from 'react'
 
-import { COMMAND_NAMES, HIDDEN_FILES, PAGE_TARGETS } from './commands'
+import { COMMAND_NAMES, PAGE_TARGETS } from './commands'
+import { HIDDEN_FILES } from './terminal-output.constants'
 
 interface CompletionSession {
     build: (match: string) => string

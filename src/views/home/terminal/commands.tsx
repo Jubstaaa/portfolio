@@ -3,21 +3,14 @@ import type { ReactNode } from 'react'
 import { NowPlaying } from '@/components/now-playing'
 import { site } from '@/lib/content'
 
+import type { CommandContext, TerminalCommand } from './commands.types'
 import { NavLinks } from './nav-links'
-
-export interface CommandContext {
-    getHistory: () => string[]
-    glitch: () => void
-    navigate: (href: string) => void
-}
-
-export interface TerminalCommand {
-    description: string
-    hidden?: boolean
-    run: (args: string, ctx: CommandContext) => ReactNode
-}
-
-const HOST = new URL(site.url).host
+import {
+    ENV_OUTPUT,
+    HIDDEN_FILES,
+    NEOFETCH_OUTPUT,
+    TOP_OUTPUT,
+} from './terminal-output.constants'
 
 const PAGES: Record<string, string> = {
     '~': '/',
@@ -30,14 +23,6 @@ export const PAGE_TARGETS = Object.keys(PAGES)
 function resolvePage(arg: string): string | undefined {
     const key = arg.replace(/^\.?\//, '').replace(/\/$/, '') || '~'
     return PAGES[key]
-}
-
-function Line({ children }: { children: ReactNode }) {
-    return <p className="text-muted-foreground">{children}</p>
-}
-
-function Pre({ children }: { children: ReactNode }) {
-    return <pre className="text-muted-foreground leading-snug">{children}</pre>
 }
 
 function line(text: string): TerminalCommand['run'] {
@@ -64,38 +49,6 @@ function goTo(args: string, ctx: CommandContext): ReactNode {
 const VIM_ESCAPE = line(
     "E37: no write since last change — just kidding, you're free."
 )
-
-const NEOFETCH_ART = ['   ▲', '  ▲ ▲', ' ▲▲▲▲▲']
-
-const NEOFETCH_INFO = [
-    `${site.handle}@${HOST}`,
-    '─'.repeat(26),
-    'os: next.js 16 (app router)',
-    'host: vercel',
-    'shell: interactive-terminal',
-    'font: hermit v2.0',
-    'theme: dark',
-    'uptime: shipping since 2023',
-]
-
-const NEOFETCH_OUTPUT = NEOFETCH_INFO.map(
-    (info, index) => `${(NEOFETCH_ART[index] ?? '').padEnd(11)}${info}`
-).join('\n')
-
-export const HIDDEN_FILES = ['.env', '.git/', 'secret.txt']
-
-const ENV_OUTPUT = [
-    'SPOTIFY_CLIENT_SECRET=nice_try',
-    'AWS_ACCESS_KEY_ID=AKIA_JUST_KIDDING',
-    'DATABASE_URL=postgres://you:wish@localhost:5432/nope',
-].join('\n')
-
-const TOP_OUTPUT = [
-    'PID   COMMAND            CPU',
-    '1     next-server        1.2%',
-    '7     spotify-widget     2.4%',
-    '42    easter-egg-hunter  99.9%',
-].join('\n')
 
 export const commands: Record<string, TerminalCommand> = {
     ':q': {
@@ -332,4 +285,12 @@ const STATIC_CTX: CommandContext = {
 
 export function renderCommandOutput(name: string, args = ''): ReactNode {
     return commands[name]?.run(args, STATIC_CTX) ?? null
+}
+
+function Line({ children }: { children: ReactNode }) {
+    return <p className="text-muted-foreground">{children}</p>
+}
+
+function Pre({ children }: { children: ReactNode }) {
+    return <pre className="text-muted-foreground leading-snug">{children}</pre>
 }

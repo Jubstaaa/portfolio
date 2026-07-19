@@ -7,7 +7,8 @@ import { useRouter } from 'next/navigation'
 import { TerminalCaret, TerminalLine } from '@/components/terminal-block'
 import { cn } from '@/lib/utils'
 
-import { type CommandContext, commands } from './commands'
+import { commands } from './commands'
+import type { CommandContext } from './commands.types'
 import {
     appendEntry,
     clearTerminal,
