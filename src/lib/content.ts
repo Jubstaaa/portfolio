@@ -31,7 +31,6 @@ export {
 }
 export type { Education, Experience, Post, Project, Site, Skill, Social, Stack }
 
-// ───── Posts ──────────────────────────────────────────────────────────────────
 export function getPublishedPosts(): Post[] {
     return posts
         .filter(post => !post.draft)
@@ -43,7 +42,6 @@ export function getPostBySlug(slug: string): Post | undefined {
     return posts.find(post => post.slug === slug)
 }
 
-// ───── Projects ───────────────────────────────────────────────────────────────
 export function getAllProjects(): Project[] {
     return projects.slice().sort((a, b) => {
         const ao = a.order ?? Number.POSITIVE_INFINITY
@@ -56,7 +54,6 @@ export function getProjectBySlug(slug: string): Project | undefined {
     return projects.find(project => project.slug === slug)
 }
 
-// ───── Experience / Education ─────────────────────────────────────────────────
 const CURRENT = '9999-99'
 
 interface Datable {
@@ -79,7 +76,6 @@ export function getEducationSorted(): Education[] {
     return education.slice().sort(byRecency)
 }
 
-// ───── Data ───────────────────────────────────────────────────────────────────
 export function getSkillsByCategory(): Record<Skill['category'], Skill[]> {
     return groupBy(skills, 'category') as Record<Skill['category'], Skill[]>
 }
@@ -88,7 +84,6 @@ export function getStacksByCategory(): Record<Stack['category'], Stack[]> {
     return groupBy(stacks, 'category') as Record<Stack['category'], Stack[]>
 }
 
-// ───── Adjacency ──────────────────────────────────────────────────────────────
 export function getAdjacent<T extends { slug: string }>(
     list: T[],
     current: T

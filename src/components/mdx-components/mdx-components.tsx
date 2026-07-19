@@ -247,8 +247,6 @@ function Img({
         className
     )
 
-    // With real intrinsic dimensions the browser reserves the aspect-ratio box up
-    // front (no reload flicker). Fall back to the responsive 0/0 hack otherwise.
     if (w && h) {
         return (
             <Image

@@ -10,8 +10,6 @@ const cache = new Map<string, MdxComponent>()
 function getComponent(code: string): MdxComponent {
     const cached = cache.get(code)
     if (cached) return cached
-    // velite emits CJS-style MDX runtime code; new Function + jsx runtime is the
-    // sanctioned evaluation path. Source is build-time trusted content.
     const fn = new Function(code) as (scope: typeof runtime) => {
         default: MdxComponent
     }

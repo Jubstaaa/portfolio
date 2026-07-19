@@ -34,8 +34,6 @@ async function loadFonts() {
     ]
 }
 
-// satori can't decode webp and has no system-font fallback, so covers are
-// rasterized to png and only ASCII glyphs are used in the layout.
 async function loadCover(src?: string): Promise<string | undefined> {
     if (!src) return undefined
     try {
@@ -85,7 +83,6 @@ export async function renderOgImage({
                 width: '100%',
             }}>
             {coverUrl ? (
-                // satori only understands raw <img>; next/image cannot run here.
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                     alt=""
@@ -180,8 +177,6 @@ export async function renderOgImage({
         { ...OG_SIZE, fonts }
     )
 
-    // satori/resvg only emit PNG, which is huge for photographic covers — recompress
-    // to JPEG so social cards stay small.
     const png = Buffer.from(await image.arrayBuffer())
     const jpeg = await sharp(png)
         .jpeg({ mozjpeg: true, quality: 84 })
