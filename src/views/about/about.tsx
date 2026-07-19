@@ -1,13 +1,13 @@
 import type { Metadata } from 'next'
 
-import { EducationList } from '@/components/education-list'
 import { PathBar } from '@/components/path-bar'
 import { SectionHeading } from '@/components/section-heading'
-import { SkillsGrid } from '@/components/skills-grid'
-import { StacksGrid } from '@/components/stacks-grid'
-import { Timeline } from '@/components/timeline'
-import { getEducationSorted, getExperiencesSorted, site } from '@/lib/content'
+import { site } from '@/lib/content'
 import { buildMetadata } from '@/lib/seo'
+
+import { Education } from './education'
+import { Experience } from './experience'
+import { Skills, Stacks } from './skills'
 
 export const metadata: Metadata = buildMetadata({
     description:
@@ -27,9 +27,6 @@ export const metadata: Metadata = buildMetadata({
 })
 
 export default function AboutPage() {
-    const experiences = getExperiencesSorted()
-    const educations = getEducationSorted()
-
     return (
         <>
             <PathBar
@@ -62,25 +59,10 @@ export default function AboutPage() {
                     </div>
                 </div>
 
-                <div className="space-y-6">
-                    <SectionHeading number="02" title="experience" />
-                    <Timeline items={experiences} />
-                </div>
-
-                <div className="space-y-6">
-                    <SectionHeading number="03" title="education" />
-                    <EducationList items={educations} />
-                </div>
-
-                <div className="space-y-6">
-                    <SectionHeading number="04" title="skills" />
-                    <SkillsGrid />
-                </div>
-
-                <div className="space-y-6">
-                    <SectionHeading number="05" title="stacks" />
-                    <StacksGrid />
-                </div>
+                <Experience />
+                <Education />
+                <Skills />
+                <Stacks />
             </section>
         </>
     )

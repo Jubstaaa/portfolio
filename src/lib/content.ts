@@ -1,3 +1,5 @@
+import { groupBy } from 'lodash-es'
+
 import {
     education,
     type Education,
@@ -79,19 +81,11 @@ export function getEducationSorted(): Education[] {
 
 // ───── Data ───────────────────────────────────────────────────────────────────
 export function getSkillsByCategory(): Record<Skill['category'], Skill[]> {
-    const buckets = {} as Record<Skill['category'], Skill[]>
-    for (const skill of skills) {
-        ;(buckets[skill.category] ??= []).push(skill)
-    }
-    return buckets
+    return groupBy(skills, 'category') as Record<Skill['category'], Skill[]>
 }
 
 export function getStacksByCategory(): Record<Stack['category'], Stack[]> {
-    const buckets = {} as Record<Stack['category'], Stack[]>
-    for (const stack of stacks) {
-        ;(buckets[stack.category] ??= []).push(stack)
-    }
-    return buckets
+    return groupBy(stacks, 'category') as Record<Stack['category'], Stack[]>
 }
 
 // ───── Adjacency ──────────────────────────────────────────────────────────────
