@@ -1,27 +1,23 @@
 import type { NextConfig } from 'next'
 
-// Derived from the same env var the components use, so the optimizer's allow-list
-// can never drift from the host the URLs actually point at. The image optimizer
-// validates remote URLs at request time, so this has to be baked into the build.
-const cdnHost = process.env.NEXT_PUBLIC_CDN_BASE
-    ? new URL(process.env.NEXT_PUBLIC_CDN_BASE).hostname
-    : undefined
+// The image optimizer validates remote URLs at request time, so the CDN host has
+// to be compiled into the build. Keep in sync with DEFAULT_CDN_BASE in
+// src/lib/cdn.ts — this config cannot import it (it is evaluated before the
+// tsconfig path aliases exist).
+const cdnHost = new URL(
+    process.env.NEXT_PUBLIC_CDN_BASE ||
+        'https://ilkerbalcilar-portfolio.fra1.cdn.digitaloceanspaces.com'
+).hostname
 
 const nextConfig: NextConfig = {
     // Self-hosted on a DigitalOcean droplet: standalone emits a minimal
     // server.js + traced node_modules, which is what the runner image starts.
     output: 'standalone',
-    ...(cdnHost && {
-        images: {
-            remotePatterns: [
-                {
-                    protocol: 'https',
-                    hostname: cdnHost,
-                    pathname: '/images/**',
-                },
-            ],
-        },
-    }),
+    images: {
+        remotePatterns: [
+            { protocol: 'https', hostname: cdnHost, pathname: '/images/**' },
+        ],
+    },
     async redirects() {
         return [
             { source: '/bio', destination: '/about', permanent: true },

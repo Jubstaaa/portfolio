@@ -33,21 +33,9 @@ jobs:
         steps:
             - uses: actions/checkout@v4
             - uses: docker/setup-buildx-action@v3
-            # Content images are served from Spaces + CDN. The repo stays the
-            # source of truth, so every deploy pushes what changed. No --delete:
-            # an image dropped from the repo may still be referenced by HTML that
-            # is already deployed, or by a URL Google has indexed.
-            - name: Sync content images to Spaces
-              env:
-                  AWS_ACCESS_KEY_ID: ${{ secrets.S3_ACCESS_KEY_ID }}
-                  AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_SECRET_ACCESS_KEY }}
-                  AWS_DEFAULT_REGION: fra1
-              run: |
-                  aws s3 sync public/images "s3://${{ vars.SPACES_BUCKET }}/images" \
-                    --endpoint-url https://fra1.digitaloceanspaces.com \
-                    --acl public-read \
-                    --cache-control "public, max-age=86400" \
-                    --size-only --no-progress
+            # No image sync step: the Spaces bucket is the source of truth for
+            # content images, not the repo. Adding one means uploading it to the
+            # bucket (run `bun run optimize:images <dir>` on it first).
             - uses: docker/login-action@v3
               with:
                   registry: ghcr.io

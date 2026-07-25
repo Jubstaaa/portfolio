@@ -1,0 +1,4 @@
+Keeps public/ in the repo even though it holds no committed files: velite writes
+its generated assets to public/_velite at build time, and the Dockerfile copies
+public/ into the runner. Git does not track empty directories, so without this the
+COPY would fail on a fresh clone.

@@ -1,12 +1,11 @@
-import { readFile } from 'node:fs/promises'
-import { join } from 'node:path'
-
 import rehypePrettyCode, {
     type Options as PrettyCodeOptions,
 } from 'rehype-pretty-code'
 import remarkGfm from 'remark-gfm'
 import sharp from 'sharp'
 import { defineConfig, defineCollection, s } from 'velite'
+
+import { readImageBytes } from './src/lib/image-source'
 
 const prettyCode: PrettyCodeOptions = {
     theme: { dark: 'github-dark-default', light: 'github-light' },
@@ -29,14 +28,12 @@ const image = s
             height: undefined as number | undefined,
         }
         if (!data.src.startsWith('/')) return blank
-        try {
-            const { width, height } = await sharp(
-                join(process.cwd(), 'public', data.src.replace(/^\//, ''))
-            ).metadata()
-            return { ...data, width, height }
-        } catch {
-            return blank
-        }
+
+        const { width, height } = await sharp(
+            await readImageBytes(data.src)
+        ).metadata()
+
+        return { ...data, width, height }
     })
 
 interface HastNode {
@@ -87,21 +84,12 @@ function rehypeImageDimensions() {
                     (props.width && props.height)
                 )
                     return
-                try {
-                    const { width, height } = await sharp(
-                        await readFile(
-                            join(
-                                process.cwd(),
-                                'public',
-                                src.replace(/^\//, '')
-                            )
-                        )
-                    ).metadata()
-                    if (width && height)
-                        node.properties = { ...props, width, height }
-                } catch {
-                    // remote or missing asset — leave dimensions unset, Img falls back
-                }
+                const { width, height } = await sharp(
+                    await readImageBytes(src)
+                ).metadata()
+
+                if (width && height)
+                    node.properties = { ...props, width, height }
             })
         )
     }

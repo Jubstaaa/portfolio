@@ -6,6 +6,7 @@ import { ImageResponse } from 'next/og'
 import sharp from 'sharp'
 
 import { OgCard } from '@/components/og-card/og-card'
+import { readImageBytes } from '@/lib/image-source'
 import { handlePath } from '@/lib/site'
 
 const OG_SIZE = { height: 630, width: 1200 } as const
@@ -34,18 +35,17 @@ async function loadFonts() {
     ]
 }
 
+// Satori cannot decode webp, so the cover is rasterised to PNG and inlined as a
+// data URL. The bytes come from the Spaces CDN (see readImageBytes).
 async function loadCover(src?: string): Promise<string | undefined> {
     if (!src) return undefined
-    try {
-        const file = join(process.cwd(), 'public', src.replace(/^\//, ''))
-        const png = await sharp(await readFile(file))
-            .resize(OG_SIZE.width, OG_SIZE.height, { fit: 'cover' })
-            .png()
-            .toBuffer()
-        return `data:image/png;base64,${png.toString('base64')}`
-    } catch {
-        return undefined
-    }
+
+    const png = await sharp(await readImageBytes(src))
+        .resize(OG_SIZE.width, OG_SIZE.height, { fit: 'cover' })
+        .png()
+        .toBuffer()
+
+    return `data:image/png;base64,${png.toString('base64')}`
 }
 
 interface OgInput {
