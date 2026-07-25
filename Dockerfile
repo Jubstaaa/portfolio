@@ -13,13 +13,17 @@ RUN bun install --frozen-lockfile --ignore-scripts
 
 # ─── build ───────────────────────────────────────────────────────────────
 # Turbopack (`next build`) — it traces standalone's runtime deps correctly.
-# No build args: the canonical site URL lives in content/site.json, and the only
-# secrets (Spotify) are read at request time by /api/now-playing.
+# The canonical site URL lives in content/site.json and the only secrets (Spotify)
+# are read at request time, so the CDN base is the single build-time input: it is
+# inlined into the prerendered HTML and compiled into the optimizer's remote
+# allow-list. Left empty, the build falls back to local /images paths.
 FROM oven/bun:1-alpine AS build
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+ARG NEXT_PUBLIC_CDN_BASE
+ENV NEXT_PUBLIC_CDN_BASE=$NEXT_PUBLIC_CDN_BASE
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN bun run build

@@ -1,5 +1,6 @@
 import Image from 'next/image'
 
+import { cdnUrl } from '@/lib/cdn'
 import { cn } from '@/lib/utils'
 
 import { CONTENT_IMAGE_CLASS } from './content-image.constants'
@@ -20,7 +21,7 @@ export function ContentImage({
             height={height}
             priority={priority}
             sizes="(min-width: 1024px) 720px, 100vw"
-            src={src}
+            src={cdnUrl(src)}
             width={width}
         />
     )
