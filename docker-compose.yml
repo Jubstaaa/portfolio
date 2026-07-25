@@ -1,0 +1,17 @@
+# Runtime stack on the droplet (/opt/portfolio). The app is published only on
+# localhost:3002; the shared Caddy in /opt/proxy terminates TLS (Cloudflare origin
+# cert) and reverse-proxies to it, alongside the other apps on this droplet.
+# The image is pulled from GHCR by the deploy workflow.
+services:
+    app:
+        image: ghcr.io/jubstaaa/portfolio:latest
+        container_name: portfolio
+        restart: unless-stopped
+        mem_limit: 256m
+        env_file: .env
+        ports:
+            - '127.0.0.1:3002:3000'
+        volumes:
+            # Persist Next's optimized-image cache so it survives redeploys
+            # (otherwise every deploy resets it and images go cold again).
+            - /opt/portfolio/cache/images:/app/.next/cache/images
