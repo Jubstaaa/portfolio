@@ -12,6 +12,7 @@
         "typecheck": "velite build && tsc --noEmit",
         "format": "prettier --write .",
         "format:check": "prettier --check .",
+        "optimize:images": "bun scripts/optimize-images.mjs",
         "velite": "velite build",
         "velite:watch": "velite build --watch",
         "prepare": "husky"
