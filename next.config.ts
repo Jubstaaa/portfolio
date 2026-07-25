@@ -4,10 +4,10 @@ import type { NextConfig } from 'next'
 // to be compiled into the build. Keep in sync with DEFAULT_CDN_BASE in
 // src/lib/cdn.ts — this config cannot import it (it is evaluated before the
 // tsconfig path aliases exist).
-const cdnHost = new URL(
+const cdnBase =
     process.env.NEXT_PUBLIC_CDN_BASE ||
-        'https://ilkerbalcilar-portfolio.fra1.cdn.digitaloceanspaces.com'
-).hostname
+    'https://ilkerbalcilar-portfolio.fra1.cdn.digitaloceanspaces.com'
+const cdnHost = new URL(cdnBase).hostname
 
 const nextConfig: NextConfig = {
     // Self-hosted on a DigitalOcean droplet: standalone emits a minimal
@@ -20,6 +20,13 @@ const nextConfig: NextConfig = {
     },
     async redirects() {
         return [
+            // Content images used to be served from public/images and are indexed
+            // under those paths; they live in the Spaces bucket now.
+            {
+                source: '/images/:path*',
+                destination: `${cdnBase}/images/:path*`,
+                permanent: true,
+            },
             { source: '/bio', destination: '/about', permanent: true },
             { source: '/stack', destination: '/about', permanent: true },
             { source: '/portfolio', destination: '/projects', permanent: true },
