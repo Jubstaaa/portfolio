@@ -6,7 +6,7 @@ import type { NextConfig } from 'next'
 // tsconfig path aliases exist).
 const cdnBase =
     process.env.NEXT_PUBLIC_CDN_BASE ||
-    'https://ilkerbalcilar-portfolio.fra1.cdn.digitaloceanspaces.com'
+    'https://ilkerbalcilar.fra1.cdn.digitaloceanspaces.com'
 const cdnHost = new URL(cdnBase).hostname
 
 const nextConfig: NextConfig = {
