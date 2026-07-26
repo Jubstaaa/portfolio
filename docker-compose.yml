@@ -9,6 +9,18 @@ services:
         restart: unless-stopped
         mem_limit: 256m
         env_file: .env
+        # No third party has Portainer access to this app. If that changes, set
+        # PORTAINER_TEAMS in .env beside this file and uncomment the two lines
+        # below: the permission is then reapplied on every recreate.
+        #
+        # Doing it from the Portainer UI instead does NOT work — the permission
+        # is keyed to the container ID, and `docker compose up -d` replaces the
+        # container, so access silently disappears on the next deploy. Leaving
+        # the label out entirely means administrator-only, which is the default
+        # we want here.
+        #
+        # labels:
+        #     io.portainer.accesscontrol.teams: ${PORTAINER_TEAMS}
         ports:
             - '127.0.0.1:3002:3000'
         volumes:
