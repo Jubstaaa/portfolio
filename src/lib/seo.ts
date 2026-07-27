@@ -1,10 +1,17 @@
 import type { Metadata } from 'next'
 
+import { cdnUrl } from '@/lib/cdn'
 import { type Post, type Project, site } from '@/lib/content'
 import { ogLocale } from '@/lib/site'
 
 function absoluteUrl(path: string): string {
     return new URL(path, site.url).toString()
+}
+
+// Content image paths are relative in frontmatter but only resolve on the CDN, so
+// structured data has to name the bucket URL rather than a site path that redirects.
+function absoluteImageUrl(src: string): string {
+    return absoluteUrl(cdnUrl(src))
 }
 
 interface BuildMetadataInput {
@@ -106,7 +113,7 @@ export function buildArticleJsonLd(post: Post): Record<string, unknown> {
             : { dateModified: post.date }),
         'author': { '@type': 'Person', 'name': site.name, 'url': site.url },
         'url': absoluteUrl(post.path),
-        ...(post.cover ? { image: absoluteUrl(post.cover.src) } : {}),
+        ...(post.cover ? { image: absoluteImageUrl(post.cover.src) } : {}),
         'articleSection': post.category,
         'inLanguage': 'en',
         'keywords': post.tags.join(', '),
@@ -139,7 +146,7 @@ export function buildProjectJsonLd(project: Project): Record<string, unknown> {
         'name': project.title,
         'url': absoluteUrl(`/projects/${project.slug}`),
         ...(project.repo ? { codeRepository: project.repo } : {}),
-        ...(cover ? { image: absoluteUrl(cover.src) } : {}),
+        ...(cover ? { image: absoluteImageUrl(cover.src) } : {}),
         'keywords': project.stack.join(', '),
     }
 }
