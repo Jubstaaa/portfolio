@@ -27,6 +27,12 @@ const nextConfig: NextConfig = {
                 destination: `${cdnBase}/images/:path*`,
                 permanent: true,
             },
+            // Legacy `/_next/image?url=/images/...` URLs are indexed as well and
+            // cannot be salvaged: the optimizer resolves a relative `url` through
+            // this router, hits the redirect above and rejects the bodiless 308
+            // ("isn't a valid image ... received null", HTTP 400). A rule on
+            // /_next/image never fires — internal routes are matched before custom
+            // redirects. The log line is expected crawler noise, not a live bug.
             { source: '/bio', destination: '/about', permanent: true },
             { source: '/stack', destination: '/about', permanent: true },
             { source: '/portfolio', destination: '/projects', permanent: true },
