@@ -17,9 +17,26 @@ Operational guide for this repo. Global rules in `~/.claude/CLAUDE.md` still app
 | Motion        | CSS-first transitions only — no JS animation libraries                     |
 | Fonts         | `geist/font` (Sans + Mono) — self-hosted                                   |
 | SEO           | `generateMetadata`, `next/og`, sitemap, robots, JSON-LD                    |
-| Deploy        | Vercel                                                                     |
+| Images        | Served from a DigitalOcean Spaces CDN — no `public/images` in the repo     |
+| Deploy        | Self-hosted: Docker image → GHCR → DigitalOcean droplet behind Caddy       |
 
 > Versions are pinned by `bun add` at install time — **never hand-write package versions**.
+
+### Deployment
+
+Not Vercel. `next.config.ts` sets `output: 'standalone'`, and `.github/workflows/deploy.yml`
+runs three jobs on a push to `main`:
+
+1. **check** — `bun run lint` and `bun run typecheck`
+2. **build** — builds the image and pushes `ghcr.io/jubstaaa/portfolio` tagged `latest` and
+   the commit SHA
+3. **deploy** — over SSH: `docker compose pull && docker compose up -d && docker image prune -f`
+
+The container listens on `127.0.0.1:3002`; a shared Caddy at `/opt/proxy` on the droplet
+terminates TLS and reverse-proxies `ilkerbalcilar.com` to it, alongside the other sites on
+the same box. Content images live in the Spaces bucket, not in the repo — `src/lib/cdn.ts`
+holds the base URL and `next.config.ts` derives the image optimizer's remote allow-list from
+it, so the two cannot drift.
 
 ---
 
