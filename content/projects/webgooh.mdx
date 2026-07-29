@@ -1,0 +1,101 @@
+---
+title: 'Webgooh'
+summary: 'Corporate site and blog for a digital engineering agency — Next.js with Payload CMS embedded in the same application, statically generated and revalidated per content tag, running as a memory-capped container behind a shared Caddy on a single droplet with its own monitoring and log reporting.'
+category: 'Web App'
+order: 4
+repo: 'https://github.com/Jubstaaa/webgooh'
+url: 'https://ilkerbalcilar.xyz'
+stack:
+    [
+        'TypeScript',
+        'Next.js',
+        'Payload CMS',
+        'SQLite',
+        'Tailwind CSS',
+        'Motion',
+        'Bun',
+        'Docker',
+        'GHCR',
+        'Caddy',
+        'DigitalOcean Spaces',
+        'Cloudflare Turnstile',
+        'Beszel',
+        'GoAccess',
+    ]
+highlights:
+    - 'Editors publish through Payload and only the affected pages rebuild — afterChange hooks invalidate individual cache tags rather than the whole site'
+    - 'A CMS-backed site that still ships as static output, so no page render waits on the database'
+    - 'Runs capped at 256 MB behind a shared Caddy that fronts every other site on the same 961 MB droplet'
+    - 'Its own operational surface: Beszel metrics and GoAccess log reports, both locked to Cloudflare origin IPs and marked noindex'
+images: []
+---
+
+An agency site for software, mobile, UX/UI, SEO, cybersecurity and DevOps work — public pages in Turkish across services, references, about, contact and a blog, all editable by a non-developer.
+
+---
+
+## **One Application, Not Two**
+
+The usual shape for this is a headless CMS somewhere else and a frontend that queries it. Here **Payload CMS 3 lives inside the same Next.js application**, serving its admin panel at `/admin` and its own REST and GraphQL endpoints, against SQLite.
+
+That collapses a deployment, a network hop and a second set of credentials. Content lives in collections — `posts`, `projects`, `services`, `categories`, `media`, `leads` — plus globals for site-wide settings, with reusable `slug` and `seo` fields shared across them.
+
+Uploaded media does not stay on the container's disk: Payload's S3 adapter writes it to a DigitalOcean Spaces bucket, so a redeploy cannot take the images with it.
+
+---
+
+## **Static Output From a Live Database**
+
+Every public page is statically generated. Reads go through `unstable_cache` with explicit tags, and Payload's `afterChange` and `afterDelete` hooks invalidate **only the tags that changed**:
+
+- editing a post refreshes that post and the blog index
+- editing a service refreshes the services pages
+- everything untouched keeps its existing HTML
+
+So the panel feels like a live CMS while visitors are served prerendered files, and no page render ever waits on SQLite. A `POST /revalidate` endpoint, guarded by an `x-revalidate-secret` header, lets an external trigger invalidate tags or paths on demand.
+
+---
+
+## **The Cache Mount That Broke a Client Site**
+
+The most useful thing this project taught me was a deployment bug, and it is worth writing down because nothing about it looks wrong.
+
+Docker was mounting only `.next/cache/images` for persistence. Docker creates a missing parent directory itself, **as root** — and the app runs as uid 1001. Next could not create its own subdirectories under that parent, so the data cache silently fell back to memory. No error, no warning.
+
+The consequence surfaced on the sister client site: content saved in Payload existed only inside the running process, so a container recreate reverted the site to its build-time HTML while the admin panel still showed the new content. Mounting the whole `.next/cache` directory instead gives it the host directory's `1001` ownership, and revalidated pages now survive redeploys.
+
+---
+
+## **Deployment and the Shared Box**
+
+- **Build once, pull anywhere.** GitHub Actions builds the image and pushes it to GHCR; the droplet runs `docker compose pull && up -d`. The public Turnstile site key is a build argument, everything secret is a runtime variable.
+- **Capped on purpose.** `mem_limit: 256m`, published only on `127.0.0.1:3001`. The box has 961 MB total, so every app declares its ceiling instead of competing for what is left.
+- **One Caddy for everything.** A shared `proxy-caddy` owns 80/443 and reverse-proxies to each app, which is what lets a single droplet also host the portfolio, a client site, and several static builds.
+- **Origin lockdown.** TLS uses Cloudflare origin certificates on disk, and a `cfonly` matcher rejects any request that does not arrive from a Cloudflare IP range, so the origin cannot be reached directly.
+
+---
+
+## **Monitoring and Logs**
+
+The site ships with the means to answer "is it up, and what is it doing":
+
+- **Beszel** on `metrics.*` — container and host metrics, reverse-proxied with `flush_interval -1` so its live stream is not buffered.
+- **GoAccess** on `logs.*` — Caddy's access logs rendered as static HTML reports.
+- **Portainer** for container inspection, bound to localhost and reached over the proxy.
+
+All three are `noindex, nofollow`, `Cache-Control: no-store`, `X-Frame-Options: DENY`, and behind the same Cloudflare-only matcher as the site itself.
+
+---
+
+## **Security**
+
+- Contact form protected by **Cloudflare Turnstile**, a honeypot field and per-IP rate limiting — three independent layers, because each fails differently.
+- HSTS, `X-Frame-Options`, `X-Content-Type-Options` and `Referrer-Policy` set in `next.config.mjs`.
+- Leads land in a Payload collection rather than an inbox, so nothing depends on an email arriving.
+
+---
+
+## **Links**
+
+- Live: [ilkerbalcilar.xyz](https://ilkerbalcilar.xyz)
+- GitHub: [github.com/Jubstaaa/webgooh](https://github.com/Jubstaaa/webgooh)
