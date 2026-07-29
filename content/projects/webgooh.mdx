@@ -27,16 +27,30 @@ highlights:
     - 'A CMS-backed site that still ships as static output, so no page render waits on the database'
     - 'Runs capped at 256 MB behind a shared Caddy that fronts every other site on the same 961 MB droplet'
     - 'Its own operational surface: Beszel metrics and GoAccess log reports, both locked to Cloudflare origin IPs and marked noindex'
-images: []
+images:
+    - src: '/images/projects/webgooh/cover.webp'
+      alt: 'Webgooh ana sayfası — dijital mühendislik hizmetleri ve deploy pipeline görseli'
+    - src: '/images/projects/webgooh/webgooh-admin.webp'
+      alt: 'Payload yönetim paneli, aynı uygulama içinde çalışan koleksiyon listesi'
+    - src: '/images/projects/webgooh/webgooh-services.webp'
+      alt: 'Hizmetler sayfası — web, mobil, UX/UI, SEO, siber güvenlik ve DevOps kartları'
+    - src: '/images/projects/webgooh/webgooh-metrics.webp'
+      alt: 'Beszel paneli — host ve container CPU, bellek ve disk metrikleri'
+    - src: '/images/projects/webgooh/webgooh-logs.webp'
+      alt: 'GoAccess erişim log raporu — istek sayıları, ziyaretçiler ve istenen dosyalar'
 ---
 
 An agency site for software, mobile, UX/UI, SEO, cybersecurity and DevOps work — public pages in Turkish across services, references, about, contact and a blog, all editable by a non-developer.
+
+![Hizmetler — the services page, one entry per discipline](/images/projects/webgooh/webgooh-services.webp)
 
 ---
 
 ## **One Application, Not Two**
 
 The usual shape for this is a headless CMS somewhere else and a frontend that queries it. Here **Payload CMS 3 lives inside the same Next.js application**, serving its admin panel at `/admin` and its own REST and GraphQL endpoints, against SQLite.
+
+![The Payload panel, served by the same application at /admin](/images/projects/webgooh/webgooh-admin.webp)
 
 That collapses a deployment, a network hop and a second set of credentials. Content lives in collections — `posts`, `projects`, `services`, `categories`, `media`, `leads` — plus globals for site-wide settings, with reusable `slug` and `seo` fields shared across them.
 
@@ -79,8 +93,12 @@ The consequence surfaced on the sister client site: content saved in Payload exi
 
 The site ships with the means to answer "is it up, and what is it doing":
 
+![Beszel — host and per-container CPU, memory and disk on the shared droplet](/images/projects/webgooh/webgooh-metrics.webp)
+
 - **Beszel** on `metrics.*` — container and host metrics, reverse-proxied with `flush_interval -1` so its live stream is not buffered.
 - **GoAccess** on `logs.*` — Caddy's access logs rendered as static HTML reports.
+
+![GoAccess — a rolling 24-hour report built from Caddy's access log](/images/projects/webgooh/webgooh-logs.webp)
 
 Both are `noindex, nofollow`, `Cache-Control: no-store`, `X-Frame-Options: DENY`, and behind the same Cloudflare-only matcher as the site itself.
 
