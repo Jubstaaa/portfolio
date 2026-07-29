@@ -81,9 +81,8 @@ The site ships with the means to answer "is it up, and what is it doing":
 
 - **Beszel** on `metrics.*` — container and host metrics, reverse-proxied with `flush_interval -1` so its live stream is not buffered.
 - **GoAccess** on `logs.*` — Caddy's access logs rendered as static HTML reports.
-- **Portainer** for container inspection, bound to localhost and reached over the proxy.
 
-All three are `noindex, nofollow`, `Cache-Control: no-store`, `X-Frame-Options: DENY`, and behind the same Cloudflare-only matcher as the site itself.
+Both are `noindex, nofollow`, `Cache-Control: no-store`, `X-Frame-Options: DENY`, and behind the same Cloudflare-only matcher as the site itself.
 
 ---
 
