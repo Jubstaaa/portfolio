@@ -1,95 +1,92 @@
 ---
 title: 'Pixel Guess Game'
-summary: 'Pixel Guess Game is an engaging web app where players identify pixelated images from various categories like League of Legends, Valorant, and Demon Slayer. Challenge yourself with different difficulty levels and compete globally!'
+summary: 'A pixelated-image guessing game for League of Legends, Valorant and Demon Slayer characters — one Turborepo monorepo shipping a Vite web app and an Expo iOS app off a shared package, with no accounts and no backend.'
 category: 'Web App'
 order: 9
-repo: 'https://github.com/Jubstaaa/pixelate-game'
+repo: 'https://github.com/Jubstaaa/pixel-guess'
 url: 'https://pixelguessgame.com/'
-stack: ['NextJS', 'Node.js', 'PostgreSQL', 'Vercel', 'Prisma']
-highlights: []
+stack:
+    [
+        'TypeScript',
+        'Turborepo',
+        'Bun',
+        'Vite',
+        'React',
+        'React Router',
+        'Tailwind CSS',
+        'Expo',
+        'React Native',
+        'Skia',
+        'DigitalOcean Spaces',
+        'sharp',
+    ]
+highlights:
+    - 'One monorepo, two shipped apps — a Vite web build and an Expo iOS app sharing game logic through a workspace package'
+    - 'No accounts and no backend: streaks live in localStorage and the site deploys as static files'
+    - 'Pixelation and the hard-mode grayscale pass run on canvas at play time rather than as pre-rendered image variants'
 images:
     - src: '/images/projects/pixel-guess-game/cover.webp'
       alt: 'Pixel Guess Game'
 ---
 
-Pixel Guess Game is an engaging web-based application that challenges players to guess pixelated images from various categories, including **League of Legends**, **Valorant**, **Demon Slayer**, and more. Players must identify the character or item as quickly as possible before the image becomes fully visible. The game is designed to be both entertaining and competitive, featuring a streak system, a global leaderboard, and various difficulty levels.
+Guess the character before the pixels resolve. Images come from **League of Legends**, **Valorant** and **Demon Slayer**, and the game runs entirely in the browser — no account, no sign-up, nothing to wait for.
 
 ---
 
 ![Pixel Guess Game Main Game Interface](/images/projects/pixel-guess-game/pixel-guess-game-main-game-interface.webp)
 
-## **How It Works: Gameplay Overview**
+## **How It Works**
 
-In **Pixel Guess Game**, the objective is simple: guess the character or item displayed in pixelated form before it becomes fully visible. Here’s how the game works:
+- Pick a category.
+- A heavily pixelated image appears.
+- Guess the character before the pixelation resolves.
+- A wrong guess reveals more of the image.
+- A correct guess extends your streak.
 
-- Players choose a category (e.g., League of Legends, Valorant, Demon Slayer).
-- A pixelated image of a character from that category appears on the screen.
-- The player has to guess which character it is before the pixelation decreases.
-- If you guess incorrectly, more pixels are revealed until the full image is shown.
-- Correct guesses reward you with streaks, and the longer your streak, the higher your rank on the leaderboard.
+### **Difficulty**
 
-### **Multiple Difficulty Levels**
+- **Easy** — lighter pixelation, more to go on from the start
+- **Hard** — heavier pixelation plus a grayscale pass, so colour palettes stop being a giveaway
 
-**Pixel Guess Game** offers different difficulty modes to challenge players:
-
-- **Easy Mode**: The image is less pixelated, making it easier to guess.
-- **Hard Mode**: The image starts with more pixelation, and a **grayscale filter** adds extra difficulty.
+Both effects are applied on a canvas at play time by `use-canvas-pixelation`, not baked into pre-rendered image variants, so one source image serves every difficulty.
 
 ---
 
-![Pixel Guess Game Leaderboard](/images/projects/pixel-guess-game/pixel-guess-game-leaderboard.webp)
+## **Streaks Stay on the Device**
 
-## **Leaderboard & Streak System**
+There is no leaderboard and no account system. `streak-storage` keeps a `streak` and `maxStreak` per category and difficulty in `localStorage`, so progress survives a refresh without a server ever being involved:
 
-One of the most exciting features of **Pixel Guess Game** is the global **Leaderboard**. As you play, your correct guesses will contribute to your streaks, and the longer your streak, the higher you’ll rank. Here’s how it works:
+```ts
+const key = (slug: string, difficulty: Difficulty) =>
+    `streak:${slug}:${difficulty}`
+```
 
-- **Track Your Streak**: Keep track of your longest streak of correct guesses.
-- **Leaderboard**: Compare your scores with other players around the world to see where you stand.
-- **Competitive Play**: Compete with friends or random players and strive to be the best.
-
----
-
-![Pixel Guess Game Feedback Section](/images/projects/pixel-guess-game/pixel-guess-game-feedback-section.webp)
-
-## **Feedback Section: Help Us Improve**
-
-We value our players’ opinions! If you have any suggestions, feedback, or if you encounter any issues while playing, feel free to leave your thoughts in the **Feedback Section**. This feature allows players to submit their feedback, which will help us improve the game and add more exciting features in future updates.
+That is the whole persistence layer. It is also why the web app ships as static files with nothing running behind them.
 
 ---
 
-![Pixel Guess Game Language Selection Menu](/images/projects/pixel-guess-game/pixel-guess-game-language-selection-menu.webp)
+## **One Monorepo, Two Apps**
 
-## **Available in 12 Languages**
+A Turborepo workspace on Bun holds both clients and the logic they share:
 
-To ensure that everyone can enjoy **Pixel Guess Game**, we’ve made it accessible in **12 different languages**:
+- **`apps/web`** — Vite, React, React Router, Tailwind CSS
+- **`apps/mobile`** — Expo and React Native, drawing through Skia with Reanimated for motion
+- **`packages/shared`** — the game logic and types both apps import, plus the image pipeline
 
-- **English**
-- **Turkish**
-- **Spanish**
-- **Portuguese**
-- **French**
-- **German**
-- **Russian**
-- **Korean**
-- **Chinese**
-- **Japanese**
-- **Arabic**
-- **Vietnamese **
-
-This multilingual support helps players from all around the world enjoy the game in their preferred language.
+The iOS app is published as **Pixel Guess**.
 
 ---
 
-### **Feedback and Future Updates**
+## **Architecture Notes**
 
-The game includes a **feedback section** where players can share their thoughts and suggestions. This feedback helps in improving the game and planning future updates, such as:
-
-- More character categories (e.g., **Naruto**, **Marvel**, **Rick and Morty**)
-- Enhanced UI features for a better gaming experience
+- **Shared logic, not shared UI.** Both apps import types and game rules from `packages/shared`, then build their own interfaces against the platform they run on rather than forcing one component tree across web and native.
+- **Image pipeline in the shared package.** `sharp` processes source art and `@aws-sdk/client-s3` uploads it to a DigitalOcean Spaces bucket, with `p-queue` and `p-retry` keeping batch runs bounded and recoverable.
+- **Static deployment.** The web build is plain files behind Caddy on a DigitalOcean droplet — no Node process, since there is no server-side work to do.
 
 ---
 
-**Current Status:**  
-**Pixel Guess Game** is currently live in **open beta** and is continuously being improved based on user feedback.
+## **Links**
 
-Visit the game at: [Pixel Guess Game](https://pixelguessgame.com/)
+- Live: [pixelguessgame.com](https://pixelguessgame.com/)
+- iOS: [Pixel Guess on the App Store](https://apps.apple.com/tr/app/pixel-guess/id6760237625)
+- GitHub: [github.com/Jubstaaa/pixel-guess](https://github.com/Jubstaaa/pixel-guess)
