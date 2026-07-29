@@ -1,0 +1,95 @@
+---
+title: 'brief'
+summary: 'A weekly digest of what actually changed in React, Next.js and React Native — read from commit history rather than releases, triaged and rewritten in Turkish by an open-weight model, and published every Tuesday as a fully static site with no server and no database.'
+category: 'Developer Tool'
+order: 7
+repo: 'https://github.com/Jubstaaa/brief'
+url: 'https://brief.ilkerbalcilar.com'
+stack:
+    [
+        'Next.js',
+        'TypeScript',
+        'Tailwind CSS',
+        'Bun',
+        'Zod',
+        'Octokit',
+        'DigitalOcean Gradient',
+        'DigitalOcean Spaces',
+        'GitHub Actions',
+        'Caddy',
+    ]
+highlights:
+    - 'Model chosen by measurement, not by reading model cards — seven candidates run against real pull requests, scored on latency, schema conformance and Turkish output quality'
+    - 'Reads commit history instead of releases, because React ships releases rarely while dozens of meaningful changes land every week'
+    - 'One inference call per change, so a single malformed response costs one item instead of the whole brief'
+    - 'No server and no database — a static export reads its content from object storage at build time and ships as plain files'
+images: []
+---
+
+## **Overview**
+
+Keeping up with a framework you ship on is a chore. Release notes arrive too late and too rarely — React can go weeks without a release while dozens of meaningful changes land on `main`. Changelogs, when they exist, are written for people who contribute to the framework, not people who use it.
+
+`brief` reads the **commit history** of `facebook/react`, `vercel/next.js` and `facebook/react-native` every Tuesday, throws away everything a working application developer cannot act on, and rewrites what is left in Turkish — what you can now do, what used to break and no longer does, and whether you need to do anything about it.
+
+Every framework gets its own category and its own weekly page:
+
+```
+/react/2026-07-28
+/next-js/2026-07-28
+/react-native/2026-07-28
+```
+
+Adding a fourth framework is one row of config — routes, sitemap, feeds and archives all derive from that list.
+
+---
+
+## **Choosing a Model by Measuring It**
+
+The pipeline originally ran on a router endpoint that resolved to a reasoning model. It worked, but it was slow and — worse — unpredictable: the same drafting call measured anywhere between 22 and 195 seconds, because the model spends tokens thinking before it answers.
+
+Rather than swap it for whatever looked best on paper, the repository carries two benchmark scripts that call the **production prompts and schemas** against real pull requests and report latency, completion tokens, schema conformance and whether a usable code example appeared. Seven candidates went through it.
+
+The failures were not about speed:
+
+- one model never produced parseable JSON and mixed four languages into a single sentence
+- one leaked CJK characters into Turkish prose
+- one invented a `defineNextConfig` helper that does not exist in Next.js
+- one answered the triage step with the kind `"perf"` against a schema holding `"performance"`, which would have discarded an entire repository's picks
+
+None of that is visible without running the real prompts and reading the output. The winner cut a full run from roughly four minutes to **71 seconds**, and removed reasoning from the pipeline entirely.
+
+---
+
+## **Reading the Output Found Bugs the Tests Could Not**
+
+Two defects only surfaced by reading generated text rather than asserting on it.
+
+The model was inventing version numbers in the "what should we do" field — a 2026 React change reported as _"upgrade to 18.3.0 or later"_. Nothing in the prompt carries release information, so the number was pure fabrication in the one field a reader is meant to act on.
+
+It also never emitted code examples, because the field was described as optional with no sense of when it earned its place. Stating plainly that anything the team writes themselves — a config option, a prop, a flag — is _expected_ to carry a snippet fixed it, and a deterministic cap in code keeps the count honest rather than trusting the instruction.
+
+---
+
+## **Noise Filtering per Repository**
+
+React Native's commit stream is far noisier than the other two. In a sampled week, 28 of 81 commits were invisible from the outside: dozens of translation auto-updates, an internal release commit, fifteen identical `RCT_EXPORT_METHOD` removals, and one commit whose title was a file path.
+
+Those patterns live on the repository's own config rather than in the shared list, because putting them in the shared list would have silently filtered React and Next.js commits too.
+
+---
+
+## **No Server, No Database**
+
+The generated brief is written to object storage as JSON. `next build` fetches it over plain public reads — no credentials in the build — prerenders every week, and the result is rsynced to a box where Caddy serves it as files.
+
+Nothing runs between requests. A container was considered and rejected: the whole site is 1.4 MB of static output, so a container would have added a second web server to do what Caddy already does, on a box with under 300 MB of RAM to spare.
+
+Deployment is split in two. A push to `main` builds and ships without regenerating anything, so a code change costs no inference. The Tuesday cron publishes that week's JSON and then calls the same deploy workflow.
+
+---
+
+## **Links**
+
+- Live: [brief.ilkerbalcilar.com](https://brief.ilkerbalcilar.com)
+- GitHub: [github.com/Jubstaaa/brief](https://github.com/Jubstaaa/brief)
