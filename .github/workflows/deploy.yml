@@ -59,6 +59,9 @@ jobs:
         needs: build
         runs-on: ubuntu-latest
         permissions:
+            # checkout needs contents; naming any permission replaces the defaults,
+            # so omitting it made the deploy job unable to read its own repository.
+            contents: read
             packages: read
         steps:
             # The compose file is the repository's, not the server's. Without this
