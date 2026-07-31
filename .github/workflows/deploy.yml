@@ -61,6 +61,18 @@ jobs:
         permissions:
             packages: read
         steps:
+            # The compose file is the repository's, not the server's. Without this
+            # step `docker compose up` reads whatever happens to be on the droplet,
+            # so the two drift the moment anyone edits either one — and the drift is
+            # silent, because a deploy still succeeds against the stale copy.
+            - uses: actions/checkout@v5
+            - uses: appleboy/scp-action@v1
+              with:
+                  host: ${{ secrets.DO_HOST }}
+                  username: ${{ secrets.DO_USER }}
+                  key: ${{ secrets.DO_SSH_KEY }}
+                  source: docker-compose.yml
+                  target: /opt/portfolio
             - uses: appleboy/ssh-action@v1
               with:
                   host: ${{ secrets.DO_HOST }}

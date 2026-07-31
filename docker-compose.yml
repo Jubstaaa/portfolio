@@ -8,6 +8,26 @@ services:
         container_name: portfolio
         restart: unless-stopped
         mem_limit: 256m
+        # next-server binds the container's own address rather than loopback, so the
+        # probe has to resolve $HOSTNAME: wget against 127.0.0.1 gets connection
+        # refused. The name is doubled so Compose passes the variable through to the
+        # shell inside the container instead of substituting the host's value. wget
+        # here is BusyBox — -T is the timeout, the GNU long options do not exist.
+        #
+        # Reports only. Docker does not restart an unhealthy container, and Beszel
+        # cannot alert per container, so this fills the Health column and nothing
+        # more: it surfaces "process alive but application wedged", which the
+        # restart policy alone never catches.
+        healthcheck:
+            test:
+                [
+                    'CMD-SHELL',
+                    'wget -q -O /dev/null -T 3 "http://$$HOSTNAME:3000/" || exit 1',
+                ]
+            interval: 30s
+            timeout: 5s
+            retries: 3
+            start_period: 40s
         env_file: .env
         # No third party has Portainer access to this app. If that changes, set
         # PORTAINER_TEAMS in .env beside this file and uncomment the two lines
