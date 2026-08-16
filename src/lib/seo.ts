@@ -81,7 +81,6 @@ export function buildMetadata(input: BuildMetadataInput): Metadata {
             description,
             title: input.title,
             ...(images ? { images } : {}),
-            creator: `@${site.handle}`,
         },
     }
 }
