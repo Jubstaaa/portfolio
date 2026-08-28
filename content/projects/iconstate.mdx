@@ -1,0 +1,58 @@
+---
+title: 'IconState'
+summary: 'A macOS app that rearranges an iPhone home screen over USB. It reads the real layout off the phone, draws every page as its own device, lets you drag icons and folders with a mouse, and writes the result back in a single atomic write — after a backup and a diff you have to confirm.'
+category: 'Desktop App'
+order: 3
+repo: 'https://github.com/Jubstaaa/iconstate'
+url: 'https://github.com/Jubstaaa/iconstate/releases/latest'
+stack:
+    [
+        'Tauri',
+        'Rust',
+        'TypeScript',
+        'React',
+        'Vite',
+        'Tailwind CSS',
+        'Bun',
+        'GitHub Actions',
+        'Git',
+    ]
+highlights: []
+images:
+    - src: '/images/projects/iconstate/cover.webp'
+      alt: 'IconState showing an iPhone home screen with folders and a dock, ready to rearrange'
+---
+
+**IconState** brings back the home screen editor Apple removed from iTunes — and adds the part iTunes never had: it sorts your apps into folders for you.
+
+Plug an iPhone in over USB and the app draws the real home screen. The icons are the device's own PNGs, pulled straight off the phone, and the grid is the size SpringBoard reports rather than a number someone typed in. Every page is rendered as a separate device, side by side, so you drag icons between pages the way you would move them between two phones on a desk.
+
+No jailbreak is involved. It speaks the same lockdown service Finder uses to back a phone up.
+
+![IconState showing an iPhone home screen with folders and a dock](/images/projects/iconstate/cover.webp)
+
+## **Nothing is written until you say so**
+
+Editing is local. The phone is untouched until you open **Review changes**, which lists exactly what would move and where — every icon, every folder created or removed. Only then does it write, and it takes a backup of the previous layout first, so a single **Undo last write** puts everything back.
+
+The write itself is one atomic call. There is no half-applied state to recover from.
+
+## **It learns your own layout**
+
+The app ships knowing only Apple's own apps. Everything else comes from one of two places: the App Store's own category for the app, or a rule table built from your own home screen. Arrange one page the way you like it, choose **Make this layout my rules**, and every future sort puts things back exactly there.
+
+That table lives on your machine, never in the app.
+
+## **Working out what the phone will actually allow**
+
+Most of the work was not the editor — it was finding the edges of what SpringBoard exposes, and proving them rather than guessing. Widgets are not in the icon state at all. Removing an app from the home screen does not stick; iOS puts it back on a new page. Free icon placement, the iOS 18 feature that lets an icon sit anywhere with gaps around it, cannot be read or written: `getIconState` returns a flat list in one format version and a fixed grid of filler cells in the others, and writing a gap was attempted four different ways before concluding it does not pass through this service.
+
+Each of those is written down in the repository with what was tried, so the next person does not have to repeat it.
+
+## **One binary**
+
+It began as a Python engine frozen with PyInstaller and shipped as a sidecar next to the Tauri shell. That worked, but it put 46 MB and a second process between the window and the phone.
+
+It is now a single 15 MB binary. The device layer is Rust over the `idevice` crate — lockdown, SpringBoard, icon PNGs — and the layout engine, which is pure JSON in and JSON out, is TypeScript inside the app itself. The migration was verified against the Python implementation on a real device before it was deleted: identical icon state, identical icon bytes, identical plans and diffs.
+
+Updates install in place, signed with the project's own key.
