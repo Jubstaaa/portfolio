@@ -17,7 +17,7 @@
     { "name": "Server-Side Rendering", "category": "backend" },
 
     { "name": "Mobile Development (React Native / Expo)", "category": "other" },
-    { "name": "Desktop Apps (Electron)", "category": "other" },
+    { "name": "Desktop Apps (Tauri, Electron)", "category": "other" },
     { "name": "Open-Source Maintenance", "category": "other" },
 
     { "name": "CI/CD Pipelines", "category": "devops" },

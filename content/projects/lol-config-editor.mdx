@@ -1,60 +1,71 @@
 ---
 title: 'LoL Config Editor'
-summary: 'Instantly swap, save & share your perfect League of Legends settings—no client required.'
+summary: 'A desktop editor for League of Legends settings — edit them without launching the game, save named profiles, and switch between them in one click.'
 category: 'Desktop App'
 order: 13
 repo: 'https://github.com/Jubstaaa/lol-config-editor'
-stack: ['JavaScript', 'TypeScript', 'Electron.js']
-highlights: []
+stack: ['Tauri', 'Rust', 'React', 'TypeScript', 'Tailwind CSS', 'Vite', 'Bun']
+highlights:
+    [
+        'Edits settings League has never written, by inserting the missing keys',
+        "Finds the install from Riot's own record instead of a hardcoded path",
+        'Keybind conflicts resolved by comparing parsed chords, not strings',
+        'Signed in-place updates on macOS and Windows',
+    ]
 images:
     - src: '/images/projects/lol-config-editor/cover.webp'
       alt: 'LoL Config Editor'
 ---
 
-### What Is It?
+## **What It Is**
 
-LoL Config Editor is a lightweight desktop app that lets you create named profiles for every playstyle, account, or roommate, then activate any profile with one click. Think of it as your personal “loadout switch” for League settings.
+![Sound settings read from a live League install](/images/projects/lol-config-editor/lol-config-editor-sound.webp)
 
----
+League keeps its settings in `Config/PersistedSettings.json` — two files' worth of `name = value` pairs, one for `Game.cfg` and one for `Input.ini`. This app reads that file, renders it as controls, and writes it back, changing only the keys you touched.
 
-### How It Works • Zero Friction Pipeline
+It covers effectively the whole file: every volume and interface option, combat text, minimap, scoreboard, chat, emotes, the item shop, and all 176 keybinds across both slots League keeps for each action.
 
-1. **Profile-First Design**
-2.  - Craft a setup (resolution, keybinds, chat state, minimap size, color-blind mode, etc.).
-
-- Save it under any name—_Ranked_, _ARAM_, _Guest_.
-
-3. **One-Click Apply**
-4.  - Select a profile → hit **Apply** → launch League.
-
-- The chosen config propagates to every LoL account on that PC.
-
-5. **Multi-User Smartness**
-6.  - Each person on a shared computer keeps their own library of configs.
-
-- No more “Who messed up my hotkeys?”
+The point is switching. Save a setup under a name — _Ranked_, _ARAM_, _Guest_ — and apply it later in one click. Settings are per machine, so every account on that PC picks them up.
 
 ---
 
-### Headline Features
+## **The Problem Underneath**
 
-- **Game-Free Editing** – Adjust everything outside the client.
-- **Unlimited Profiles** – From sweat-tryhard to chill-casual, store them all.
-- **Account-Wide Consistency** – Settings follow you across every login.
-- **Open Source & Free** – MIT-licensed; fork it, mod it, ship PRs.
+**League only saves what differs from its own defaults.** A fresh config is missing most keys entirely.
 
----
+The first version addressed settings with JSONPath strings evaluated against form state, which meant it could only edit a key that was already in the file. Anything absent resolved to an empty path and the control silently did nothing — so most of the settings screen was unreachable, and adding new options mostly produced dead checkboxes.
 
-### Why You’ll Love It
-
-- **Speed** – Swap from “Solo Queue focus mode” to “Friends & Fun mode” in seconds.
-- **Peace** – Roommates, siblings, or LAN cafés can coexist without setting wars.
-- **Control** – Keep chat off where it tilts you, on where it memes you.
-- **Future-Proof** – Built with Electron, NextUI, Tailwind—easy to extend.
+The rewrite addresses settings by `(file, section, key)` and writes through an upsert that inserts the file, section or key when it is missing. Each control also carries League's own default, so a setting you have never touched in game still shows the right value and becomes editable.
 
 ---
 
-### Get Involved
+## **Keybinds**
 
-GitHub: [**github.com/Jubstaaa/lol-config-editor**](https://github.com/Jubstaaa/lol-config-editor)  
-Open an issue, star the repo, or jump into a pull request—community tweaks welcome!
+![Every cast mode for every ability, both slots](/images/projects/lol-config-editor/lol-config-editor-hotkeys.webp)
+
+League writes a binding as `[Ctrl][Button 1],[<Unbound>]` — two slots per action, each a chain of bracketed tokens.
+
+Taking a key means freeing it everywhere else first. The original did that with a `String.replace` over the serialised config, which fails twice: it replaces only the first match, so a key bound in three places stays bound in two; and it matches substrings, so binding `[Button 1]` corrupts an existing `[Ctrl][Button 1]` into `[<Unbound>][Button 1]`.
+
+Bindings are now parsed into chords and compared structurally. A modified chord is a different key, and every slot holding a conflict is cleared.
+
+Browser events also needed translating. The DOM numbers mouse buttons from zero and puts the middle button second; League numbers from one and puts the right button second. Passing `event.button` straight through mislabelled every button on the mouse.
+
+---
+
+## **Architecture Notes**
+
+- **Finding the install** reads `RiotClientInstalls.json`, which Riot's own launcher writes on both platforms, rather than guessing at `C:\Riot Games` — the default, and wrong for anyone who installed elsewhere.
+- **Locking** solves the real complaint: League rewrites the settings file every time it exits, which is how hand-edited configs get lost. The app can mark the file read-only, and applying settings still works while locked — it unlocks, writes, and locks again.
+- **The chosen path** lives in Tauri state and is read on every command. Caching it at startup meant picking a new folder mid-session left Apply writing to the old one until restart.
+- **The settings model is pure** — read, upsert, keybind parsing and the catalogue never import a Tauri command. CI has no League install, so the tests run against a real config the game wrote, checked into the repo as a fixture.
+- **The catalogue is tested against that fixture.** A control pointed at a key League does not have fails the build instead of silently doing nothing — which is exactly how the item-component checkbox shipped broken, bound to a key that exists in neither section.
+- **Updates install in place**, signed with the project's own key, so they never pick up the macOS quarantine flag that makes a downloaded build look damaged.
+
+---
+
+## **Get Involved**
+
+GitHub: [**github.com/Jubstaaa/lol-config-editor**](https://github.com/Jubstaaa/lol-config-editor)
+
+MIT licensed. Issues and pull requests welcome.

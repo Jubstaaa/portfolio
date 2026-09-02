@@ -16,6 +16,10 @@
         "category": "lang"
     },
     {
+        "name": "Rust",
+        "category": "lang"
+    },
+    {
         "name": "HTML",
         "category": "lang"
     },
@@ -45,6 +49,10 @@
     },
     {
         "name": "Electron",
+        "category": "framework"
+    },
+    {
+        "name": "Tauri",
         "category": "framework"
     },
     {
