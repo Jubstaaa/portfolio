@@ -1,0 +1,79 @@
+---
+title: 'standup-mr'
+summary: 'standup-mr writes your daily standup note from merge request state instead of your git log. It reads GitLab or GitHub for what is ready to merge, what is blocked, and what is waiting on your review — and when a pipeline is red it opens the failing job log and reports the error lines, so the note says why it is red rather than that it is. Ships as a CLI and as an MCP server.'
+category: 'Developer Tool'
+order: 7
+repo: 'https://github.com/Jubstaaa/standup-mr'
+url: 'https://www.npmjs.com/package/standup-mr'
+stack:
+    [
+        'TypeScript',
+        'Node.js',
+        'Bun',
+        'npm',
+        'MCP',
+        'GitLab',
+        'GitHub',
+        'GitHub Actions',
+        'Git',
+        'Zod',
+    ]
+highlights: []
+images: []
+---
+
+## **The problem it solves**
+
+Most standup tools read your local `git log`. That answers "what did I type", which is not the question a standup asks. Nobody wants to hear a list of commit messages — they want to know what is ready, what is stuck, and why.
+
+standup-mr reads the merge request state instead. Same data your team already argues about in review, turned into a note you can read out loud.
+
+---
+
+## **What makes it different**
+
+Every other tool tells you the pipeline is red. This one opens the failing job's log, extracts the error lines, and puts them in the note.
+
+|                     | commit-log tools | standup-mr                                      |
+| ------------------- | ---------------- | ----------------------------------------------- |
+| Source              | local `git log`  | GitLab or GitHub API                            |
+| Merge request state | ✗                | ready / blocked / draft / stale                 |
+| Review queue        | ✗                | pending only, approvals filtered out            |
+| Failed pipeline     | ✗                | error lines from the job trace or Actions log   |
+| Self-hosted         | varies           | GitLab CE/EE and GitHub Enterprise, first class |
+
+---
+
+## **Two providers, one vocabulary**
+
+GitLab and GitHub are both first class, including self-hosted instances. Identity resolves from a flag, an environment variable, or a logged-in `gh` / `glab` session — and when both are configured, an ambiguous provider fails with a clear error rather than a silent guess.
+
+---
+
+## **Three surfaces**
+
+### **CLI**
+
+```bash
+npx standup-mr fetch              # JSON, provider auto-detected
+npx standup-mr fetch --markdown   # structured digest
+npx standup-mr post --google-chat "$URL"
+```
+
+### **MCP server**
+
+`npx -y standup-mr mcp` starts a stdio MCP server, so any client — Claude Code, Cursor, Codex — can pull the data, read the note-writing rules, and post the finished note to a chat webhook. Three tools, no credential ever accepted as a tool argument.
+
+### **Claude Code skill**
+
+A bundled skill carries the note-writing rules: how to group the previous day by theme, how to derive today from open merge requests, and how to report a blocker from its job log.
+
+---
+
+## **Engineering notes**
+
+Published on npm, on the official MCP Registry, and on Glama, where it scores 100% on the server quality checklist with an A in both server coherence and tool definition quality.
+
+Every behaviour is covered by tests — 315 of them, plus a separate timezone-sensitive suite pinned to two zones, because a standup note is a date calculation wearing a trench coat. Releases run through CI: type check, lint, formatting, tests, build, tag/version agreement, and a smoke test that the published binary runs through its bin symlink.
+
+MIT licensed. No telemetry, and no network egress beyond the host you configure.
