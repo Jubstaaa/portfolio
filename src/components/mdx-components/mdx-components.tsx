@@ -11,6 +11,7 @@ import { Ol } from './ordered-list'
 import { P } from './paragraph'
 import { Pre } from './pre'
 import { Strong } from './strong'
+import { Table, Tbody, Td, Th, Thead, Tr } from './table'
 import { Ul } from './unordered-list'
 import { Warn } from './warn'
 
@@ -36,6 +37,12 @@ export const mdxComponents = {
     p: P,
     pre: Pre,
     strong: Strong,
+    table: Table,
+    tbody: Tbody,
+    td: Td,
+    th: Th,
+    thead: Thead,
+    tr: Tr,
     ul: Ul,
     Warn,
 } as const
