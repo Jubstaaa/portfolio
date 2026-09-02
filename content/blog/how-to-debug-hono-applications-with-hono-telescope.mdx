@@ -2,6 +2,7 @@
 title: 'How to Debug Hono Applications with Telescope — Laravel Telescope for Bun & Node.js'
 description: 'A Laravel Telescope–style debugging tool for Hono.js applications. Monitor requests, queries, logs, and exceptions in real-time with a beautiful dashboard. Works with Bun & Node.js.'
 date: 2025-10-31
+updated: 2026-09-02
 category: development
 tags:
     [
@@ -21,6 +22,8 @@ cover:
 ---
 
 # How to Debug Hono Applications with Telescope
+
+> **Updated for 1.x.** The original version of this post used `setupTelescope(app)`. That entry point was removed in 1.0, which replaced the singleton core with an instance-based one. Every snippet below is the current API.
 
 If you've ever used Laravel Telescope, you know how game-changing it is for debugging. Now imagine having that same power for your Hono.js applications.
 
@@ -71,12 +74,15 @@ npm install hono-telescope
 
 ```ts
 import { Hono } from 'hono'
-import { setupTelescope } from 'hono-telescope'
+import { createTelescope, memoryStorage } from 'hono-telescope'
 
 const app = new Hono()
+const telescope = createTelescope({
+    storage: memoryStorage({ maxEntries: 1000 }),
+})
 
-// One line – that's it!
-setupTelescope(app)
+app.use('*', telescope.middleware())
+app.route('/telescope', telescope.dashboard())
 
 app.get('/api/users', async c => {
     console.log('Fetching users')
@@ -86,6 +92,8 @@ app.get('/api/users', async c => {
 
 export default app
 ```
+
+Telescope is on outside production and off inside it, so this is safe to leave in place.
 
 ### Run it with Bun
 
@@ -130,10 +138,19 @@ Monitor database performance:
 
 Works with:
 
-- **Prisma** — `$queryRaw` and `$executeRaw`
-- **Sequelize** — All queries
-- **MongoDB** — Document operations
-- **Bun SQLite** — Native queries
+- **Prisma** — every model operation, through a client extension
+- **Sequelize** — all queries
+- **MongoDB** — command monitoring
+- **Bun SQLite** — prepared statements
+
+Each client is instrumented explicitly, and `instrumentPrisma` returns a new client you have to use:
+
+```ts
+const prisma = telescope.instrumentPrisma(new PrismaClient())
+telescope.instrumentBunSqlite(db)
+```
+
+A query that fails is stored with the driver's own error message, so a failed command does not read as a merely slow one.
 
 ### 4. Log Monitoring
 
@@ -141,8 +158,7 @@ Centralized logging:
 
 - `console.log` capture
 - Organized by severity level
-- Searchable and filterable
-- Linked to requests
+- Linked to the request they happened inside
 
 All your debug logs in one place.
 
@@ -151,51 +167,56 @@ All your debug logs in one place.
 Want fine-grained control?
 
 ```ts
-setupTelescope(app, {
-    enabled: true, // Enable/disable
-    path: '/telescope', // Dashboard URL
-    max_entries: 1000, // Max entries to store
-    ignored_paths: ['/health'], // Paths to skip
-    watchers: {
-        requests: true, // Monitor requests
-        exceptions: true, // Monitor errors
-        logs: true, // Monitor logs
-        queries: true, // Monitor queries
+const telescope = createTelescope({
+    enabled: process.env.NODE_ENV !== 'production',
+    storage: memoryStorage({ maxEntries: 1000 }),
+    collectors: [consoleCollector(), exceptionCollector(), fetchCollector()],
+    dashboardPath: '/telescope', // must match the path you mount at
+    ignorePaths: ['/health'],
+    capture: { requestBody: true, responseBody: true, maxBodySize: 65536 },
+    redact: {
+        headers: ['authorization', 'cookie', 'x-api-key'],
+        bodyKeys: ['password', 'token', 'secret'],
     },
+    dashboard: { auth: { username: 'admin', password: 'telescope' } },
 })
 ```
 
+Every option is optional. Redaction is on by default and recurses through nested objects and arrays, so a `password` five levels deep in a request body is still replaced before anything is stored.
+
 ## Live Demo — Try It Now
 
-No installation needed. [Live dashboard](https://hono-telescope-9lvpv.ondigitalocean.app/telescope).
+No installation needed. [Live dashboard](https://hono-telescope.ilkerbalcilar.com/telescope).
 
 Test the API:
 
 ```bash
-# Get all users
-curl https://hono-telescope-9lvpv.ondigitalocean.app/api/users
+BASE=https://hono-telescope.ilkerbalcilar.com
 
-# Create a user
-curl -X POST https://hono-telescope-9lvpv.ondigitalocean.app/api/users \
-  -H "Content-Type: application/json" \
-  -d '{"name":"John","email":"john@example.com"}'
+# Incoming request plus the SQLite queries it ran
+curl $BASE/api/users
 
-# Trigger an error
-curl https://hono-telescope-9lvpv.ondigitalocean.app/api/error
+# Outgoing POST whose payload is recorded with `token` redacted
+curl -X POST $BASE/api/webhook
 
-# Run all tests at once
-bash <(curl -s https://raw.githubusercontent.com/jubstaaa/hono-telescope/main/src/example/test-all-endpoints.sh)
+# A UNIQUE violation, recorded as a failed query; returns 409 and throws nothing
+curl -X POST $BASE/api/db-error
+
+# Throws, so the exception is recorded as a child of its request
+curl $BASE/api/error
 ```
 
-Then check the dashboard to see everything.
+Then check the dashboard to see everything. The demo store is capped at 500 entries in memory and has no auth, so treat anything you send as public.
 
 ## Perfect For
 
 - **Development** — debug during active development with Bun's speed
 - **Testing** — understand request/response flows
 - **Performance** — track database query times and optimize
-- **Production issues** — see exactly what's happening
+- **Staging** — reproduce a report with the request, its queries and its logs in one view
 - **API development** — monitor API behavior
+
+It is a development tool, not an APM: in production it is disabled by default, and enabling it there without dashboard credentials throws on purpose.
 
 ## Why Bun + Telescope
 
@@ -203,16 +224,26 @@ Bun is lightning-fast. But you still need to see what's happening in your app. H
 
 Perfect combo for modern API development.
 
+## Read Your App's Errors From Your Editor
+
+The dashboard endpoint is also an [MCP](https://modelcontextprotocol.io) server, so an AI coding agent can read the running application instead of being handed pasted stack traces:
+
+```bash
+claude mcp add --transport http telescope http://localhost:3000/telescope/mcp
+```
+
+Five read-only tools: `recent_exceptions` (each exception with the request that produced it and that request's logs, queries and outgoing calls), `recent_requests` (filter by `minStatus`, `status`, `minDuration`, `uriContains`), `request_detail`, `slow_queries` and `stats`. Ask "why did that request fail" and the agent has the whole failure in one call.
+
 ## Roadmap
 
-We're actively developing:
+Shipped since this post first went up: the instance-based 1.0 core, dashboard basic auth, the MCP server, failed-query marking and outgoing payload capture.
 
+Still ahead:
+
+- Filtering and search in the dashboard
 - Data export (JSON, CSV)
+- Persistent storage adapters
 - Real-time alerts
-- Advanced analytics
-- Dashboard authentication
-- Multi-tenancy support
-- Enhanced mobile dashboard
 - Plugin system
 
 ## Get Started

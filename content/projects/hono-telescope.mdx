@@ -1,12 +1,13 @@
 ---
 title: 'Hono Telescope'
-summary: 'Hono Telescope is an open-source monitoring and debugging tool for Hono applications running on Node.js and Bun. It provides a real-time dashboard to inspect requests, exceptions, logs, and database queries, helping developers debug faster and gain full visibility into their backend systems.'
+summary: "Hono Telescope is an open-source debugging tool for Hono applications on Node.js and Bun. A real-time dashboard inspects requests, exceptions, logs and database queries, and the same endpoint doubles as an MCP server so an AI coding agent can read the running app's live telemetry instead of being handed pasted stack traces. Zero runtime dependencies."
 category: 'Developer Tool'
 order: 5
 repo: 'https://github.com/jubstaaa/hono-telescope'
 url: 'https://hono-telescope.ilkerbalcilar.com/telescope'
 stack:
     [
+        'TypeScript',
         'Node.js',
         'React',
         'Prisma',
@@ -75,22 +76,47 @@ Tracks database queries executed by:
 - MongoDB
 - Bun SQLite
 
-Query text, execution time, and context are recorded for performance analysis and debugging.
+Query text, bindings, execution time and the parent request are recorded, and a query that fails is marked with the client's own error message, so a failed command is distinguishable from a slow one. Each client is instrumented explicitly — `telescope.instrumentPrisma(prisma)` — rather than by patching globals, which is what makes the capture predictable across Node and Bun.
+
+---
+
+### **MCP Server**
+
+The dashboard endpoint also speaks the Model Context Protocol, so Claude Code, Cursor or any MCP client can read the application's telemetry directly:
+
+```bash
+claude mcp add --transport http telescope http://localhost:3000/telescope/mcp
+```
+
+Five read-only tools answer a debugging question in one call — the most recent exceptions with the request that produced them and that request's logs and queries, recent requests filtered by status or duration, one request in full, the slowest queries, and the entry counts. No other tool in the Hono ecosystem exposes live request and exception data to an agent.
 
 ---
 
 ### **Simple Integration**
 
-Adding Hono Telescope requires only a few lines of code. Once initialized, it runs as a middleware inside the Hono app and can be accessed at a dedicated path (e.g., /telescope).
+Three lines: create the instance, mount the middleware, mount the dashboard.
+
+```ts
+const telescope = createTelescope({
+    storage: memoryStorage({ maxEntries: 1000 }),
+})
+
+app.use('*', telescope.middleware())
+app.route('/telescope', telescope.dashboard())
+```
+
+Telescope is enabled outside production and disabled inside it. If it is enabled in production anyway, mounting the dashboard without credentials throws — the dashboard exposes request bodies, headers and SQL, so that refusal is deliberate. Sensitive headers and body keys are redacted by default at any nesting depth.
 
 ---
 
 ## **Tech Stack**
 
-- **Backend:** Hono (Node.js / Bun)
-- **Monitoring Layer:** Custom middleware & hooks
-- **UI:** React-based dashboard
+- **Backend:** Hono (Node.js / Bun), TypeScript, ESM only
+- **Monitoring Layer:** Instance-based core with pluggable storage, context and collectors
+- **UI:** React dashboard bundled and inlined into the package
 - **Database Support:** Prisma, Sequelize, MongoDB, Bun SQLite
+- **AI Integration:** MCP server over Streamable HTTP, hand-written to keep the package dependency-free
+- **Dependencies:** none at runtime; Hono is a peer dependency
 - **Open Source:** MIT-licensed GitHub project
 
 ---
@@ -103,7 +129,9 @@ Hono Telescope is designed for developers working with **Hono APIs** who need in
 
 ## **Status**
 
-The project is currently in active development and available as an open-source tool on GitHub. Planned improvements include enhanced UI filters, real-time streaming mode, and plugin-based extension support.
+Published on npm and in active development. 1.0 replaced the original singleton core with an instance-based one: explicit database instrumentation, recursive redaction, a documented storage adapter contract and no runtime dependencies. 1.1 added the MCP server, failed-query marking and outgoing request payload capture.
+
+Planned next: filtering and search in the dashboard, data export, persistent storage adapters and alerting.
 
 ---
 
