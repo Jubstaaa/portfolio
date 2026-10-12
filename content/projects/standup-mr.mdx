@@ -1,6 +1,6 @@
 ---
 title: 'standup-mr'
-summary: 'standup-mr writes your daily standup note from merge request state instead of your git log. It reads GitLab or GitHub for what is ready to merge, what is blocked, and what is waiting on your review — and when a pipeline is red it opens the failing job log and reports the error lines, so the note says why it is red rather than that it is. Ships as a CLI and as an MCP server.'
+summary: 'standup-mr writes your daily standup note from merge request state instead of your git log. It reads GitLab or GitHub for what is ready to merge, what is blocked, and what is waiting on your review — and when a pipeline is red it opens the failing job log and reports the error lines, so the note says why it is red rather than that it is. Ships as a CLI, a local MCP server, a Claude Code skill, and a hosted connector that works in any AI assistant — Claude, ChatGPT, Cursor, VS Code, Gemini CLI, Codex — and on your phone. Sign in, no API keys.'
 category: 'Developer Tool'
 order: 2
 repo: 'https://github.com/Jubstaaa/standup-mr'
@@ -17,6 +17,11 @@ stack:
         'GitHub Actions',
         'Git',
         'Zod',
+        'Express',
+        'OAuth 2.1',
+        'SQLite',
+        'Docker',
+        'Caddy',
     ]
 highlights: []
 images: []
@@ -50,7 +55,7 @@ GitLab and GitHub are both first class, including self-hosted instances. Identit
 
 ---
 
-## **Three surfaces**
+## **Four surfaces**
 
 ### **CLI**
 
@@ -64,6 +69,12 @@ npx standup-mr post --google-chat "$URL"
 
 `npx -y standup-mr mcp` starts a stdio MCP server, so any client — Claude Code, Cursor, Codex — can pull the data, read the note-writing rules, and post the finished note to a chat webhook. Three tools, no credential ever accepted as a tool argument.
 
+### **Hosted connector for any AI assistant**
+
+Add `https://standup.ilkerbalcilar.com/mcp` as a remote MCP server in Claude, ChatGPT, Cursor, VS Code, Gemini CLI or Codex, and sign in — with GitHub, with gitlab.com, or with your company's own GitLab or GitHub Enterprise. No API key to paste anywhere. In an assistant with a mobile app, it works from your phone too: ask for your standup on the way to the meeting.
+
+Self-hosted instances are self-service. Type your company's host on the connect page: if a colleague already set up sign-in, you get a button; if not, the page shows the exact redirect URI and scopes to register an OAuth application once, and everyone at that host can sign in from then on.
+
 ### **Claude Code skill**
 
 A bundled skill carries the note-writing rules: how to group the previous day by theme, how to derive today from open merge requests, and how to report a blocker from its job log.
@@ -72,8 +83,10 @@ A bundled skill carries the note-writing rules: how to group the previous day by
 
 ## **Engineering notes**
 
-Published on npm, on the official MCP Registry, and on Glama, where it scores 100% on the server quality checklist with an A in both server coherence and tool definition quality.
+1.0.0 is the first stable release: the CLI flags, the JSON output, the MCP tool names and the environment variables now follow semver. It is published on npm, on the official MCP Registry — with both the npm package and the hosted endpoint — and on Glama, where it scores 100% on the server quality checklist with an A in both server coherence and tool definition quality.
 
-Every behaviour is covered by tests — 315 of them, plus a separate timezone-sensitive suite pinned to two zones, because a standup note is a date calculation wearing a trench coat. Releases run through CI: type check, lint, formatting, tests, build, tag/version agreement, and a smoke test that the published binary runs through its bin symlink.
+The hosted connector is an OAuth 2.1 authorization server in its own right, built on the MCP SDK: dynamic client registration, PKCE, refresh-token rotation with reuse detection. Provider tokens and webhook URLs are encrypted at rest with AES-256-GCM, its own tokens are stored only as hashes, and the connect page is bound to the browser that started it. Because users can type in any host, every outbound request goes through a guarded fetch whose DNS lookup refuses private addresses at connect time, redirects included. It runs as a single Bun container behind Caddy and Cloudflare, deployed from CI.
 
-MIT licensed. No telemetry, and no network egress beyond the host you configure.
+Every behaviour is covered by tests — over 400 of them, plus a separate timezone-sensitive suite pinned to two zones, because a standup note is a date calculation wearing a trench coat. Releases run through CI: type check, lint, formatting, tests, build, tag/version agreement, and a smoke test that the published binary runs through its bin symlink.
+
+MIT licensed, no telemetry. The CLI and local server talk only to the host you configure.
