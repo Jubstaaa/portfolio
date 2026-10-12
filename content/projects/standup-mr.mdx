@@ -1,6 +1,6 @@
 ---
 title: 'standup-mr'
-summary: 'standup-mr writes your daily standup note from merge request state instead of your git log. It reads GitLab or GitHub for what is ready to merge, what is blocked, and what is waiting on your review — and when a pipeline is red it opens the failing job log and reports the error lines, so the note says why it is red rather than that it is. Ships as a CLI, a local MCP server, a Claude Code skill, and a hosted connector that works in claude.ai on the web and on your phone — sign in, no API keys.'
+summary: 'standup-mr writes your daily standup note from merge request state instead of your git log. It reads GitLab or GitHub for what is ready to merge, what is blocked, and what is waiting on your review — and when a pipeline is red it opens the failing job log and reports the error lines, so the note says why it is red rather than that it is. Ships as a CLI, a local MCP server, a Claude Code skill, and a hosted connector that works in any AI assistant — Claude, ChatGPT, Cursor, VS Code, Gemini CLI, Codex — and on your phone. Sign in, no API keys.'
 category: 'Developer Tool'
 order: 2
 repo: 'https://github.com/Jubstaaa/standup-mr'
@@ -69,9 +69,9 @@ npx standup-mr post --google-chat "$URL"
 
 `npx -y standup-mr mcp` starts a stdio MCP server, so any client — Claude Code, Cursor, Codex — can pull the data, read the note-writing rules, and post the finished note to a chat webhook. Three tools, no credential ever accepted as a tool argument.
 
-### **Hosted connector for claude.ai**
+### **Hosted connector for any AI assistant**
 
-Add `https://standup.ilkerbalcilar.com/mcp` as a custom connector in claude.ai, press Connect, and sign in — with GitHub, with gitlab.com, or with your company's own GitLab or GitHub Enterprise. The same three tools then work from claude.ai on the web and from the mobile app: ask for your standup on the way to the meeting.
+Add `https://standup.ilkerbalcilar.com/mcp` as a remote MCP server in Claude, ChatGPT, Cursor, VS Code, Gemini CLI or Codex, and sign in — with GitHub, with gitlab.com, or with your company's own GitLab or GitHub Enterprise. No API key to paste anywhere. In an assistant with a mobile app, it works from your phone too: ask for your standup on the way to the meeting.
 
 Self-hosted instances are self-service. Type your company's host on the connect page: if a colleague already set up sign-in, you get a button; if not, the page shows the exact redirect URI and scopes to register an OAuth application once, and everyone at that host can sign in from then on.
 
