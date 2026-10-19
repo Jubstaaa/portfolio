@@ -4,7 +4,7 @@
 # Alpine end to end: bun installs sharp's musl libvips (@img/*-linuxmusl-x64),
 # which is the same flavour the node:alpine runner loads at request time.
 # --ignore-scripts keeps husky's `prepare` from running (no .git in the build
-# context); sharp 0.34 ships prebuilt binaries, so nothing here needs scripts.
+# context); sharp 0.35 ships prebuilt binaries, so nothing here needs scripts.
 FROM oven/bun:1-alpine AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
