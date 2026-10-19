@@ -1,0 +1,160 @@
+---
+title: 'A Dozen Apps on One Small Droplet: My Self-Hosting Setup'
+description: 'How I run a dozen containers and ten static sites on a single 1 vCPU / 2 GB DigitalOcean droplet: Caddy, Docker, GitHub Actions, Infisical, Beszel, Cronicle and nightly backups.'
+date: 2026-10-19
+category: devops
+tags: [devops, self-hosting, docker, caddy, digitalocean, github-actions, ci-cd]
+draft: false
+---
+
+# A Dozen Apps on One Small Droplet: My Self-Hosting Setup
+
+Everything I ship lives on one DigitalOcean droplet in Frankfurt: 1 vCPU, 2 GB of RAM, 48 GB of disk. My portfolio, a few client sites, the API behind a mobile app, live demos of my open-source tools, a monitoring dashboard and a cron runner. Twelve containers and ten static sites, and the box has been up for 66 days straight at the time of writing.
+
+This post walks through the whole setup: how traffic gets in, how apps get deployed, where secrets live, how I know when something breaks, and the small decisions that keep it all fitting in 2 GB.
+
+## The shape of it
+
+```text
+visitor ─▶ Cloudflare ─▶ Caddy (host network, :80/:443)
+                           ├─▶ 127.0.0.1:3000  acw         (container)
+                           ├─▶ 127.0.0.1:3002  portfolio   (container)
+                           ├─▶ 127.0.0.1:3014  waqt-api    (container)
+                           ├─▶ ...
+                           └─▶ /srv/<site>     static exports, served by Caddy itself
+```
+
+Three rules hold everything together:
+
+1. **One reverse proxy owns ports 80 and 443.** Every app listens on `127.0.0.1` only, so nothing is reachable except through Caddy.
+2. **Every app is one folder in `/opt`** with its own `docker-compose.yml` and `.env`. No shared compose file, no orchestration layer.
+3. **Static sites don't get a container.** A Next.js static export is just files, so Caddy serves it straight from disk and it costs zero RAM.
+
+## Caddy: the front door
+
+Caddy runs in its own compose project on the host network, so it binds 80/443 directly and sees real client addresses. Each site is a short block:
+
+```caddyfile
+ilkerbalcilar.com {
+	import access_log
+	import cfonly
+	tls /etc/caddy/certs/ilkerbalcilar.com.pem /etc/caddy/certs/ilkerbalcilar.com.key
+	encode gzip zstd
+	import secure_headers
+	reverse_proxy 127.0.0.1:3002
+}
+```
+
+The interesting parts are the snippets.
+
+**`cfonly`: lock the origin to Cloudflare.** Most of my domains sit behind Cloudflare, but the droplet's IP is still public. Without a guard, anyone can send the right `Host` header straight to the IP and skip the WAF and Access rules. The snippet aborts any request whose source isn't a Cloudflare range (or localhost for health checks):
+
+```caddyfile
+(cfonly) {
+	@notcf not remote_ip 173.245.48.0/20 103.21.244.0/22 ... 127.0.0.1/8 ::1
+	handle @notcf {
+		abort
+	}
+}
+```
+
+It's wrapped in `handle` rather than a bare `abort` on purpose. Caddy orders directives by a fixed internal priority, not by where they appear in the file. My static sites route with `handle` blocks, and those outranked a top-level `abort`, so the request got served anyway. Putting the guard in its own `handle` puts it in the same mutually exclusive group, where being first wins.
+
+**`trusted_proxies`: get the real visitor IP.** Behind Cloudflare, the socket address is always a Cloudflare edge. Listing Cloudflare's ranges as trusted proxies makes Caddy resolve the real client from `CF-Connecting-IP`, so the access logs (and any per-IP rate limiting) see actual visitors.
+
+**Origin certificates as files.** Cloudflare-proxied domains use Cloudflare origin certificates, one `.pem`/`.key` pair per domain in a mounted `certs/` folder. Adding a domain is a file drop and a `caddy reload`, not a container recreate. The one domain not behind Cloudflare uses Caddy's automatic Let's Encrypt, which is also why it can't import `cfonly`: it would block its own ACME challenge.
+
+**Logs that don't eat the disk.** Access logs go to a single JSON file that Caddy rotates itself (20 MiB per file, kept for a week), and the container's own stdout is capped with Docker's `json-file` options. Before I added that cap, Caddy's stdout log had quietly grown to 40 MB.
+
+## Fitting twelve containers into 2 GB
+
+The trick is that each container gets a hard memory ceiling:
+
+| Container      | Limit  | Typical usage |
+| -------------- | ------ | ------------- |
+| acw (Next.js)  | 512 MB | ~150 MB       |
+| bishy          | 512 MB | ~90 MB        |
+| statbox        | 256 MB | ~70 MB        |
+| webgooh        | 256 MB | ~60 MB        |
+| portfolio      | 256 MB | ~45 MB        |
+| cronicle       | 256 MB | ~45 MB        |
+| standup-mr     | 192 MB | ~45 MB        |
+| beszel         | 192 MB | ~20 MB        |
+| hono-telescope | 256 MB | ~16 MB        |
+| waqt-api (Bun) | 128 MB | ~10 MB        |
+
+The limits add up to more than the machine has, and that's fine: they aren't reservations, they're blast-radius caps. If one app leaks memory, the kernel kills that container instead of taking the whole box down. A 2 GB swapfile absorbs the occasional spike during image pulls.
+
+Every service also has a healthcheck. Docker won't restart an unhealthy container on its own, so this isn't self-healing. What it does is surface the "process is alive but the app is wedged" state that `restart: unless-stopped` never catches. One gotcha worth knowing: Next.js standalone binds the container's own hostname, not loopback, so a healthcheck against `127.0.0.1` gets connection refused. The probe has to target `$HOSTNAME`, doubled as `$$HOSTNAME` so Compose doesn't substitute the host's value.
+
+## Deploys: push to main, done
+
+Every app follows the same three-job GitHub Actions pipeline:
+
+1. **check**: install with Bun, lint, typecheck.
+2. **build**: build the image with Buildx (GitHub Actions cache on), push it to GHCR tagged `latest` and the commit SHA. The SHA tag is the rollback target.
+3. **deploy**: copy the repo's `docker-compose.yml` to the droplet over SCP, then SSH in and run `docker compose pull && docker compose up -d && docker image prune -f`.
+
+Two lessons are baked into that deploy job.
+
+**Ship the compose file with every deploy.** At first the droplet had its own copy of `docker-compose.yml`. The moment someone edits either copy, the two drift, and the drift is silent because the deploy still succeeds against the stale file. Now the repo's copy is the only one that matters.
+
+**GHCR is eventually consistent.** Right after a push, GHCR can take up to a minute to serve the new manifest, by tag or by digest. For the deploys where this bit me, the workflow writes the exact image digest into the droplet's `.env` and the pull retries until that digest is available. That way a deploy can never quietly start the previous image.
+
+Static sites skip Docker entirely: CI builds the export and rsyncs it into `/opt/proxy/sites/<name>`, and new files are live the moment rsync finishes. Because that rsync runs with `--delete`, the workflow first checks that the export actually exists and isn't empty. Without that guard, a half-failed build would sync an empty folder and wipe the live site.
+
+## Secrets: Infisical, rendered to disk
+
+No `.env` file is edited by hand on the server. Secrets live in Infisical, and an `infisical-agent` systemd service renders `/opt/<app>/.env` from the production environment using one template per app. Compose reads the `.env` like any other file, so apps don't know Infisical exists. Rotating a secret means changing it in one place.
+
+## Knowing when something breaks
+
+**Beszel** (`metrics.webgooh.tech`) gives me CPU, memory, disk and per-container stats. The agent talks to the hub over a Unix socket instead of a network port, and the dashboard sits behind Cloudflare Access: Beszel trusts the `Cf-Access-Authenticated-User-Email` header, so login is my Cloudflare identity. Beszel also pings a heartbeat URL, so if the monitoring itself dies, I hear about it.
+
+**UptimeRobot** checks every public site from outside, and I built [upbeat](https://github.com/Jubstaaa/upbeat), an open-source status page on top of its API, to show the results at `status.webgooh.tech`.
+
+The container healthchecks fill in the gap between the two: a site can be "up" to UptimeRobot while a background worker is stuck.
+
+## Scheduled jobs: Cronicle
+
+Cron jobs run in **Cronicle** (`cron.webgooh.tech`), which gives me a UI, run history, retries and failure emails instead of a crontab I'd forget about. Two jobs worth mentioning:
+
+- **CDN certificate renewal.** Some of my media is served from DigitalOcean Spaces through custom CDN domains behind Cloudflare. DigitalOcean can't issue certificates for those, so a daily job uses `lego` with a Cloudflare DNS challenge, uploads a new certificate to DigitalOcean only when it actually changed, attaches it to the CDN endpoint, cleans up old ones, and then fails loudly if the edge is serving the wrong certificate or one that expires within 14 days.
+- **The nightly backup**, covered in the next section.
+- **A personal booking bot** that fills empty days on a language-learning site. Not infrastructure, but a nice example of why a cron runner with logs beats a bare crontab.
+
+A Cronicle quirk that cost me an evening: the `CRONICLE_*` environment variables are only read on first setup. Once its config exists they're silently ignored, so changing the base URL in compose did nothing for months.
+
+## Backups that prove themselves
+
+Every night a Cronicle job backs the droplet up to a private Spaces bucket with `rclone`, and keeps 30 days of archives. A few decisions in that script matter more than the tooling:
+
+- **SQLite gets snapshotted, not copied.** A live database has in-flight WAL content, and a plain `cp` can capture a torn file that only reveals itself when you try to restore it. The script uses `sqlite3 .backup` for each database and then runs `PRAGMA integrity_check` on the snapshot, because a corrupt backup is worse than none: it looks like one.
+- **`/opt` is archived with a deny-list, not an allow-list.** I first cherry-picked what to back up, and that silently missed files that exist nowhere else: the `.well-known` app-link documents for a mobile app's deep links, which carry the Apple and Google certificate fingerprints. Now everything under `/opt` goes in, minus what can be regenerated (image caches, the DigitalOcean agent, containerd state).
+- **Sentinel checks.** After building the archive, the script lists it and fails loudly if specific irreplaceable files are missing: the Caddyfile, those app-link documents, an app's `.env`, and the Cloudflare origin certificate keys, which Cloudflare won't hand out a second time.
+- **Trust the remote, not the exit code.** After uploading, it asks Spaces for the object's size and compares it with the local archive before calling the run a success.
+
+Since Cronicle's own storage lives under `/opt`, the backup also captures every scheduled job, including itself.
+
+## Email from a droplet
+
+DigitalOcean blocks outbound ports 25 and 587 on droplets, from the host and from inside containers. Everything on the box that sends mail (Cronicle alerts, app notifications) goes through Brevo's SMTP relay on port 2525, which is open. SPF, DKIM and DMARC all pass.
+
+## The boring security basics
+
+- **UFW** allows only SSH, 80 and 443. App ports never leave `127.0.0.1`.
+- **SSH is key-only**; password authentication is off.
+- **The origin answers only Cloudflare** for every proxied domain, thanks to `cfonly`.
+- **Caddy strips** `Server`, `Via` and `X-Powered-By` from every response, so the stack isn't advertised.
+- **Admin dashboards** (metrics, cron) sit behind Cloudflare Access, not just a login form.
+
+## What I'd tell someone starting out
+
+- **One proxy, localhost-only apps.** It's the single decision that makes everything else simple and safe.
+- **Cap every container's memory.** On a small box, a leak in one app shouldn't be an outage for all of them.
+- **Keep the repo as the source of truth**, including the compose file. Anything that exists only on the server will drift.
+- **Serve static exports from the proxy.** A container for static files is RAM you don't need to spend.
+- **Monitor from inside and outside.** Beszel for the box, UptimeRobot for the user's view.
+- **Make backups verify themselves.** Integrity checks, sentinel files and a remote size check turn "the job exited 0" into "the backup is actually there".
+
+A managed platform would hide all of this, and for a lot of projects that's the right call. But running it myself is how I learned what those platforms actually do for you, and it costs me one small droplet a month for everything I build.
