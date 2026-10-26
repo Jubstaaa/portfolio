@@ -1,0 +1,117 @@
+---
+title: 'DM Export for X'
+summary: "DM Export for X is an open-source Chrome extension that exports your X (Twitter) DMs, including the new end-to-end encrypted chats, to HTML, JSON and plain text with photos and videos. It reads the chats X's own web app already decrypted in your browser, so nothing ever leaves your device."
+category: 'Browser Extension'
+order: 2.5
+repo: 'https://github.com/Jubstaaa/x-dm-export'
+url: 'https://github.com/Jubstaaa/x-dm-export/releases/latest'
+stack:
+    [
+        'React',
+        'TypeScript',
+        'Vite',
+        'Tailwind CSS',
+        'shadcn/ui',
+        'Radix UI',
+        'SQLite (sql.js)',
+        'Chrome Extension (MV3)',
+        'Bun',
+        'GitHub Actions',
+    ]
+highlights:
+    [
+        'Exports end-to-end encrypted X chats, which network-based exporters only see as ciphertext',
+        "Reads the decrypted SQLite database X's web app keeps in the browser's Origin Private File System",
+        "In-chat export button cloned from X's own call button, so it matches X exactly in light and dark mode",
+        'Bulk export of any number of chats into one zip: HTML chat view, JSON and plain text, plus media',
+        'No servers, no accounts, no network requests; never touches the tables X uses for encryption keys',
+    ]
+images:
+    - src: '/images/projects/x-dm-export/cover.webp'
+      alt: 'DM Export for X — save your X chats, including the encrypted ones'
+    - src: '/images/projects/x-dm-export/in-chat-button.webp'
+      alt: 'Export button next to the call buttons in an X chat, with the export menu open'
+    - src: '/images/projects/x-dm-export/popup.webp'
+      alt: 'Toolbar popup listing chats with avatars, four selected and an export in progress'
+    - src: '/images/projects/x-dm-export/exported-chat.webp'
+      alt: 'An exported chat.html open in the browser, showing the conversation as chat bubbles'
+---
+
+## **The Problem**
+
+X moved direct messages to Chat, its new end-to-end encrypted messenger. Message text is now encrypted on the device and decrypted inside the browser. That is good for privacy, but it quietly broke the ways people saved their conversations: it is unclear whether the official data archive includes them, and every exporter that reads X's network traffic only ever sees ciphertext. The most popular open-source exporter lists its DM export as broken.
+
+Years of conversations had no way out of X.
+
+---
+
+## **What It Does**
+
+Open a conversation on x.com and a download button appears next to the call buttons. Pick _with media_ or _without media_ and the whole chat lands in your Downloads folder as a zip. Or click the toolbar icon, search your chats, select any number of them, and export them all at once.
+
+![Export button next to the call buttons in an X chat](/images/projects/x-dm-export/in-chat-button.webp)
+
+---
+
+## **How It Works**
+
+The interesting part was finding where the plaintext lives. Message bodies never arrive over the network unencrypted, and the chat UI renders inside a shadow root with obfuscated, build-specific React props. Scraping the DOM would have meant auto-scrolling a virtualized list and breaking on every X deploy.
+
+Instead, X's web client keeps its own local SQLite database in the browser's Origin Private File System, with decrypted message text already in it, and decrypted media files stored next to it:
+
+```
+backups/chat_<user id>.db                decrypted messages, users, reactions
+dm-files-<user id>/decrypted-media-v2/   decrypted photos and videos
+```
+
+The content script runs on x.com, so it shares that origin and can read the file directly. It opens the database with sql.js (SQLite compiled to WASM, which x.com's CSP allows), decodes user profiles stored as CBOR, and builds the zip in the page with fflate. It only ever queries message, user, reaction and attachment tables, never the ones X uses for encryption keys.
+
+![Toolbar popup with chats selected and an export in progress](/images/projects/x-dm-export/popup.webp)
+
+---
+
+## **Key Features**
+
+### **Native-Looking Export Button**
+
+The in-chat button is a clone of X's own call button: same classes, same 48px circle, same hover scale. The menu and status icons are rendered into it with React portals, so it follows X's theme automatically.
+
+### **Three Formats in Every Export**
+
+Every zip contains `chat.html`, a readable bubble view with dates, reactions and media in light and dark; `chat.json` with every message, sender, timestamp and reaction; and `_chat.txt`, plain text with one line per message.
+
+![An exported chat open in the browser](/images/projects/x-dm-export/exported-chat.webp)
+
+### **Bulk Export**
+
+The toolbar popup lists every chat with avatars, handles, message counts and last activity, styled like X. Search, select any or all, and get one zip with a folder per chat.
+
+### **Zero Data Collection**
+
+No servers, no accounts, no analytics and no network requests of its own. The export is a regular browser download.
+
+---
+
+## **Tech Stack**
+
+- **Frontend:** React 19, TypeScript, Tailwind CSS v4
+- **Components:** shadcn/ui (new-york), Radix UI, lucide-react
+- **Data:** sql.js (SQLite → WASM), cbor-x, fflate
+- **Build:** Vite, @crxjs/vite-plugin, Bun; tagged releases zipped by GitHub Actions
+- **Browser APIs:** Origin Private File System, `chrome.tabs`, `chrome.runtime`, MV3 content scripts
+
+---
+
+## **Status**
+
+Submitted to the Chrome Web Store and available now from GitHub Releases. MIT licensed.
+
+---
+
+## **Links**
+
+GitHub: [github.com/Jubstaaa/x-dm-export](https://github.com/Jubstaaa/x-dm-export)
+
+Download: [Latest release](https://github.com/Jubstaaa/x-dm-export/releases/latest)
+
+Privacy Policy: [PRIVACY.md](https://github.com/Jubstaaa/x-dm-export/blob/main/PRIVACY.md)
