@@ -1,0 +1,94 @@
+---
+title: 'upbeat'
+summary: 'A beautiful, animated status page for UptimeRobot. One read-only API key, no database, and a one-click deploy to Vercel, Cloudflare Workers or Docker. A live heartbeat runs across every service and flatlines on the one that is down.'
+category: 'Developer Tool'
+order: 3.5
+repo: 'https://github.com/Jubstaaa/upbeat'
+url: 'https://status.webgooh.tech'
+stack:
+    [
+        'React',
+        'TypeScript',
+        'Vite',
+        'Hono',
+        'Tailwind CSS',
+        'TanStack Query',
+        'D3',
+        'Cloudflare Workers',
+        'Docker',
+        'Bun',
+        'Vitest',
+        'Playwright',
+    ]
+highlights:
+    - 'Runs on Cloudflare’s free plan: static assets at the edge, the API answering from a one-minute edge cache'
+    - 'The UptimeRobot key never reaches the browser; visitors only receive the numbers the page shows'
+    - 'About one UptimeRobot refresh a minute per server, shared by the page, README badges and the incident feed'
+    - 'One-click deploy to Vercel or Cloudflare, plus multi-arch Docker images on GHCR'
+images:
+    - src: '/images/projects/upbeat/cover.webp'
+      alt: 'upbeat status page showing all systems operational, a heartbeat line and 90-day uptime bars'
+    - src: '/images/projects/upbeat/dark.webp'
+      alt: 'upbeat status page in dark mode'
+---
+
+## **The Problem**
+
+UptimeRobot is the go-to free monitor, but its public status pages look dated, and the alternatives either want a database, a paid plan, or your API key shipped to every visitor's browser. I wanted a status page that looks good, deploys in a minute and costs nothing to run.
+
+---
+
+## **What It Does**
+
+upbeat turns one read-only UptimeRobot API key into a polished status page. A heartbeat runs across the summary card and every service row. It speeds up and turns red when something goes down, and flatlines on the service that is down.
+
+![upbeat in light mode](/images/projects/upbeat/cover.webp)
+
+---
+
+## **Key Features**
+
+### **It Feels Alive**
+
+The overall status drives a live heartbeat, and the tab title and favicon follow it. Every row has 90 days of daily uptime bars with a tooltip per day and a 24-hour response-time sparkline. Click a row for its full response-time chart and outage history; `#monitor-id` links open it directly.
+
+### **Your Key Stays on the Server**
+
+UptimeRobot's read-only key can still list every monitor and your alert contacts, so upbeat never sends it to visitors. A small Hono API calls UptimeRobot, keeps the result in memory and the edge cache, and returns only what the page needs.
+
+### **Kind to Rate Limits**
+
+The API refreshes from UptimeRobot at most once a minute per server, however many people are watching, and the page, the README badges and the Atom feed all share that one refresh. If UptimeRobot is unreachable, the last good data keeps showing with a note.
+
+### **Nothing to Edit**
+
+Everything is configured with environment variables: title, description, logo, accent colour. Groups come from monitor names (`Websites / example.com`), so you can pull upstream updates without merge conflicts.
+
+### **Badges and Feed**
+
+README badges for the whole page or a single monitor, an Atom feed of incidents and maintenance, simultaneous outages merged into one incident, and a maintenance banner on paid plans.
+
+![upbeat in dark mode](/images/projects/upbeat/dark.webp)
+
+---
+
+## **Architecture**
+
+upbeat is a React single-page app built with Vite plus a small Hono API. On Cloudflare the same code runs as one Worker with static assets; in Docker it runs on Bun, which serves both the API and the page; on Vercel the page is static and the API is one Node.js function. Light and dark themes, `prefers-reduced-motion` support, and a demo mode with sample data for trying it without a key.
+
+---
+
+## **Tech Stack**
+
+- **Frontend:** React 19, TypeScript, Tailwind CSS v4, TanStack Query, D3 (scales and shapes), Motion
+- **API:** Hono, Zod, badge-maker, feed
+- **Runtime:** Cloudflare Workers, Bun, Node.js
+- **Tooling:** Vite, Vitest, Playwright, GitHub Actions, multi-arch Docker images on GHCR
+
+---
+
+## **Links**
+
+Live demo: [status.webgooh.tech](https://status.webgooh.tech)
+
+GitHub: [github.com/Jubstaaa/upbeat](https://github.com/Jubstaaa/upbeat)

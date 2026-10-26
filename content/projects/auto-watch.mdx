@@ -1,0 +1,70 @@
+---
+title: 'auto-watch'
+summary: 'A GitHub Action that brings back automatic watching. GitHub stopped watching new repositories for you in May 2025, so issues and pull requests on a new repo arrive silently. auto-watch runs hourly in your own repo and watches anything new.'
+category: 'Developer Tool'
+order: 6.5
+repo: 'https://github.com/Jubstaaa/auto-watch'
+url: 'https://github.com/marketplace/actions/auto-watch-repositories'
+stack:
+    [
+        'TypeScript',
+        'GitHub Actions',
+        'GitHub REST API',
+        'Bun',
+        'esbuild',
+        'Vitest',
+    ]
+highlights:
+    - 'Published on the GitHub Marketplace'
+    - 'Covers repos you own and repos in organizations where you are an admin, skipping forks, archived and ignored repos'
+    - 'Keeps its own schedule alive by re-enabling the workflow on every run, so GitHub’s 60-day pause never kicks in'
+    - 'Dry-run and backfill modes; runs entirely in your repo’s Actions with no server in between'
+images: []
+---
+
+## **The Problem**
+
+In May 2025 GitHub [removed automatic watching](https://github.blog/changelog/2025-05-23-sunset-of-automatic-watching-of-repositories-and-teams). Since then a repository you create isn't watched, and an unwatched repository tells you nothing when someone opens an issue or a pull request on it. No email, no inbox entry, no push notification. You find out when you happen to look.
+
+---
+
+## **What It Does**
+
+auto-watch puts it back. It is a GitHub Action that runs once an hour in one of your own repositories, finds every repo created in the last day that you own or administer, and watches it. Setup is a single workflow file and a token saved as a secret.
+
+- **Backfill** watches every existing repo that isn't watched or ignored yet
+- **Dry run** lists what would be watched without changing anything
+- **Exclude** patterns (`my-org/*`, `*/scratch-*`) leave repos alone
+- Outputs the count and the list of watched repos for later steps
+
+---
+
+## **Design Decisions**
+
+### **Why a Classic Token**
+
+GitHub only lets a classic token with the `notifications` scope watch a repository. Fine-grained tokens and GitHub Apps can't call that endpoint at all, which rules out a hosted app. The Action checks the token type on its first line and explains the problem instead of failing quietly.
+
+### **No Server in Between**
+
+The token lives in your repository's secrets and is only used by your own workflow runs. Nothing is sent to a third party.
+
+### **Staying Alive**
+
+GitHub pauses scheduled workflows in a repository with no commits for 60 days. auto-watch re-enables its own workflow on every run, which resets that clock, so it keeps working on a quiet profile repo indefinitely.
+
+---
+
+## **Tech Stack**
+
+- **Language:** TypeScript, bundled to a single ESM file with esbuild
+- **Platform:** GitHub Actions, GitHub REST API
+- **Tooling:** Bun, Vitest
+
+---
+
+## **Links**
+
+GitHub Marketplace: [auto-watch](https://github.com/marketplace/actions/auto-watch-repositories)
+
+GitHub: [github.com/Jubstaaa/auto-watch](https://github.com/Jubstaaa/auto-watch)
