@@ -1,0 +1,73 @@
+---
+title: 'Where X Keeps Your Decrypted DMs (and How I Built an Exporter Around It)'
+description: "X's encrypted Chat left no way to save conversations. The plaintext was sitting in a SQLite file in the browser the whole time, so I built a Chrome extension that exports it."
+date: 2026-10-26
+category: development
+tags: [chrome-extension, sqlite, x, privacy, reverse-engineering, open-source]
+draft: false
+---
+
+# Where X Keeps Your Decrypted DMs
+
+X moved direct messages to Chat, its end-to-end encrypted messenger. Good for privacy, but it left a gap: I wanted to save a conversation and there was simply no button for it. The existing exporters didn't help either. They work by intercepting X's API responses, and with encrypted chat those responses only contain ciphertext. The most popular open-source one marks its DM export as broken.
+
+So I went looking for where the readable text actually lives.
+
+## Not on the wire
+
+First check: open a chat with DevTools watching the network. The requests that fire are for user profiles and call permissions. The message bodies never show up in plaintext. They are decrypted on the client, which is the whole point.
+
+The rendered messages are in the DOM, of course, but X's chat UI is a separate embedded app inside an open shadow root. Its React props carry obfuscated, build-specific names like `cfr_1` and `pfr_1`, and the message list is virtualized, holding about fifty messages at a time. Scraping that would mean auto-scrolling, collecting nodes as they appear and disappear, and breaking on every deploy.
+
+## In the Origin Private File System
+
+The breakthrough came from `navigator.storage.estimate()`. Almost four gigabytes of usage on x.com, nearly all of it under `fileSystem`. That is the Origin Private File System, the browser's sandboxed disk for a site. Listing it turned up two things:
+
+```
+backups/chat_<user id>.db                SQLite format 3
+dm-files-<user id>/decrypted-media-v2/   photos, GIFs and videos
+```
+
+Reading just the schema of that database (not the rows) was enough:
+
+```sql
+CREATE TABLE dm_entry(
+    entry_id TEXT NOT NULL PRIMARY KEY,
+    conversation_id TEXT NOT NULL,
+    timestamp INTEGER NOT NULL,
+    sender_id INTEGER NOT NULL,
+    plain_text TEXT,
+    ...
+)
+```
+
+`plain_text`. X's web client keeps a local, decrypted copy of your chats so it can render and search them quickly, plus users, reactions, attachments, and the decrypted media files next to it. It also has tables for key material, which an exporter has no business reading.
+
+## Building the extension
+
+That changed the problem completely. No crypto, no PIN, no DOM scraping:
+
+- **Same origin, same disk.** A content script on x.com can open that OPFS file directly.
+- **SQLite in the page.** x.com's Content Security Policy allows `wasm-unsafe-eval`, so [sql.js](https://github.com/sql-js/sql.js) runs right in the content script.
+- **CBOR, not JSON.** User profiles are stored as CBOR blobs. The handle, display name and avatar URL decode cleanly with `cbor-x`.
+- **Big IDs.** Snowflake IDs overflow JavaScript numbers, so every ID column is cast to text in SQL.
+- **Zip in the page.** [fflate](https://github.com/101arrowz/fflate) builds the archive and a normal download saves it.
+
+Each export contains a readable `chat.html` with bubbles, dates, reactions and media, a `chat.json` with every message, and a `_chat.txt` with one line per message.
+
+## Making it feel native
+
+I wanted the button to look like it shipped with X. The chat header has call and video buttons rendered by X's own design system, so the extension clones the call button, keeping its classes, 48px circle and hover animation, swaps the icon, and inserts it next to the others. The menu and status icons are rendered into it with React portals. Because it uses X's own classes, it follows X's light and dark themes automatically.
+
+There is also a toolbar popup for bulk export: every chat with avatars and message counts, searchable, select all, one zip with a folder per chat.
+
+## Limits
+
+The export contains what X has synced to that browser. For a chat's full history you open it and scroll to the top first. And this reads an internal storage format, so if X changes it, the extension will need an update.
+
+## Try it
+
+DM Export for X is open source and MIT licensed. It makes no network requests and keeps nothing.
+
+- [Source on GitHub](https://github.com/Jubstaaa/x-dm-export)
+- [Download the latest release](https://github.com/Jubstaaa/x-dm-export/releases/latest)
