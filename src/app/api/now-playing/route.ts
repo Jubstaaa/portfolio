@@ -18,6 +18,7 @@ interface NowPlayingPayload {
 }
 
 const RECENT_TRACKS_ENDPOINT = 'https://ws.audioscrobbler.com/2.0/'
+const SPOTIFY_PROFILE_URL = 'https://open.spotify.com/user/11154024788'
 
 const CACHE_HEADERS = {
     'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=60',
@@ -53,10 +54,9 @@ export async function GET(): Promise<NextResponse> {
     const track = Array.isArray(tracks) ? tracks[0] : tracks
     if (!track || track['@attr']?.nowplaying !== 'true') return idleResponse()
 
-    const artist = track.artist['#text']
     const payload: NowPlayingPayload = {
-        url: `https://open.spotify.com/search/${encodeURIComponent(`${track.name} ${artist}`)}`,
-        artist,
+        url: SPOTIFY_PROFILE_URL,
+        artist: track.artist['#text'],
         isPlaying: true,
         title: track.name,
     }
