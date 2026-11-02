@@ -1,18 +1,13 @@
 import { NextResponse } from 'next/server'
 
-interface SpotifyArtist {
-    name: string
+interface LastFmTrack {
+    '@attr'?: { nowplaying?: string }
+    'artist': { '#text': string }
+    'name': string
 }
 
-interface SpotifyTrack {
-    artists: SpotifyArtist[]
-    external_urls: { spotify: string }
-    name: string
-}
-
-interface SpotifyCurrentlyPlaying {
-    is_playing: boolean
-    item: SpotifyTrack | null
+interface LastFmRecentTracks {
+    recenttracks?: { track: LastFmTrack | LastFmTrack[] }
 }
 
 interface NowPlayingPayload {
@@ -22,65 +17,49 @@ interface NowPlayingPayload {
     url?: string
 }
 
-const TOKEN_ENDPOINT = 'https://accounts.spotify.com/api/token'
-const NOW_PLAYING_ENDPOINT =
-    'https://api.spotify.com/v1/me/player/currently-playing'
+const RECENT_TRACKS_ENDPOINT = 'https://ws.audioscrobbler.com/2.0/'
+
+const CACHE_HEADERS = {
+    'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=60',
+}
 
 const idleResponse = (): NextResponse =>
     NextResponse.json({ isPlaying: false } satisfies NowPlayingPayload, {
-        headers: {
-            'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=60',
-        },
+        headers: CACHE_HEADERS,
     })
-
-async function getAccessToken(): Promise<string | null> {
-    const clientId = process.env.SPOTIFY_CLIENT_ID
-    const clientSecret = process.env.SPOTIFY_CLIENT_SECRET
-    const refreshToken = process.env.SPOTIFY_REFRESH_TOKEN
-    if (!clientId || !clientSecret || !refreshToken) return null
-
-    const basic = Buffer.from(`${clientId}:${clientSecret}`).toString('base64')
-    const res = await fetch(TOKEN_ENDPOINT, {
-        method: 'POST',
-        body: new URLSearchParams({
-            grant_type: 'refresh_token',
-            refresh_token: refreshToken,
-        }),
-        headers: {
-            'Authorization': `Basic ${basic}`,
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        cache: 'no-store',
-    })
-    if (!res.ok) return null
-    const data = (await res.json()) as { access_token?: string }
-    return data.access_token ?? null
-}
 
 export async function GET(): Promise<NextResponse> {
-    const token = await getAccessToken()
-    if (!token) return idleResponse()
+    const apiKey = process.env.LASTFM_API_KEY
+    const user = process.env.LASTFM_USERNAME
+    if (!apiKey || !user) return idleResponse()
 
-    const res = await fetch(NOW_PLAYING_ENDPOINT, {
-        headers: { Authorization: `Bearer ${token}` },
+    const params = new URLSearchParams({
+        method: 'user.getrecenttracks',
+        api_key: apiKey,
+        format: 'json',
+        limit: '1',
+        user,
+    })
+    const res = await fetch(`${RECENT_TRACKS_ENDPOINT}?${params}`, {
         cache: 'no-store',
     })
-
-    if (res.status === 204 || res.status >= 400) return idleResponse()
-
-    const data = (await res.json()) as SpotifyCurrentlyPlaying
-    if (!data.item) return idleResponse()
-
-    const payload: NowPlayingPayload = {
-        url: data.item.external_urls.spotify,
-        artist: data.item.artists?.[0]?.name || '',
-        isPlaying: data.is_playing,
-        title: data.item.name,
+    if (!res.ok) {
+        console.error(`now-playing: Last.fm responded ${res.status}`)
+        return idleResponse()
     }
 
-    return NextResponse.json(payload, {
-        headers: {
-            'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=60',
-        },
-    })
+    const data = (await res.json()) as LastFmRecentTracks
+    const tracks = data.recenttracks?.track
+    const track = Array.isArray(tracks) ? tracks[0] : tracks
+    if (!track || track['@attr']?.nowplaying !== 'true') return idleResponse()
+
+    const artist = track.artist['#text']
+    const payload: NowPlayingPayload = {
+        url: `https://open.spotify.com/search/${encodeURIComponent(`${track.name} ${artist}`)}`,
+        artist,
+        isPlaying: true,
+        title: track.name,
+    }
+
+    return NextResponse.json(payload, { headers: CACHE_HEADERS })
 }
