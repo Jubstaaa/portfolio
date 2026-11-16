@@ -4,5 +4,6 @@
     "start": "2021-12",
     "end": "2022-12",
     "location": "İstanbul, Türkiye",
-    "summary": "I created and updated websites for our clients, making sure they met modern design and usability standards. I also helped develop an internal CRM system using React, making it easier for the team to manage clients and tasks."
+    "summary": "Built and maintained client websites and an internal CRM in React used by the agency team to manage clients and tasks.",
+    "stack": ["React", "HTML", "CSS"]
 }

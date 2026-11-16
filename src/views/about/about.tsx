@@ -36,23 +36,24 @@ export default function AboutPage() {
                     <SectionHeading as="h1" number="01" title="bio" />
                     <div className="text-foreground space-y-4 leading-relaxed">
                         <p>
-                            I&apos;m a software engineering student based in
-                            Istanbul. I build full-stack web applications —
-                            mostly with Next.js, React, and Node.js, and I work
-                            with TypeScript end-to-end.
+                            I&apos;m a software engineer based in Istanbul with
+                            five years of experience shipping production web and
+                            mobile apps in TypeScript. At Macellan I build
+                            fintech products: I own a box-office web panel and a
+                            customer wallet app, and I&apos;m the main
+                            contributor to the company&apos;s React component
+                            library.
                         </p>
                         <p>
-                            I&apos;ve shipped projects from UI to infra: writing
-                            the frontend, designing the API, modeling the data,
-                            and setting up servers with Nginx on Ubuntu.
-                            I&apos;ve used GitHub Actions to automate
-                            deployments and enjoy working with teams to create
-                            clean, fast, and accessible web experiences.
+                            I take features from Figma to release on my own, and
+                            I like the infra side too: my own projects run as
+                            Dockerized apps on a DigitalOcean droplet behind
+                            Caddy, shipped through GitHub Actions.
                         </p>
                         <p>
-                            My biggest motivation is combining my technical
-                            skills with my passion for gaming and entertainment
-                            to build projects that are both useful and fun.
+                            In my spare time I build open-source developer tools
+                            and publish them on npm, with a soft spot for
+                            anything gaming-related.
                         </p>
                     </div>
                 </div>

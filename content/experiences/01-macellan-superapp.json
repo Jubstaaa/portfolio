@@ -3,5 +3,28 @@
     "role": "Software Engineer",
     "start": "2025-09",
     "location": "İstanbul, Türkiye",
-    "summary": ""
+    "summary": "Fintech products for venues and merchants: a box-office web panel, a customer wallet app, a merchant POS terminal and the company design system, shipped to web, iOS and Android.",
+    "highlights": [
+        "Built the Box Office web panel from its first commit and remain its main contributor: product and ticket sales, wallet top-ups, customer management and a reporting dashboard used daily by venue staff.",
+        "Built the JoyPort customer wallet app nearly single-handedly: phone + OTP sign-in, onboarding, QR scan and pay, profile and account screens, and a WebView bridge to the wallet-as-a-service web app.",
+        "Main contributor to the company's React component library (smart table, select, virtual keyboard, modal, sidebar, date-time field) and contributor to SuperUI, the cross-platform React / React Native library.",
+        "Added the PAX POS device mode with NFC card payments and transaction filtering to the Merchant Terminal app.",
+        "Built a customer-facing ticket booking site, shipped wallet, deposit and payment features in the WaaS web app, and migrated two marketing sites to static Next.js builds."
+    ],
+    "stack": [
+        "React",
+        "React Native",
+        "Expo",
+        "TypeScript",
+        "Vite",
+        "Redux Toolkit",
+        "RTK Query",
+        "React Hook Form",
+        "Zod",
+        "Tailwind CSS",
+        "NativeWind",
+        "Radix UI",
+        "Storybook",
+        "i18next"
+    ]
 }

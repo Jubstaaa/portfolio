@@ -1,8 +1,16 @@
 {
     "company": "Freelance",
-    "role": "Freelance Software Engineer",
+    "role": "Freelance Software Developer",
     "start": "2023-10",
     "end": "2025-09",
-    "location": "İstanbul, Türkiye",
-    "summary": "As a freelancer, I’ve worked on different web projects, creating both frontend and backend features. I’ve used modern tools like React and Next.js to build responsive websites. I also managed deployments and server setups on platforms like Ubuntu using Nginx."
+    "location": "Remote",
+    "summary": "Full-stack web products for clients with Next.js, React, Node.js and Payload CMS, including an agency site and blog and a personal site on a headless CMS. Owned deployment on Ubuntu VPS, Docker, Cloudflare and GitHub Actions.",
+    "stack": [
+        "Next.js",
+        "React",
+        "Node.js",
+        "Payload CMS",
+        "Docker",
+        "Cloudflare"
+    ]
 }
