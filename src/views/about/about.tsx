@@ -39,13 +39,11 @@ export default function AboutPage() {
                             I&apos;m a software engineer based in Istanbul with
                             five years of experience shipping production web and
                             mobile apps in TypeScript. At Macellan I build
-                            fintech products: I own a box-office web panel and a
-                            customer wallet app, and I&apos;m the main
-                            contributor to the company&apos;s React component
-                            library.
+                            fintech products: the Box Office web panel, the
+                            JoyPort customer wallet app and the company&apos;s
+                            React component library.
                         </p>
                         <p>
-                            I take features from Figma to release on my own, and
                             I like the infra side too: my own projects run as
                             Dockerized apps on a DigitalOcean droplet behind
                             Caddy, shipped through GitHub Actions.
