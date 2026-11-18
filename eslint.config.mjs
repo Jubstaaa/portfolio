@@ -1,10 +1,13 @@
+/**
+ * Presets carry the rules; this file only wires them together and adds the few
+ * project-specific choices at the end.
+ */
+
 import nextVitals from 'eslint-config-next/core-web-vitals'
 import nextTs from 'eslint-config-next/typescript'
 import prettier from 'eslint-config-prettier/flat'
 import jsxA11y from 'eslint-plugin-jsx-a11y'
 import perfectionist from 'eslint-plugin-perfectionist'
-// Presets carry the rules; this file only wires them together and adds the few
-// project-specific choices at the end.
 import { defineConfig, globalIgnores } from 'eslint/config'
 import tseslint from 'typescript-eslint'
 

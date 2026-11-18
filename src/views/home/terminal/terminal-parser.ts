@@ -4,11 +4,14 @@ import type { Completion, ParsedCommand } from './terminal-parser.types'
 
 import { HIDDEN_FILES } from './terminal-output.constants'
 
+// Insertion order is the order `cd <Tab>` offers pages, so it is not sorted.
+/* eslint-disable perfectionist/sort-maps */
 const PAGES = new Map<string, string>([
-    ['home', '/'],
     ['~', '/'],
+    ['home', '/'],
     ...site.nav.map(item => [item.label, item.href] as const),
 ])
+/* eslint-enable perfectionist/sort-maps */
 
 export const PAGE_TARGETS = [...PAGES.keys()]
 

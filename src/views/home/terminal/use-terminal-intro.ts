@@ -60,11 +60,10 @@ export function useTerminalIntro({
         // Aborted on unmount; a signal (unlike a reassigned local) stays readable
         // to the async loop and to the type checker.
         const lifecycle = new AbortController()
-        // Either a key press (skip) or unmount ends the typing early.
-        const stop = AbortSignal.any([
-            machineRef.current.skip.signal,
-            lifecycle.signal,
-        ])
+        // Either a key press (skip) or unmount ends the typing early. Checked
+        // separately: AbortSignal.any is newer than the browsers Next supports.
+        const { skip } = machineRef.current
+        const stopped = () => skip.signal.aborted || lifecycle.signal.aborted
 
         const sleep = (ms: number) =>
             new Promise<void>(resolve => {
@@ -91,14 +90,14 @@ export function useTerminalIntro({
             while (queue.length > 0) {
                 const command = queue[0] ?? ''
                 for (let index = 1; index <= command.length; index += 1) {
-                    if (stop.aborted) {
+                    if (stopped()) {
                         finish(queue)
                         return
                     }
                     setInput(command.slice(0, index))
                     await sleep(35 + Math.random() * 45)
                 }
-                if (stop.aborted) {
+                if (stopped()) {
                     finish(queue)
                     return
                 }
