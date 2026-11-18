@@ -8,8 +8,7 @@ export interface ContentDetailProps {
     }
     body?: string | undefined
     cover?:
-        | { alt: string; height: number; src: string; width: number }
-        | undefined
+        { alt: string; height: number; src: string; width: number } | undefined
     header: {
         children?: ReactNode
         lead: string

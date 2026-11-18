@@ -22,7 +22,7 @@ const eslintConfig = defineConfig([
             perfectionist: perfectionistPlugin,
         },
         rules: {
-            'no-console': ['warn', { allow: ['error'] }],
+            'no-console': ['warn', { allow: ['error', 'warn'] }],
             '@typescript-eslint/no-unused-vars': [
                 'error',
                 {
@@ -150,10 +150,6 @@ const eslintConfig = defineConfig([
                 },
             ],
         },
-    },
-    {
-        files: ['**/*.types.ts', '**/*.types.tsx', '**/*.d.ts'],
-        rules: { 'no-unused-vars': 'off' },
     },
     {
         files: ['**/api/**/*.ts', '**/route.ts'],
