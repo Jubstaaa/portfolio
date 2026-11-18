@@ -4,25 +4,41 @@
 # The image is pulled from GHCR by the deploy workflow.
 services:
     app:
-        image: ghcr.io/jubstaaa/portfolio:latest
+        # The deploy job sets IMAGE_TAG to the commit SHA it is releasing; :latest is
+        # promoted only after a healthy deploy, so the fallback is the last good release.
+        image: ghcr.io/jubstaaa/portfolio:${IMAGE_TAG:-latest}
         container_name: portfolio
         restart: unless-stopped
         mem_limit: 256m
-        # next-server binds the container's own address rather than loopback, so the
-        # probe has to resolve $HOSTNAME: wget against 127.0.0.1 gets connection
-        # refused. The name is doubled so Compose passes the variable through to the
-        # shell inside the container instead of substituting the host's value. wget
-        # here is BusyBox — -T is the timeout, the GNU long options do not exist.
-        #
-        # Reports only. Docker does not restart an unhealthy container, and Beszel
-        # cannot alert per container, so this fills the Health column and nothing
-        # more: it surfaces "process alive but application wedged", which the
-        # restart policy alone never catches.
+        pids_limit: 128
+        # The only runtime writes are Next's caches: optimized images (persisted below)
+        # and the fetch cache behind /api/now-playing (ephemeral is fine).
+        read_only: true
+        tmpfs:
+            - /tmp
+            - /app/.next/cache/fetch-cache
+        cap_drop:
+            - ALL
+        security_opt:
+            - no-new-privileges:true
+        logging:
+            driver: json-file
+            options:
+                max-size: 10m
+                max-file: '3'
+        environment:
+            # Keep V8's heap under the container limit so it collects garbage before
+            # the cgroup OOM-kills the process.
+            NODE_OPTIONS: --max-old-space-size=160
+        # Docker does not restart an unhealthy container, and Beszel cannot alert per
+        # container. The deploy job waits on this check (`compose up --wait`) and rolls
+        # back when it fails; afterwards it only fills the Health column. wget here is
+        # BusyBox: -T is the timeout, the GNU long options do not exist.
         healthcheck:
             test:
                 [
                     'CMD-SHELL',
-                    'wget -q -O /dev/null -T 3 "http://$$HOSTNAME:3000/" || exit 1',
+                    'wget -q -O /dev/null -T 3 http://127.0.0.1:3000/ || exit 1',
                 ]
             interval: 30s
             timeout: 5s
