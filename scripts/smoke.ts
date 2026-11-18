@@ -60,6 +60,20 @@ const checks: [string, () => Promise<void>][] = [
         },
     ],
     [
+        'every page starts with a skip link to the main content',
+        async () => {
+            for (const path of ['/', '/about', '/blog']) {
+                const html = await (await request(path)).text()
+                const firstLink = /<a\b[^>]*>/.exec(html)?.[0] ?? ''
+                assert(
+                    firstLink.includes('href="#main"'),
+                    `${path}: ${firstLink}`
+                )
+                assert(html.includes('id="main"'), `${path}: no #main`)
+            }
+        },
+    ],
+    [
         'unknown slugs: 404 and not cacheable',
         async () => {
             for (const path of ['/blog/__smoke__', '/projects/__smoke__']) {

@@ -6,6 +6,7 @@ import { Footer } from '@/components/footer/footer'
 import { Nav } from '@/components/nav/nav'
 import { Providers } from '@/components/providers/providers'
 import { ScrollProgress } from '@/components/scroll-progress/scroll-progress'
+import { SkipLink } from '@/components/skip-link/skip-link'
 import { site } from '@/lib/content'
 import { ogLocale } from '@/lib/site'
 import { cn } from '@/lib/utils'
@@ -110,6 +111,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
                 suppressHydrationWarning
                 className="bg-background text-foreground flex min-h-screen flex-col font-mono antialiased">
                 <Providers>
+                    <SkipLink />
                     <Nav />
                     <ScrollProgress />
                     <main className="flex flex-1 flex-col" id="main">
