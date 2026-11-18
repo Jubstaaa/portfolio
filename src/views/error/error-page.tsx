@@ -1,0 +1,69 @@
+'use client'
+
+import { useEffect } from 'react'
+
+import Link from 'next/link'
+
+import { StatusDot } from '@/components/terminal-block/status-dot'
+import { TerminalBlock } from '@/components/terminal-block/terminal-block'
+import { TerminalLine } from '@/components/terminal-block/terminal-line'
+import { TerminalMeta } from '@/components/terminal-block/terminal-meta'
+import { LINK_CLASS } from '@/lib/utils'
+
+import type { ErrorPageProps } from './error-page.types'
+
+export default function ErrorPage({ error, reset }: ErrorPageProps) {
+    useEffect(() => {
+        console.error(error)
+    }, [error])
+
+    return (
+        <section className="container-default section-pad">
+            <TerminalBlock>
+                <TerminalMeta branch="500" path="~/error" />
+
+                <TerminalLine command="cat .">
+                    <p>
+                        <StatusDot tone="danger" />
+                        unexpected error · 500
+                    </p>
+                    <p className="text-muted-foreground">
+                        <span aria-hidden className="mr-1 select-none">
+                            →
+                        </span>
+                        the page failed to render
+                    </p>
+                    {error.digest ? (
+                        <p className="text-muted-foreground">
+                            <span aria-hidden className="mr-1 select-none">
+                                →
+                            </span>
+                            ref: {error.digest}
+                        </p>
+                    ) : null}
+                </TerminalLine>
+
+                <TerminalLine command="retry">
+                    <p>
+                        <button
+                            className={LINK_CLASS}
+                            type="button"
+                            onClick={reset}>
+                            ./reset
+                        </button>
+                        <span
+                            aria-hidden
+                            className="text-muted-foreground mx-3 select-none">
+                            ·
+                        </span>
+                        <Link
+                            className="text-foreground hover:text-accent transition-token underline-offset-4 hover:underline"
+                            href="/">
+                            ./home
+                        </Link>
+                    </p>
+                </TerminalLine>
+            </TerminalBlock>
+        </section>
+    )
+}

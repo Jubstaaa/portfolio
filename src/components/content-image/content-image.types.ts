@@ -2,7 +2,7 @@ export interface ContentImageProps {
     alt: string
     className?: string
     height: number
-    priority?: boolean
+    preload?: boolean
     src: string
     width: number
 }

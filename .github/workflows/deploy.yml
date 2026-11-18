@@ -5,89 +5,224 @@ on:
         branches: [main]
     pull_request:
         branches: [main]
+    schedule:
+        # Advisories land between pushes; the weekly gate surfaces them without a commit.
+        - cron: '0 6 * * 1'
     workflow_dispatch:
+        inputs:
+            image_tag:
+                description: 'Rollback: redeploy an existing image by its full 40-char commit SHA. Empty builds and deploys HEAD.'
+                required: false
+                default: ''
+                type: string
 
+permissions:
+    contents: read
+
+# PRs supersede each other; main never cancels, so a deploy is never killed halfway
+# through `compose up` and left with the container stopped.
 concurrency:
-    group: deploy-${{ github.ref }}
-    cancel-in-progress: true
+    group: ci-${{ github.ref }}
+    cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+    IMAGE: ghcr.io/jubstaaa/portfolio
 
 jobs:
     check:
+        if: ${{ !inputs.image_tag }}
         runs-on: ubuntu-latest
+        timeout-minutes: 10
         steps:
-            - uses: actions/checkout@v7
-            - uses: oven-sh/setup-bun@v2
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               with:
-                  bun-version: latest
-            - run: bun install --frozen-lockfile
+                  persist-credentials: false
+            - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+              with:
+                  bun-version-file: package.json
+            # unrs-resolver's postinstall is only a fallback check: its native binding
+            # arrives from the lockfile as an optional dependency. sharp ships prebuilt.
+            - run: bun install --frozen-lockfile --ignore-scripts
+            - run: bun run format:check
             - run: bun run lint
             - run: bun run typecheck
+            - run: bun run test
+            - run: bun run audit
 
-    build:
+    image:
         needs: check
-        if: github.ref == 'refs/heads/main'
+        if: github.event_name != 'schedule'
         runs-on: ubuntu-latest
+        timeout-minutes: 20
         permissions:
             contents: read
             packages: write
         steps:
-            - uses: actions/checkout@v7
-            - uses: docker/setup-buildx-action@v4
-            # No image sync step: the Spaces bucket is the source of truth for
-            # content images, not the repo. Adding one means uploading it to the
-            # bucket (run `bun run optimize:images <dir>` on it first).
-            - uses: docker/login-action@v4
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               with:
-                  registry: ghcr.io
-                  username: ${{ github.actor }}
-                  password: ${{ secrets.GITHUB_TOKEN }}
-            # :latest is what the droplet runs; :sha stays behind as the rollback
-            # target (`docker compose` pinned to it, or a manual docker run).
-            - uses: docker/build-push-action@v7
+                  persist-credentials: false
+            - name: Require the CDN base
+              env:
+                  CDN_BASE: ${{ vars.NEXT_PUBLIC_CDN_BASE }}
+              run: test -n "$CDN_BASE" || { echo "::error::vars.NEXT_PUBLIC_CDN_BASE is empty"; exit 1; }
+            - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+            - name: Build candidate
+              uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
               with:
                   context: .
-                  push: true
-                  tags: |
-                      ghcr.io/jubstaaa/portfolio:latest
-                      ghcr.io/jubstaaa/portfolio:${{ github.sha }}
+                  load: true
+                  push: false
+                  tags: portfolio:candidate
+                  labels: |
+                      org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+                      org.opencontainers.image.revision=${{ github.sha }}
                   cache-from: type=gha
                   cache-to: type=gha,mode=max
                   build-args: |
                       NEXT_PUBLIC_CDN_BASE=${{ vars.NEXT_PUBLIC_CDN_BASE }}
+            # Same constraints as docker-compose.yml, so a hardening regression fails
+            # here instead of in production.
+            - name: Start candidate
+              run: |
+                  docker run -d --name candidate -p 127.0.0.1:3000:3000 \
+                      --memory 256m --pids-limit 128 --read-only \
+                      --tmpfs /tmp --tmpfs /app/.next/cache/fetch-cache --tmpfs /app/.next/cache/images \
+                      --cap-drop ALL --security-opt no-new-privileges:true \
+                      -e NODE_OPTIONS=--max-old-space-size=160 \
+                      portfolio:candidate
+                  # Docker's port proxy accepts connections before Next listens, so wait
+                  # for a real response rather than trusting curl's retry semantics.
+                  for _ in $(seq 1 30); do
+                      curl -fsS -o /dev/null http://127.0.0.1:3000/ && exit 0
+                      sleep 2
+                  done
+                  docker logs candidate
+                  exit 1
+            - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+              with:
+                  bun-version-file: package.json
+            - name: Smoke test
+              env:
+                  CDN_BASE: ${{ vars.NEXT_PUBLIC_CDN_BASE }}
+              run: bun scripts/smoke.ts http://127.0.0.1:3000
+            - name: Candidate logs
+              if: failure()
+              run: docker logs candidate
+            - uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
+              if: github.ref == 'refs/heads/main'
+              with:
+                  registry: ghcr.io
+                  username: ${{ github.actor }}
+                  password: ${{ secrets.GITHUB_TOKEN }}
+            # Push the exact image that passed the smoke test. Only :sha here — :latest
+            # moves in `promote`, after production reports healthy.
+            - name: Push :sha
+              if: github.ref == 'refs/heads/main'
+              run: |
+                  docker tag portfolio:candidate "$IMAGE:$GITHUB_SHA"
+                  docker push "$IMAGE:$GITHUB_SHA"
 
     deploy:
-        needs: build
+        needs: [check, image]
+        # A rollback (image_tag set) skips check/image: that SHA was gated when it was built.
+        if: >-
+            !cancelled() &&
+            github.ref == 'refs/heads/main' &&
+            (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+            (inputs.image_tag || (needs.check.result == 'success' && needs.image.result == 'success'))
         runs-on: ubuntu-latest
-        permissions:
-            # checkout needs contents; naming any permission replaces the defaults,
-            # so omitting it made the deploy job unable to read its own repository.
-            contents: read
-            packages: read
+        timeout-minutes: 10
+        environment:
+            name: Production
+            url: https://ilkerbalcilar.com
+        concurrency:
+            group: production-deploy
+            cancel-in-progress: false
+        env:
+            IMAGE_TAG: ${{ inputs.image_tag || github.sha }}
         steps:
-            # The compose file is the repository's, not the server's. Without this
-            # step `docker compose up` reads whatever happens to be on the droplet,
-            # so the two drift the moment anyone edits either one — and the drift is
-            # silent, because a deploy still succeeds against the stale copy.
-            - uses: actions/checkout@v5
-            - uses: appleboy/scp-action@v1
+            - name: Validate tag and confirm the image exists
+              run: |
+                  [[ "$IMAGE_TAG" =~ ^[0-9a-f]{40}$ ]] || { echo "::error::image_tag must be a full 40-char commit SHA"; exit 1; }
+                  docker buildx imagetools inspect "$IMAGE:$IMAGE_TAG" > /dev/null
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               with:
-                  host: ${{ secrets.DO_HOST }}
-                  username: ${{ secrets.DO_USER }}
-                  key: ${{ secrets.DO_SSH_KEY }}
-                  source: docker-compose.yml
-                  target: /opt/portfolio
-            - uses: appleboy/ssh-action@v1
-              with:
-                  host: ${{ secrets.DO_HOST }}
-                  username: ${{ secrets.DO_USER }}
-                  key: ${{ secrets.DO_SSH_KEY }}
-                  envs: GHCR_TOKEN,GHCR_USER
-                  script: |
-                      echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
-                      cd /opt/portfolio
-                      docker compose pull
-                      docker compose up -d
-                      docker image prune -f
+                  persist-credentials: false
+                  sparse-checkout: docker-compose.yml
+                  sparse-checkout-cone-mode: false
+            # Plain OpenSSH with a pinned host key: no third-party action ever holds
+            # the droplet key, and a spoofed host is refused.
+            - name: Configure SSH
               env:
-                  GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  GHCR_USER: ${{ github.actor }}
+                  SSH_KEY: ${{ secrets.DO_SSH_KEY }}
+                  KNOWN_HOSTS: ${{ secrets.DO_KNOWN_HOSTS }}
+                  DO_HOST: ${{ secrets.DO_HOST }}
+                  DO_USER: ${{ secrets.DO_USER }}
+              run: |
+                  test -n "$KNOWN_HOSTS" || { echo "::error::secret DO_KNOWN_HOSTS is not set"; exit 1; }
+                  install -m 700 -d ~/.ssh
+                  printf '%s\n' "$SSH_KEY" > ~/.ssh/id_deploy && chmod 600 ~/.ssh/id_deploy
+                  printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+                  printf 'Host droplet\n  HostName %s\n  User %s\n  IdentityFile ~/.ssh/id_deploy\n  IdentitiesOnly yes\n  StrictHostKeyChecking yes\n  ConnectTimeout 15\n' \
+                      "$DO_HOST" "$DO_USER" > ~/.ssh/config
+            - name: Upload compose file
+              run: scp docker-compose.yml droplet:/opt/portfolio/docker-compose.yml
+            # The GHCR package is public, so the droplet pulls without credentials.
+            - name: Deploy with automatic rollback
+              run: |
+                  ssh droplet "bash -s -- $IMAGE_TAG ${{ github.server_url }}/${{ github.repository }}" <<'REMOTE'
+                  set -euo pipefail
+                  new="$1"
+                  source_label="$2"
+                  cd /opt/portfolio
+                  prev=$(docker inspect --format '{{.Config.Image}}' portfolio 2>/dev/null | sed 's/.*://') || true
+                  prev=${prev:-latest}
+                  echo "deploying $new (running: $prev)"
+                  IMAGE_TAG="$new" docker compose pull app
+                  if IMAGE_TAG="$new" docker compose up -d --wait --wait-timeout 120 app \
+                      && curl -fsS -o /dev/null --max-time 10 http://127.0.0.1:3002/; then
+                      printf 'IMAGE_TAG=%s\nPREVIOUS_TAG=%s\nDEPLOYED_AT=%s\n' "$new" "$prev" "$(date -u +%FT%TZ)" > release.env
+                      docker image prune -af \
+                          --filter "label=org.opencontainers.image.source=$source_label" \
+                          --filter 'until=168h' \
+                          || echo "::warning::image prune failed; old images remain on disk"
+                      exit 0
+                  fi
+                  echo "::error::$new failed its health check; rolling back to $prev"
+                  IMAGE_TAG="$new" docker compose logs --tail 200 app || true
+                  if IMAGE_TAG="$prev" docker compose up -d --wait --wait-timeout 120 app \
+                      && curl -fsS -o /dev/null --max-time 10 http://127.0.0.1:3002/; then
+                      echo "::error::rolled back; production is serving $prev"
+                  else
+                      echo "::error::ROLLBACK TO $prev FAILED; production is likely down"
+                      IMAGE_TAG="$prev" docker compose logs --tail 200 app || true
+                  fi
+                  exit 1
+                  REMOTE
+            # Through Cloudflare and Caddy. Warn only: an edge blip must not count as
+            # a failed release after the origin already reported healthy.
+            - name: Public reachability
+              continue-on-error: true
+              run: curl -fsS -o /dev/null --retry 5 --retry-all-errors --retry-delay 3 https://ilkerbalcilar.com/
+
+    promote:
+        needs: deploy
+        # A rollback skips check/image; without this, the implicit success() would
+        # skip promote too and leave :latest on the release that was rolled back.
+        if: ${{ !cancelled() && needs.deploy.result == 'success' }}
+        runs-on: ubuntu-latest
+        timeout-minutes: 5
+        permissions:
+            contents: read
+            packages: write
+        env:
+            IMAGE_TAG: ${{ inputs.image_tag || github.sha }}
+        steps:
+            - uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
+              with:
+                  registry: ghcr.io
+                  username: ${{ github.actor }}
+                  password: ${{ secrets.GITHUB_TOKEN }}
+            # :latest always means "what production runs", so compose's
+            # ${IMAGE_TAG:-latest} fallback is the last good release.
+            - run: docker buildx imagetools create --tag "$IMAGE:latest" "$IMAGE:$IMAGE_TAG"

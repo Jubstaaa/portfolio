@@ -14,3 +14,7 @@ public
 *.min.*
 
 .superpowers/
+.claude/
+.full-review/
+.full-stack-feature/
+.security-hardening/

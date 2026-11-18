@@ -2,56 +2,69 @@
     "name": "portfolio",
     "version": "0.1.0",
     "private": true,
+    "packageManager": "bun@1.4.4",
+    "engines": {
+        "node": ">=22 <23"
+    },
     "description": "Personal portfolio and blog.",
     "scripts": {
-        "dev": "velite build && next dev --turbopack",
+        "dev": "velite build && next dev",
         "build": "velite build && next build",
         "start": "next start",
         "lint": "eslint",
         "lint:fix": "eslint --fix",
-        "typecheck": "velite build && tsc --noEmit",
+        "typecheck": "velite build && next typegen && tsc --noEmit",
+        "test": "bun test",
         "format": "prettier --write .",
         "format:check": "prettier --check .",
+        "audit": "bun audit --audit-level=high --ignore=GHSA-3jxr-9vmj-r5cp --ignore=GHSA-6j4f-fj2g-mc7p --ignore=GHSA-g3hv-75wg-m249 --ignore=GHSA-jxxr-4gwj-5jf2 --ignore=GHSA-mh99-v99m-4gvg --ignore=GHSA-q2hr-2g5m-vwhr --ignore=GHSA-qhr7-859c-m2p7 --ignore=GHSA-rgw5-rvv9-x895",
         "optimize:images": "bun scripts/optimize-images.mjs",
         "velite": "velite build",
         "velite:watch": "velite build --watch",
         "prepare": "husky"
     },
     "dependencies": {
-        "@tanstack/react-query": "^5.101.2",
+        "@tanstack/react-query": "^5.108.0",
         "clsx": "^2.1.1",
         "feed": "^5.2.1",
         "lodash-es": "^4.18.1",
-        "lucide-react": "^1.8.0",
-        "next": "16.4.3",
+        "lucide-react": "^1.75.0",
+        "next": "16.4.6",
         "next-themes": "^0.4.6",
         "react": "19.2.4",
         "react-dom": "19.2.4",
         "sharp": "^0.35.5",
-        "tailwind-merge": "^3.5.0"
+        "tailwind-merge": "^3.7.0",
+        "zod": "^4.6.7"
     },
     "devDependencies": {
-        "@commitlint/cli": "^20.5.0",
-        "@commitlint/config-conventional": "^20.5.0",
-        "@tailwindcss/postcss": "^4",
+        "@commitlint/cli": "^20.5.3",
+        "@commitlint/config-conventional": "^20.5.3",
+        "@commitlint/types": "^21.2.3",
+        "@tailwindcss/postcss": "^4.3.5",
+        "@types/bun": "^1.4.4",
+        "@types/hast": "^3.0.5",
         "@types/lodash-es": "^4.17.12",
-        "@types/node": "^20",
-        "@types/react": "^19",
-        "@types/react-dom": "^19",
-        "eslint": "^9",
-        "eslint-config-next": "16.4.3",
+        "@types/node": "22",
+        "@types/react": "^19.3.0",
+        "@types/react-dom": "^19.3.0",
+        "eslint": "^9.39.5",
+        "eslint-config-next": "16.4.6",
         "eslint-import-resolver-typescript": "^4.4.5",
         "eslint-plugin-import": "^2.32.0",
-        "eslint-plugin-perfectionist": "^5.10.0",
+        "eslint-plugin-perfectionist": "^5.14.0",
+        "hast-util-heading-rank": "^3.0.0",
+        "hast-util-shift-heading": "^4.0.0",
         "husky": "^9.1.7",
         "lint-staged": "^16.4.0",
-        "prettier": "^3.8.3",
-        "prettier-plugin-tailwindcss": "^0.0.0-insiders.f7d2598",
-        "rehype-pretty-code": "^0.14.3",
+        "prettier": "^3.10.1",
+        "prettier-plugin-tailwindcss": "^0.8.1",
+        "rehype-pretty-code": "^0.14.6",
         "remark-gfm": "^4.0.1",
-        "shiki": "^4.0.2",
-        "tailwindcss": "^4",
-        "typescript": "^5",
+        "shiki": "^4.6.0",
+        "tailwindcss": "^4.3.5",
+        "typescript": "^5.9.3",
+        "unist-util-visit": "^5.2.0",
         "velite": "^0.3.1"
     },
     "lint-staged": {
@@ -64,14 +77,16 @@
         ]
     },
     "trustedDependencies": [
-        "sharp",
-        "unrs-resolver"
-    ],
-    "ignoreScripts": [
-        "sharp",
         "unrs-resolver"
     ],
     "overrides": {
-        "sharp": "^0.35.5"
+        "@babel/core": "^7.29.13",
+        "baseline-browser-mapping": "^2.11.38",
+        "browserslist": "^4.29.6",
+        "fast-uri": "^3.1.9",
+        "js-yaml": "^4.3.2",
+        "sharp": "^0.35.5",
+        "source-map-js": "^1.2.2",
+        "zod": "^4.6.7"
     }
 }

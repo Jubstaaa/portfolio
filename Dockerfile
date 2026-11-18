@@ -5,7 +5,7 @@
 # which is the same flavour the node:alpine runner loads at request time.
 # --ignore-scripts keeps husky's `prepare` from running (no .git in the build
 # context); sharp 0.35 ships prebuilt binaries, so nothing here needs scripts.
-FROM oven/bun:1-alpine AS deps
+FROM oven/bun:1.4.4-alpine@sha256:4cf82f5686b196504fe119db3fcd9185b191f82ece82c40680e597228ec6070a AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY package.json bun.lock ./
@@ -13,11 +13,12 @@ RUN bun install --frozen-lockfile --ignore-scripts
 
 # ─── build ───────────────────────────────────────────────────────────────
 # Turbopack (`next build`) — it traces standalone's runtime deps correctly.
-# The canonical site URL lives in content/site.json and the only secrets (Spotify)
+# The canonical site URL lives in content/site.json and the only secrets (Last.fm)
 # are read at request time, so the CDN base is the single build-time input: it is
 # inlined into the prerendered HTML and compiled into the optimizer's remote
-# allow-list. Left empty, the build falls back to local /images paths.
-FROM oven/bun:1-alpine AS build
+# allow-list. Left empty, src/lib/cdn.ts falls back to the production bucket; CI
+# refuses an empty value so a misconfigured repository variable cannot slip by.
+FROM oven/bun:1.4.4-alpine@sha256:4cf82f5686b196504fe119db3fcd9185b191f82ece82c40680e597228ec6070a AS build
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
@@ -31,12 +32,15 @@ RUN bun run build
 # ─── runner ──────────────────────────────────────────────────────────────
 # Next's standalone server on Node (not `bun run start`) — keeps idle RSS around
 # 110MB instead of ~400MB, which matters on a shared 1GB droplet.
-FROM node:22-alpine AS runner
+FROM node:22-alpine@sha256:1314fb30ec37592d5845e5a160d522c0e680972aa534549940b8d73bde88481a AS runner
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3000
+# Bind all interfaces explicitly so the healthcheck can probe loopback instead of
+# resolving the container's own hostname.
+ENV HOSTNAME=0.0.0.0
 
 RUN addgroup --system --gid 1001 nodejs \
     && adduser --system --uid 1001 nextjs

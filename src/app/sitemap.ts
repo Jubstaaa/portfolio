@@ -1,10 +1,7 @@
 import type { MetadataRoute } from 'next'
 
-import { getAllProjects, getPublishedPosts, site } from '@/lib/content'
-
-function absolute(path: string): string {
-    return new URL(path, site.url).toString()
-}
+import { getAllProjects, getPublishedPosts } from '@/lib/content'
+import { absoluteUrl } from '@/lib/site'
 
 export default function sitemap(): MetadataRoute.Sitemap {
     const now = new Date()
@@ -14,31 +11,31 @@ export default function sitemap(): MetadataRoute.Sitemap {
             changeFrequency: 'weekly',
             lastModified: now,
             priority: 1,
-            url: absolute('/'),
+            url: absoluteUrl('/'),
         },
         {
             changeFrequency: 'monthly',
             lastModified: now,
             priority: 0.8,
-            url: absolute('/about'),
+            url: absoluteUrl('/about'),
         },
         {
             changeFrequency: 'weekly',
             lastModified: now,
             priority: 0.9,
-            url: absolute('/projects'),
+            url: absoluteUrl('/projects'),
         },
         {
             changeFrequency: 'weekly',
             lastModified: now,
             priority: 0.9,
-            url: absolute('/blog'),
+            url: absoluteUrl('/blog'),
         },
         {
             changeFrequency: 'monthly',
             lastModified: now,
             priority: 0.6,
-            url: absolute('/contact'),
+            url: absoluteUrl('/contact'),
         },
     ]
 
@@ -47,7 +44,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
             changeFrequency: 'monthly',
             lastModified: now,
             priority: 0.7,
-            url: absolute(`/projects/${project.slug}`),
+            url: absoluteUrl(project.path),
         })
     )
 
@@ -55,7 +52,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
         changeFrequency: 'monthly',
         lastModified: new Date(post.updated ?? post.date),
         priority: 0.7,
-        url: absolute(post.path),
+        url: absoluteUrl(post.path),
     }))
 
     return [...staticRoutes, ...projectRoutes, ...postRoutes]

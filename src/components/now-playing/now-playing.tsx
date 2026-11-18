@@ -12,7 +12,7 @@ export function NowPlaying({ className }: NowPlayingProps) {
         return <span className={cn('text-muted-foreground', className)}>—</span>
     }
 
-    if (!data.title) {
+    if (!data.isPlaying) {
         return (
             <span className={cn('text-muted-foreground', className)}>
                 — not listening
@@ -20,44 +20,24 @@ export function NowPlaying({ className }: NowPlayingProps) {
         )
     }
 
-    const label = data.artist ? `${data.title} — ${data.artist}` : data.title
-    const playing = data.isPlaying
+    const label = `${data.title} — ${data.artist}`
 
-    const body = (
-        <>
+    return (
+        <a
+            aria-label={`Now playing on Spotify: ${label}`}
+            href={data.url}
+            rel="noreferrer noopener"
+            target="_blank"
+            className={cn(
+                'inline-flex items-start gap-2',
+                'hover:[&_.text-foreground]:text-accent transition-token group',
+                className
+            )}>
             <span
                 aria-hidden
-                className={cn(
-                    'dot-nudge inline-block size-1.5 shrink-0 rounded-full',
-                    playing ? 'bg-success' : 'bg-muted-foreground'
-                )}
+                className="dot-nudge bg-success inline-block size-1.5 shrink-0 rounded-full"
             />
             <span className="text-foreground min-w-0 break-all">{label}</span>
-            {playing ? null : (
-                <span className="text-muted-foreground dot-nudge shrink-0 text-xs">
-                    (paused)
-                </span>
-            )}
-        </>
+        </a>
     )
-
-    const baseClass = cn('inline-flex items-start gap-2', className)
-
-    if (data.url) {
-        return (
-            <a
-                aria-label={`${playing ? 'Now playing' : 'Paused'} on Spotify: ${label}`}
-                href={data.url}
-                rel="noreferrer noopener"
-                target="_blank"
-                className={cn(
-                    baseClass,
-                    'hover:[&_.text-foreground]:text-accent transition-token group'
-                )}>
-                {body}
-            </a>
-        )
-    }
-
-    return <span className={baseClass}>{body}</span>
 }

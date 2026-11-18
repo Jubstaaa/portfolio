@@ -32,7 +32,7 @@ export async function generateMetadata({
         authors: [site.name],
         description: project.summary,
         keywords: [project.title, project.category, ...project.stack],
-        path: `/projects/${project.slug}`,
+        path: project.path,
         title: project.title,
     })
 }
@@ -83,7 +83,7 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
                 breadcrumb: buildBreadcrumbJsonLd([
                     { name: 'Home', path: '/' },
                     { name: 'Projects', path: '/projects' },
-                    { name: project.title, path: `/projects/${project.slug}` },
+                    { name: project.title, path: project.path },
                 ]),
                 entity: buildProjectJsonLd(project),
                 idPrefix: 'project',

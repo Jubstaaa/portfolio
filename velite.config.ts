@@ -5,7 +5,9 @@ import remarkGfm from 'remark-gfm'
 import sharp from 'sharp'
 import { defineConfig, defineCollection, s } from 'velite'
 
+import { YEAR_MONTH } from './src/lib/format'
 import { readImageBytes } from './src/lib/image-source'
+import { rehypeNormalizeHeadings } from './src/lib/rehype-normalize-headings'
 
 const prettyCode: PrettyCodeOptions = {
     theme: { dark: 'github-dark-default', light: 'github-light' },
@@ -43,7 +45,7 @@ interface HastNode {
     children?: HastNode[]
 }
 
-// Flag the first image in the body so it can render eager/priority — it becomes the
+// Flag the first image in the body so it can be preloaded — it becomes the
 // LCP element on posts whose cover is hidden (showCover: false).
 function rehypeFirstImagePriority() {
     return (tree: HastNode) => {
@@ -169,8 +171,8 @@ const experiences = defineCollection({
         .object({
             company: s.string(),
             role: s.string(),
-            start: s.string(),
-            end: s.string().optional(),
+            start: s.string().regex(YEAR_MONTH),
+            end: s.string().regex(YEAR_MONTH).optional(),
             location: s.string(),
             summary: s.string(),
             highlights: s.array(s.string()).default([]),
@@ -191,8 +193,8 @@ const education = defineCollection({
             school: s.string(),
             degree: s.string(),
             field: s.string().optional(),
-            start: s.string(),
-            end: s.string().optional(),
+            start: s.string().regex(YEAR_MONTH),
+            end: s.string().regex(YEAR_MONTH).optional(),
             location: s.string().optional(),
             notes: s.string().optional(),
         })
@@ -266,6 +268,7 @@ export default defineConfig({
     mdx: {
         remarkPlugins: [remarkGfm],
         rehypePlugins: [
+            rehypeNormalizeHeadings,
             rehypeFirstImagePriority,
             rehypeImageDimensions,
             [rehypePrettyCode, prettyCode],

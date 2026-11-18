@@ -7,6 +7,7 @@ import { PathBar } from '@/components/path-bar/path-bar'
 import { Prose } from '@/components/prose/prose'
 import { SectionHeading } from '@/components/section-heading/section-heading'
 
+import { DEFERRED_BODY_IMAGES } from './content-detail.constants'
 import type { ContentDetailProps } from './content-detail.types'
 
 export function ContentDetail({
@@ -41,7 +42,7 @@ export function ContentDetail({
 
                     {cover ? (
                         <ContentImage
-                            priority
+                            preload
                             alt={cover.alt}
                             height={cover.height}
                             src={cover.src}
@@ -51,7 +52,12 @@ export function ContentDetail({
 
                     {body ? (
                         <Prose>
-                            <Mdx code={body} />
+                            <Mdx
+                                code={body}
+                                {...(cover
+                                    ? { components: DEFERRED_BODY_IMAGES }
+                                    : {})}
+                            />
                         </Prose>
                     ) : null}
 

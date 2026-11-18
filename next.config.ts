@@ -1,22 +1,65 @@
 import type { NextConfig } from 'next'
 
-// The image optimizer validates remote URLs at request time, so the CDN host has
-// to be compiled into the build. Keep in sync with DEFAULT_CDN_BASE in
-// src/lib/cdn.ts — this config cannot import it (it is evaluated before the
-// tsconfig path aliases exist).
-const cdnBase =
-    process.env.NEXT_PUBLIC_CDN_BASE ||
-    'https://ilkerbalcilar.fra1.cdn.digitaloceanspaces.com'
-const cdnHost = new URL(cdnBase).hostname
+// Relative, not the @/ alias: the config is evaluated before tsconfig paths exist.
+import { CDN_BASE } from './src/lib/cdn'
+
+const isDev = process.env.NODE_ENV === 'development'
+
+// Pages are prerendered, so per-request nonces are impossible: Next's inline flight
+// data and the theme script need 'unsafe-inline'. Dev additionally needs eval for
+// React's stack traces and a websocket for HMR.
+const contentSecurityPolicy = [
+    "default-src 'self'",
+    `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''}`,
+    "style-src 'self' 'unsafe-inline'",
+    `img-src 'self' data: blob: ${CDN_BASE}`,
+    "font-src 'self'",
+    `connect-src 'self'${isDev ? ' ws:' : ''}`,
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "frame-ancestors 'none'",
+    ...(isDev ? [] : ['upgrade-insecure-requests']),
+].join('; ')
+
+const securityHeaders = [
+    { key: 'Content-Security-Policy', value: contentSecurityPolicy },
+    // No includeSubDomains/preload: other subdomains are not this app's to vouch for.
+    { key: 'Strict-Transport-Security', value: 'max-age=31536000' },
+    { key: 'X-Content-Type-Options', value: 'nosniff' },
+    { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+    {
+        key: 'Permissions-Policy',
+        value: 'camera=(), microphone=(), geolocation=(), browsing-topics=()',
+    },
+]
 
 const nextConfig: NextConfig = {
     // Self-hosted on a DigitalOcean droplet: standalone emits a minimal
     // server.js + traced node_modules, which is what the runner image starts.
     output: 'standalone',
+    poweredByHeader: false,
     images: {
         remotePatterns: [
-            { protocol: 'https', hostname: cdnHost, pathname: '/images/**' },
+            {
+                protocol: 'https',
+                hostname: new URL(CDN_BASE).hostname,
+                pathname: '/images/**',
+                // The bucket ignores query strings but the optimizer keys its cache
+                // on them, so allowing any would let a loop of ?x=N fill the disk.
+                search: '',
+            },
         ],
+        // The cache is bind-mounted from the shared droplet's disk.
+        maximumDiskCacheSize: 500_000_000,
+        // Source images are immutable once uploaded; re-encoding every 4 hours
+        // only burns CPU in a 256 MB container.
+        minimumCacheTTL: 2_678_400,
+        // Content renders at most ~720 CSS px wide, so 2x tops out near 1440.
+        deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+    },
+    async headers() {
+        return [{ source: '/:path*', headers: securityHeaders }]
     },
     async redirects() {
         return [
@@ -24,7 +67,7 @@ const nextConfig: NextConfig = {
             // under those paths; they live in the Spaces bucket now.
             {
                 source: '/images/:path*',
-                destination: `${cdnBase}/images/:path*`,
+                destination: `${CDN_BASE}/images/:path*`,
                 permanent: true,
             },
             // Legacy `/_next/image?url=/images/...` URLs are indexed as well and

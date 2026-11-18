@@ -1,6 +1,7 @@
 import { Feed } from 'feed'
 
 import { getPublishedPosts, site } from '@/lib/content'
+import { absoluteUrl } from '@/lib/site'
 
 export function buildRss(): string {
     const posts = getPublishedPosts().slice(0, 20)
@@ -10,7 +11,7 @@ export function buildRss(): string {
         author,
         copyright: `© ${new Date().getFullYear()} ${site.name}`,
         description: site.description,
-        feedLinks: { rss: new URL('/feed.xml', site.url).toString() },
+        feedLinks: { rss: absoluteUrl('/feed.xml') },
         id: site.url,
         language: site.locale,
         link: site.url,
@@ -19,7 +20,7 @@ export function buildRss(): string {
     })
 
     for (const post of posts) {
-        const url = new URL(post.path, site.url).toString()
+        const url = absoluteUrl(post.path)
         feed.addItem({
             author: [author],
             category: [post.category, ...post.tags].map(name => ({ name })),

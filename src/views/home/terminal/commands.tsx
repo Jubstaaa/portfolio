@@ -14,19 +14,7 @@ import {
     NEOFETCH_OUTPUT,
     TOP_OUTPUT,
 } from './terminal-output.constants'
-
-const PAGES: Record<string, string> = {
-    '~': '/',
-    'home': '/',
-    ...Object.fromEntries(site.nav.map(item => [item.label, item.href])),
-}
-
-export const PAGE_TARGETS = Object.keys(PAGES)
-
-function resolvePage(arg: string): string | undefined {
-    const key = arg.replace(/^\.?\//, '').replace(/\/$/, '') || '~'
-    return PAGES[key]
-}
+import { resolvePage } from './terminal-parser'
 
 function line(text: string): TerminalCommand['run'] {
     return function LineRun() {

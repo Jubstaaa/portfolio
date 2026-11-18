@@ -17,3 +17,10 @@ docker-compose.yml
 README.md
 *.tsbuildinfo
 .DS_Store
+.claude
+.full-review
+.full-stack-feature
+.security-hardening
+.superpowers
+CLAUDE.md
+*.log

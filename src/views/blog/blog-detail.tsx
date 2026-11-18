@@ -7,7 +7,6 @@ import {
     getAdjacent,
     getPostBySlug,
     getPublishedPosts,
-    posts,
     site,
 } from '@/lib/content'
 import { formatDate } from '@/lib/format'
@@ -20,7 +19,7 @@ import {
 import type { PostPageProps } from './blog-detail.types'
 
 export function generateStaticParams() {
-    return posts.map(post => ({ slug: post.slug }))
+    return getPublishedPosts().map(post => ({ slug: post.slug }))
 }
 
 export async function generateMetadata({
