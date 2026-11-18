@@ -29,17 +29,12 @@ if (!root) {
     process.exit(1)
 }
 
-async function walk(dir, out = []) {
-    for (const entry of await readdir(dir, { withFileTypes: true })) {
-        const path = join(dir, entry.name)
-        if (entry.isDirectory()) await walk(path, out)
-        else if (SOURCES.has(extname(entry.name).toLowerCase())) out.push(path)
-    }
-
-    return out
-}
-
-const files = await walk(root)
+const files = (await readdir(root, { recursive: true, withFileTypes: true }))
+    .filter(
+        entry =>
+            entry.isFile() && SOURCES.has(extname(entry.name).toLowerCase())
+    )
+    .map(entry => join(entry.parentPath, entry.name))
 let before = 0
 let after = 0
 let written = 0

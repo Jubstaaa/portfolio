@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 
-import { site } from '@/lib/content'
-import { buildMetadata } from '@/lib/seo'
+import { getAllProjects, site } from '@/lib/content'
+import { buildMetadata, buildProjectJsonLd } from '@/lib/seo'
 
 describe('buildMetadata', () => {
     test('a website page gets an absolute canonical matching og:url', () => {
@@ -43,5 +43,25 @@ describe('buildMetadata', () => {
             images: [{ url: '/og.png' }],
         })
         expect(metadata.twitter).toMatchObject({ images: [{ url: '/og.png' }] })
+    })
+})
+
+describe('buildProjectJsonLd', () => {
+    // codeRepository is only defined on SoftwareSourceCode, not CreativeWork.
+    test('a project with a repository is SoftwareSourceCode', () => {
+        const withRepo = getAllProjects().find(project => project.repo)
+        if (!withRepo) throw new Error('fixture: no project with a repo')
+        expect(buildProjectJsonLd(withRepo)).toMatchObject({
+            '@type': 'SoftwareSourceCode',
+            'codeRepository': withRepo.repo,
+        })
+    })
+
+    test('a project without one stays a CreativeWork', () => {
+        const withoutRepo = getAllProjects().find(project => !project.repo)
+        if (!withoutRepo) throw new Error('fixture: no project without a repo')
+        const jsonLd = buildProjectJsonLd(withoutRepo)
+        expect(jsonLd['@type']).toBe('CreativeWork')
+        expect(jsonLd).not.toHaveProperty('codeRepository')
     })
 })
