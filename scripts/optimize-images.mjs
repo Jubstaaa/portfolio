@@ -9,7 +9,7 @@
 // subpath (a cover at images/projects/foo/cover.webp is referenced as
 // /images/projects/foo/cover.webp).
 import { readdir, stat, unlink, writeFile } from 'node:fs/promises'
-import { extname, join } from 'node:path'
+import { extname, format, join, parse } from 'node:path'
 import sharp from 'sharp'
 
 const MAX_EDGE = 2000
@@ -56,7 +56,7 @@ for (const file of files) {
     // A non-webp source always gets converted; an existing webp only when the
     // re-encode actually buys something.
     if (!isWebp) {
-        const target = file.replace(/\.[^.]+$/, '.webp')
+        const target = format({ ...parse(file), base: '', ext: '.webp' })
         await writeFile(target, buffer)
         await unlink(file)
         after += buffer.length
