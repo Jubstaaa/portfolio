@@ -10,7 +10,7 @@ export function ContentImage({
     alt,
     className,
     height,
-    priority = false,
+    preload = false,
     src,
     width,
 }: ContentImageProps) {
@@ -19,7 +19,7 @@ export function ContentImage({
             alt={alt}
             className={cn(CONTENT_IMAGE_CLASS, className)}
             height={height}
-            priority={priority}
+            preload={preload}
             sizes="(min-width: 1024px) 720px, 100vw"
             src={cdnUrl(src)}
             width={width}

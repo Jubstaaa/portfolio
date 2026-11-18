@@ -1,23 +1,23 @@
-import type { ImgHTMLAttributes } from 'react'
-
 import Image from 'next/image'
 
 import { CONTENT_IMAGE_MAX_HEIGHT_CLASS } from '@/components/content-image/content-image.constants'
 import { cdnUrl } from '@/lib/cdn'
 import { cn } from '@/lib/utils'
 
+import type { ImgProps } from './image.types'
+
 export function Img({
     alt = '',
     className,
+    'data-priority': dataPriority,
     height,
     src,
     width,
-    ...rest
-}: ImgHTMLAttributes<HTMLImageElement>) {
+}: ImgProps) {
     if (typeof src !== 'string') return null
     const resolvedSrc = cdnUrl(src)
-    const priority =
-        (rest as Record<string, unknown>)['data-priority'] === 'true'
+    // The first body image is the LCP candidate when no cover is shown.
+    const preload = dataPriority === 'true'
     const w = Number(width) || undefined
     const h = Number(height) || undefined
     const sharedClassName = cn(
@@ -34,7 +34,7 @@ export function Img({
                 height={h}
                 src={resolvedSrc}
                 width={w}
-                {...(priority ? { priority: true } : {})}
+                {...(preload ? { preload: true } : {})}
                 className={cn(sharedClassName, 'h-auto')}
                 sizes="(min-width: 768px) 720px, 100vw"
             />
@@ -47,7 +47,7 @@ export function Img({
             height={0}
             src={resolvedSrc}
             width={0}
-            {...(priority ? { priority: true } : {})}
+            {...(preload ? { preload: true } : {})}
             className={sharedClassName}
             sizes="100vw"
         />
