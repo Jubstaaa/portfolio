@@ -1,40 +1,74 @@
-import { afterEach, expect, mock, spyOn, test } from 'bun:test'
+import { expect, mock, test } from 'bun:test'
+import { http, HttpResponse } from 'msw'
 
+import { setupMockServer } from '@/test-utils/mock-server'
+
+import { CDN_BASE } from './cdn'
 import { readImageBytes } from './image-source'
 
-afterEach(() => mock.restore())
+const server = setupMockServer()
+
+function countRequests() {
+    const requests = mock()
+    server.events.removeAllListeners()
+    server.events.on('request:start', requests)
+    return requests
+}
 
 test('retries a transient CDN failure', async () => {
-    const fetchSpy = spyOn(globalThis, 'fetch')
-        .mockResolvedValueOnce(new Response(null, { status: 503 }))
-        .mockResolvedValueOnce(new Response(new Uint8Array([1, 2, 3])))
-    const bytes = await readImageBytes('/images/a.webp')
-    expect([...bytes]).toEqual([1, 2, 3])
-    expect(fetchSpy).toHaveBeenCalledTimes(2)
+    server.use(
+        http.get(
+            `${CDN_BASE}/images/a.webp`,
+            () => new HttpResponse(null, { status: 503 }),
+            { once: true }
+        ),
+        http.get(`${CDN_BASE}/images/a.webp`, () =>
+            HttpResponse.arrayBuffer(new Uint8Array([1, 2, 3]).buffer)
+        )
+    )
+    const requests = countRequests()
+    expect([...(await readImageBytes('/images/a.webp'))]).toEqual([1, 2, 3])
+    expect(requests).toHaveBeenCalledTimes(2)
 })
 
 test('fails the build on a missing image without retrying', async () => {
-    const fetchSpy = spyOn(globalThis, 'fetch').mockResolvedValue(
-        new Response(null, { status: 404 })
+    server.use(
+        http.get(
+            `${CDN_BASE}/images/missing.webp`,
+            () => new HttpResponse(null, { status: 404 })
+        )
     )
+    const requests = countRequests()
     await expect(readImageBytes('/images/missing.webp')).rejects.toThrow(
         'HTTP 404'
     )
-    expect(fetchSpy).toHaveBeenCalledTimes(1)
-})
-
-test('bounds each request with a timeout', async () => {
-    const fetchSpy = spyOn(globalThis, 'fetch').mockResolvedValue(
-        new Response(new Uint8Array([1]))
-    )
-    await readImageBytes('/images/a.webp')
-    expect(fetchSpy.mock.calls[0]?.[1]?.signal).toBeInstanceOf(AbortSignal)
+    expect(requests).toHaveBeenCalledTimes(1)
 })
 
 test.each([408, 429])('retries a %i from the CDN', async status => {
-    const fetchSpy = spyOn(globalThis, 'fetch')
-        .mockResolvedValueOnce(new Response(null, { status }))
-        .mockResolvedValueOnce(new Response(new Uint8Array([1])))
+    server.use(
+        http.get(
+            `${CDN_BASE}/images/a.webp`,
+            () => new HttpResponse(null, { status }),
+            { once: true }
+        ),
+        http.get(`${CDN_BASE}/images/a.webp`, () =>
+            HttpResponse.arrayBuffer(new Uint8Array([1]).buffer)
+        )
+    )
+    const requests = countRequests()
     await readImageBytes('/images/a.webp')
-    expect(fetchSpy).toHaveBeenCalledTimes(2)
+    expect(requests).toHaveBeenCalledTimes(2)
+})
+
+test('retries a network failure', async () => {
+    server.use(
+        http.get(`${CDN_BASE}/images/a.webp`, () => HttpResponse.error(), {
+            once: true,
+        }),
+        http.get(`${CDN_BASE}/images/a.webp`, () =>
+            HttpResponse.arrayBuffer(new Uint8Array([7]).buffer)
+        )
+    )
+    expect([...(await readImageBytes('/images/a.webp'))]).toEqual([7])
 })

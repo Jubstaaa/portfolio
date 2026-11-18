@@ -44,7 +44,13 @@ services:
             timeout: 5s
             retries: 3
             start_period: 40s
-        env_file: .env
+            # Probe quickly while starting so `compose up --wait` returns as soon as
+            # the app answers, instead of after the first 30s interval.
+            start_interval: 2s
+        # Optional so CI can run this same file without the droplet's secrets.
+        env_file:
+            - path: .env
+              required: false
         # No third party has Portainer access to this app. If that changes, set
         # PORTAINER_TEAMS in .env beside this file and uncomment the two lines
         # below: the permission is then reapplied on every recreate.
@@ -62,4 +68,4 @@ services:
         volumes:
             # Persist Next's optimized-image cache so it survives redeploys
             # (otherwise every deploy resets it and images go cold again).
-            - /opt/portfolio/cache/images:/app/.next/cache/images
+            - ${IMAGE_CACHE_DIR:-/opt/portfolio/cache/images}:/app/.next/cache/images
