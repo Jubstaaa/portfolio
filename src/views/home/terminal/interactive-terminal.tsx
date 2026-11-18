@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils'
 import { commands } from './commands'
 import type { CommandContext } from './commands.types'
 import type { InteractiveTerminalProps } from './interactive-terminal.types'
+import { parseCommand } from './terminal-parser'
 import {
     appendEntry,
     clearTerminal,
@@ -44,29 +45,26 @@ export function InteractiveTerminal({
         })
 
     const execute = (raw: string) => {
-        const trimmed = raw.trim()
         resetHistoryNavigation()
 
-        if (!trimmed) {
+        const parsed = parseCommand(raw)
+        if (!parsed) {
             appendEntry('', null)
             return
         }
 
+        const trimmed = raw.trim()
         pushHistory(trimmed)
-
-        const spaceIndex = trimmed.indexOf(' ')
-        const name = (
-            spaceIndex === -1 ? trimmed : trimmed.slice(0, spaceIndex)
-        ).toLowerCase()
-        const args =
-            spaceIndex === -1 ? '' : trimmed.slice(spaceIndex + 1).trim()
+        const { args, name } = parsed
 
         if (name === 'clear') {
             clearTerminal()
             return
         }
 
-        const command = commands[name]
+        const command = Object.hasOwn(commands, name)
+            ? commands[name]
+            : undefined
         if (!command) {
             appendEntry(
                 trimmed,
@@ -84,7 +82,8 @@ export function InteractiveTerminal({
         let output: ReactNode
         try {
             output = command.run(args, ctx)
-        } catch {
+        } catch (error) {
+            console.error(`terminal: '${name}' failed`, error)
             output = (
                 <p className="text-muted-foreground">
                     error: something went wrong
@@ -174,6 +173,7 @@ export function InteractiveTerminal({
             }}>
             {cleared ? null : (
                 <div
+                    data-terminal-static
                     className={cn(
                         'flex flex-col gap-3',
                         !revealStatic && 'hidden'

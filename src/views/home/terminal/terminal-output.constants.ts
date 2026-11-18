@@ -10,7 +10,7 @@ const NEOFETCH_INFO = [
     `${site.handle}@${HOST}`,
     '─'.repeat(26),
     'os: next.js 16 (app router)',
-    'host: vercel',
+    'host: digitalocean (docker + caddy)',
     'shell: interactive-terminal',
     'font: hermit v2.0',
     'theme: dark',

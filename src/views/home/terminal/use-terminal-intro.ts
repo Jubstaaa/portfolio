@@ -1,9 +1,12 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useEffectEvent, useRef, useState } from 'react'
+
+import { useHasMounted } from '@/hooks/use-has-mounted'
 
 import {
+    abortIntro,
+    beginIntro,
+    completeIntro,
     getSessionState,
-    markIntroPlayed,
-    setCleared,
 } from './terminal-session'
 
 export type IntroStatus = 'idle' | 'playing' | 'done'
@@ -20,12 +23,20 @@ export function useTerminalIntro({
     setInput,
 }: UseTerminalIntroOptions) {
     const [status, setStatus] = useState<IntroStatus>('idle')
+    // Latched on the first render: false while hydrating a server-rendered page,
+    // true when the terminal mounts after a client-side navigation. A cold load
+    // keeps the server-rendered output on screen (it is the LCP element); the
+    // typing intro only replays it for visitors arriving from elsewhere on the site.
+    const hasMounted = useHasMounted()
+    const [coldLoad] = useState(() => !hasMounted)
     const [revealStatic, setRevealStatic] = useState(
-        () => !introCommands || introCommands.length === 0
+        () => coldLoad || !introCommands || introCommands.length === 0
     )
 
     const machineRef = useRef({ active: false, cancelled: false })
     const timeoutRef = useRef<number | null>(null)
+
+    const runCommand = useEffectEvent(execute)
 
     const skipIntro = useCallback((): boolean => {
         if (!machineRef.current.active) return false
@@ -34,7 +45,7 @@ export function useTerminalIntro({
     }, [])
 
     useEffect(() => {
-        if (!introCommands || introCommands.length === 0) return
+        if (coldLoad || !introCommands || introCommands.length === 0) return
         if (
             getSessionState().introPlayed ||
             window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -54,7 +65,8 @@ export function useTerminalIntro({
         const finish = (remaining: string[]) => {
             machineRef.current.active = false
             if (unmounted) return
-            for (const command of remaining) execute(command)
+            for (const command of remaining) runCommand(command)
+            completeIntro()
             setInput('')
             setStatus('done')
         }
@@ -63,8 +75,7 @@ export function useTerminalIntro({
             await sleep(0)
             if (unmounted) return
             setStatus('playing')
-            markIntroPlayed()
-            setCleared(true)
+            beginIntro()
             await sleep(400)
 
             const queue = [...introCommands]
@@ -83,12 +94,13 @@ export function useTerminalIntro({
                     return
                 }
                 await sleep(200)
-                execute(command)
+                runCommand(command)
                 setInput('')
                 queue.shift()
                 await sleep(350)
             }
             machineRef.current.active = false
+            completeIntro()
             setStatus('done')
         })()
 
@@ -96,9 +108,12 @@ export function useTerminalIntro({
             unmounted = true
             if (timeoutRef.current !== null)
                 window.clearTimeout(timeoutRef.current)
+            if (machineRef.current.active) {
+                machineRef.current.active = false
+                abortIntro()
+            }
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only boot sequence;
-    }, [])
+    }, [coldLoad, introCommands, setInput])
 
     return { revealStatic, skipIntro, status }
 }

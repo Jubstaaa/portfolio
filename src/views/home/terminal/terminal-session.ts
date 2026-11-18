@@ -47,12 +47,19 @@ export function pushHistory(command: string): void {
     setState({ history: [...state.history, command] })
 }
 
-export function setCleared(cleared: boolean): void {
-    setState({ cleared })
+// The intro hides the server-rendered output and replays it as typed commands.
+// It only counts as played once it finishes: a visitor who navigates away midway
+// must come back to the static output, not to a half-typed transcript.
+export function beginIntro(): void {
+    setState({ cleared: true })
 }
 
-export function markIntroPlayed(): void {
+export function completeIntro(): void {
     setState({ introPlayed: true })
+}
+
+export function abortIntro(): void {
+    setState({ cleared: false, entries: [] })
 }
 
 function subscribe(listener: () => void): () => void {

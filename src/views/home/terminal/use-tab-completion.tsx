@@ -1,7 +1,7 @@
 import { useCallback, useRef } from 'react'
 
-import { COMMAND_NAMES, PAGE_TARGETS } from './commands'
-import { HIDDEN_FILES } from './terminal-output.constants'
+import { COMMAND_NAMES } from './commands'
+import { getCompletions } from './terminal-parser'
 import type {
     CompletionSession,
     UseTabCompletionOptions,
@@ -27,33 +27,9 @@ export function useTabCompletion({
             return true
         }
 
-        const spaceIndex = input.indexOf(' ')
-        let prefix: string
-        let candidates: string[]
-        let build: (match: string) => string
-
-        if (spaceIndex === -1) {
-            if (!input) return false
-            prefix = input
-            candidates = COMMAND_NAMES
-            build = match => `${match} `
-        } else {
-            const name = input.slice(0, spaceIndex)
-            prefix = input.slice(spaceIndex + 1).trimStart()
-            if (name === 'cd' || name === 'open') {
-                candidates = PAGE_TARGETS
-            } else if (name === 'cat') {
-                candidates = HIDDEN_FILES
-            } else {
-                return false
-            }
-            build = match => `${name} ${match}`
-        }
-
-        const matches = candidates.filter(candidate =>
-            candidate.startsWith(prefix)
-        )
-        if (matches.length === 0) return false
+        const completion = getCompletions(input, COMMAND_NAMES)
+        if (!completion) return false
+        const { build, matches } = completion
 
         const first = matches[0]
         if (matches.length === 1 && first) {

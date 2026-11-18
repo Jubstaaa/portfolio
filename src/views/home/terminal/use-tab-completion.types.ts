@@ -1,9 +1,9 @@
 import type { ReactNode } from 'react'
 
-export interface CompletionSession {
-    build: (match: string) => string
+import type { Completion } from './terminal-parser.types'
+
+export interface CompletionSession extends Completion {
     index: number
-    matches: string[]
 }
 
 export interface UseTabCompletionOptions {
