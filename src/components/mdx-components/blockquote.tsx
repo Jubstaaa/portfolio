@@ -9,7 +9,7 @@ export function Blockquote({
     return (
         <blockquote
             className={cn(
-                'text-muted-foreground my-4 border-l-2 pl-4 italic before:content-none',
+                'text-muted-foreground font-mono-italic my-4 border-l-2 pl-4 italic before:content-none',
                 className
             )}
             {...props}

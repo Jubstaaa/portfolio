@@ -1,13 +1,14 @@
 'use client'
 
-import type { ReactNode } from 'react'
 import { useState } from 'react'
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 import { ThemeProvider } from '@/components/theme-provider/theme-provider'
 
-export function Providers({ children }: { children: ReactNode }) {
+import type { ProvidersProps } from './providers.types'
+
+export function Providers({ children }: ProvidersProps) {
     const [client] = useState(() => new QueryClient())
     return (
         <QueryClientProvider client={client}>

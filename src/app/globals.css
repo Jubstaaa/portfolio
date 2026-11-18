@@ -44,6 +44,7 @@
     --font-mono:
         var(--font-hermit), ui-monospace, SFMono-Regular, Menlo, Monaco,
         Consolas, monospace;
+    --font-mono-italic: var(--font-hermit-italic), var(--font-mono);
 }
 
 @layer base {
