@@ -37,6 +37,8 @@ runs on pushes, PRs, a weekly schedule and manual dispatch (actions pinned to co
 
 Rollback: `gh workflow run deploy.yml --ref main -f image_tag=<good-sha>` (see README).
 
+`main` is protected by the `protect-main` ruleset: no direct pushes, no force-push or deletion, and every PR needs the `check` and `image` jobs green before it can merge — there is no bypass. Dependabot patch/minor PRs auto-merge once green (`dependabot-auto-merge.yml`); they ship with the next deploy because bot merges do not trigger workflows.
+
 The container listens on `127.0.0.1:3002`; a shared Caddy at `/opt/proxy` on the droplet
 terminates TLS and reverse-proxies `ilkerbalcilar.com` to it, alongside the other sites on
 the same box. Content images live in the Spaces bucket, not in the repo — `src/lib/cdn.ts`
