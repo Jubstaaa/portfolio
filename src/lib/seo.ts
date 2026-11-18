@@ -1,6 +1,14 @@
 import type { Metadata } from 'next'
 
 import { pickBy } from 'lodash-es'
+import type {
+    BlogPosting,
+    BreadcrumbList,
+    CreativeWork,
+    Person,
+    SoftwareSourceCode,
+    WithContext,
+} from 'schema-dts'
 
 import { cdnUrl } from '@/lib/cdn'
 import { type Post, type Project, site } from '@/lib/content'
@@ -79,7 +87,7 @@ export function buildMetadata(input: BuildMetadataInput): Metadata {
     }
 }
 
-export function buildPersonJsonLd(): Record<string, unknown> {
+export function buildPersonJsonLd(): WithContext<Person> {
     return {
         '@context': 'https://schema.org',
         '@type': 'Person',
@@ -94,7 +102,7 @@ export function buildPersonJsonLd(): Record<string, unknown> {
     }
 }
 
-export function buildArticleJsonLd(post: Post): Record<string, unknown> {
+export function buildArticleJsonLd(post: Post): WithContext<BlogPosting> {
     return {
         '@context': 'https://schema.org',
         '@type': 'BlogPosting',
@@ -114,7 +122,7 @@ export function buildArticleJsonLd(post: Post): Record<string, unknown> {
 
 export function buildBreadcrumbJsonLd(
     trail: Array<{ name: string; path: string }>
-): Record<string, unknown> {
+): WithContext<BreadcrumbList> {
     return {
         '@context': 'https://schema.org',
         '@type': 'BreadcrumbList',
@@ -127,17 +135,26 @@ export function buildBreadcrumbJsonLd(
     }
 }
 
-export function buildProjectJsonLd(project: Project): Record<string, unknown> {
+// A project with a repository is source code, which is the type that defines
+// codeRepository; the rest are plain creative works.
+export function buildProjectJsonLd(
+    project: Project
+): WithContext<CreativeWork | SoftwareSourceCode> {
     const cover = project.images[0]
-    return {
-        '@context': 'https://schema.org',
-        '@type': 'CreativeWork',
-        'creator': { '@type': 'Person', 'name': site.name },
-        'description': project.summary,
-        'name': project.title,
-        'url': absoluteUrl(project.path),
-        ...(project.repo ? { codeRepository: project.repo } : {}),
+    const base = {
+        creator: { '@type': 'Person', 'name': site.name },
+        description: project.summary,
+        keywords: project.stack.join(', '),
+        name: project.title,
+        url: absoluteUrl(project.path),
         ...(cover ? { image: absoluteImageUrl(cover.src) } : {}),
-        'keywords': project.stack.join(', '),
-    }
+    } satisfies Omit<CreativeWork, '@type'>
+    return project.repo
+        ? {
+              '@context': 'https://schema.org',
+              '@type': 'SoftwareSourceCode',
+              ...base,
+              'codeRepository': project.repo,
+          }
+        : { '@context': 'https://schema.org', '@type': 'CreativeWork', ...base }
 }

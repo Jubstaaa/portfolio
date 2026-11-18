@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react'
 
+import type { BreadcrumbList, Thing, WithContext } from 'schema-dts'
+
 export interface ContentDetailProps {
     adjacent: {
         ariaLabel: string
@@ -18,8 +20,8 @@ export interface ContentDetailProps {
     }
     highlights?: string[] | undefined
     jsonLd: {
-        breadcrumb: Record<string, unknown>
-        entity: Record<string, unknown>
+        breadcrumb: WithContext<BreadcrumbList>
+        entity: WithContext<Thing>
         idPrefix: string
         slug: string
     }
