@@ -4,12 +4,16 @@ import {
     describe,
     expect,
     mock,
-    type Mock,
     spyOn,
     test,
 } from 'bun:test'
+import { delay, http, HttpResponse } from 'msw'
+
+import { setupMockServer } from '@/test-utils/mock-server'
 
 import { GET } from './route'
+
+const LASTFM = 'https://ws.audioscrobbler.com/2.0/'
 
 const nowPlaying = {
     recenttracks: {
@@ -23,18 +27,18 @@ const nowPlaying = {
     },
 }
 
-function json(body: unknown, status = 200): Response {
-    return new Response(JSON.stringify(body), { status })
+const server = setupMockServer()
+
+function lastFm(resolver: Parameters<typeof http.get>[1]) {
+    server.use(http.get(LASTFM, resolver))
 }
 
 describe('GET /api/now-playing', () => {
-    let fetchSpy: Mock<typeof fetch>
-
     beforeEach(() => {
         process.env.LASTFM_API_KEY = 'key'
         process.env.LASTFM_USERNAME = 'user'
-        fetchSpy = spyOn(globalThis, 'fetch')
         spyOn(console, 'error').mockImplementation(() => undefined)
+        spyOn(console, 'warn').mockImplementation(() => undefined)
     })
 
     afterEach(() => {
@@ -43,20 +47,20 @@ describe('GET /api/now-playing', () => {
         delete process.env.LASTFM_USERNAME
     })
 
-    test('is idle without credentials and never calls Last.fm', async () => {
+    test('is idle without credentials, warns once and never calls Last.fm', async () => {
         delete process.env.LASTFM_API_KEY
-        const warned = spyOn(console, 'warn').mockImplementation(
-            () => undefined
-        )
+        const requests = mock()
+        server.events.on('request:start', requests)
         expect(await (await GET()).json()).toEqual({ isPlaying: false })
         await GET()
-        expect(fetchSpy).not.toHaveBeenCalled()
+        expect(requests).not.toHaveBeenCalled()
         // A misconfigured droplet must leave a trace, but not on every poll.
-        expect(warned).toHaveBeenCalledTimes(1)
+        expect(console.warn).toHaveBeenCalledTimes(1)
+        server.events.removeAllListeners()
     })
 
     test('returns the playing track with a profile link', async () => {
-        fetchSpy.mockResolvedValue(json(nowPlaying))
+        lastFm(() => HttpResponse.json(nowPlaying))
         expect(await (await GET()).json()).toMatchObject({
             url: expect.stringContaining('spotify.com'),
             artist: 'Boards of Canada',
@@ -66,49 +70,50 @@ describe('GET /api/now-playing', () => {
     })
 
     test('is idle on an upstream error status', async () => {
-        fetchSpy.mockResolvedValue(json({}, 503))
+        lastFm(() => new HttpResponse(null, { status: 503 }))
         const res = await GET()
         expect(res.status).toBe(200)
         expect(await res.json()).toEqual({ isPlaying: false })
     })
 
     test('is idle when the network fails', async () => {
-        fetchSpy.mockRejectedValue(new TypeError('fetch failed'))
+        lastFm(() => HttpResponse.error())
         const res = await GET()
         expect(res.status).toBe(200)
         expect(await res.json()).toEqual({ isPlaying: false })
     })
 
     test('is idle on a body that is not JSON', async () => {
-        fetchSpy.mockResolvedValue(new Response('<html>', { status: 200 }))
+        lastFm(() => HttpResponse.text('<html>'))
         expect(await (await GET()).json()).toEqual({ isPlaying: false })
     })
 
-    test('bounds the upstream call and shares it across visitors', async () => {
-        fetchSpy.mockResolvedValue(json(nowPlaying))
+    test('logs and degrades when Last.fm changes its payload', async () => {
+        lastFm(() => HttpResponse.json({ error: 6, message: 'User not found' }))
+        expect(await (await GET()).json()).toEqual({ isPlaying: false })
+        expect(console.error).toHaveBeenCalled()
+    })
+
+    test(
+        'gives up on a hanging upstream instead of holding the request',
+        async () => {
+            lastFm(async () => {
+                await delay('infinite')
+                return HttpResponse.json(nowPlaying)
+            })
+            expect(await (await GET()).json()).toEqual({ isPlaying: false })
+        },
+        { timeout: 10_000 }
+    )
+
+    // Next's data cache shares one upstream call per window across visitors; it
+    // is configured through fetch options, which no network mock can observe.
+    test('asks Next to cache the upstream response', async () => {
+        lastFm(() => HttpResponse.json(nowPlaying))
+        const fetchSpy = spyOn(globalThis, 'fetch')
         await GET()
         const init = fetchSpy.mock.calls[0]?.[1]
-        expect(init?.signal).toBeInstanceOf(AbortSignal)
         expect(init?.cache).toBeUndefined()
         expect(init?.next?.revalidate).toBeGreaterThan(0)
-    })
-})
-
-describe('GET /api/now-playing payload drift', () => {
-    test('logs and degrades when Last.fm changes its payload', async () => {
-        process.env.LASTFM_API_KEY = 'key'
-        process.env.LASTFM_USERNAME = 'user'
-        const fetchSpy = spyOn(globalThis, 'fetch').mockResolvedValue(
-            json({ error: 6, message: 'User not found' })
-        )
-        const logged = spyOn(console, 'error').mockImplementation(
-            () => undefined
-        )
-        expect(await (await GET()).json()).toEqual({ isPlaying: false })
-        expect(logged).toHaveBeenCalled()
-        fetchSpy.mockRestore()
-        logged.mockRestore()
-        delete process.env.LASTFM_API_KEY
-        delete process.env.LASTFM_USERNAME
     })
 })
