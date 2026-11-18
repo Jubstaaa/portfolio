@@ -76,7 +76,7 @@ The image must be on the CDN before you build — the build fetches it to read i
 `.github/workflows/deploy.yml`:
 
 1. **check** (every push, PR and weekly) — format, lint, typecheck, tests, dependency audit.
-2. **image** — builds the Docker image (`output: 'standalone'`, Node 22 runner), runs it with the production constraints, runs `scripts/smoke.ts` against it, and on `main` pushes exactly that image as `ghcr.io/jubstaaa/portfolio:<commit-sha>`.
+2. **image** — builds the Docker image (`output: 'standalone'`, Node 24 LTS runner), runs it with the production constraints, runs `scripts/smoke.ts` against it, and on `main` pushes exactly that image as `ghcr.io/jubstaaa/portfolio:<commit-sha>`.
 3. **deploy** (`main` only, `Production` environment) — copies `docker-compose.yml` to `/opt/portfolio`, then `docker compose up --wait` with `IMAGE_TAG=<sha>`. If the container is not healthy within 120 s it rolls back to the previously running tag and fails the job. `/opt/portfolio/release.env` records the current and previous tags.
 4. **promote** — moves `:latest` to the released SHA, so `:latest` always means "what production runs".
 
