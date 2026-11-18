@@ -2,10 +2,13 @@ import rehypePrettyCode, {
     type Options as PrettyCodeOptions,
 } from 'rehype-pretty-code'
 import remarkGfm from 'remark-gfm'
+import type { Element, Root } from 'hast'
+import { posix } from 'node:path'
 import sharp from 'sharp'
+import { EXIT, visit } from 'unist-util-visit'
 import { defineConfig, defineCollection, s } from 'velite'
 
-import { YEAR_MONTH } from './src/lib/format'
+import { isYearMonth } from './src/lib/format'
 import { readImageBytes } from './src/lib/image-source'
 import { rehypeNormalizeHeadings } from './src/lib/rehype-normalize-headings'
 
@@ -38,60 +41,38 @@ const image = s
         return { ...data, width, height }
     })
 
-interface HastNode {
-    type?: string
-    tagName?: string
-    properties?: Record<string, unknown>
-    children?: HastNode[]
-}
-
 // Flag the first image in the body so it can be preloaded — it becomes the
 // LCP element on posts whose cover is hidden (showCover: false).
 function rehypeFirstImagePriority() {
-    return (tree: HastNode) => {
-        let done = false
-        const walk = (node: HastNode) => {
-            if (done) return
-            if (node.type === 'element' && node.tagName === 'img') {
-                node.properties = { ...node.properties, dataPriority: 'true' }
-                done = true
-                return
-            }
-            for (const child of node.children ?? []) walk(child)
-        }
-        walk(tree)
+    return (tree: Root) => {
+        visit(tree, { tagName: 'img', type: 'element' }, (node: Element) => {
+            node.properties.dataPriority = 'true'
+            return EXIT
+        })
     }
 }
 
 // Stamp intrinsic width/height on local body images so next/image reserves the
 // correct aspect-ratio box up front — kills the reload layout shift / flicker.
 function rehypeImageDimensions() {
-    return async (tree: HastNode) => {
-        const images: HastNode[] = []
-        const collect = (node: HastNode) => {
-            if (node.type === 'element' && node.tagName === 'img')
-                images.push(node)
-            for (const child of node.children ?? []) collect(child)
-        }
-        collect(tree)
+    return async (tree: Root) => {
+        const images: Element[] = []
+        visit(tree, { tagName: 'img', type: 'element' }, (node: Element) => {
+            images.push(node)
+        })
 
         await Promise.all(
             images.map(async node => {
-                const props = node.properties ?? {}
-                const src =
-                    typeof props.src === 'string' ? props.src : undefined
-                if (
-                    !src ||
-                    !src.startsWith('/') ||
-                    (props.width && props.height)
-                )
-                    return
-                const { width, height } = await sharp(
+                const { height, src, width } = node.properties
+                if (typeof src !== 'string' || !src.startsWith('/')) return
+                if (width && height) return
+                const metadata = await sharp(
                     await readImageBytes(src)
                 ).metadata()
-
-                if (width && height)
-                    node.properties = { ...props, width, height }
+                if (metadata.width && metadata.height) {
+                    node.properties.width = metadata.width
+                    node.properties.height = metadata.height
+                }
             })
         )
     }
@@ -133,11 +114,10 @@ const posts = defineCollection({
             body: s.mdx(),
             raw: s.raw(),
         })
-        .transform(data => ({
-            ...data,
-            slug: data.slug.replace(/^blog\//, ''),
-            path: `/blog/${data.slug.replace(/^blog\//, '')}`,
-        })),
+        .transform(data => {
+            const slug = posix.basename(data.slug)
+            return { ...data, slug, path: `/blog/${slug}` }
+        }),
 })
 
 const projects = defineCollection({
@@ -158,8 +138,7 @@ const projects = defineCollection({
             raw: s.raw(),
         })
         .transform((data, { meta }) => {
-            const file = meta.path.split('/').pop() ?? ''
-            const slug = file.replace(/\.mdx$/, '')
+            const slug = posix.parse(meta.path).name
             return { ...data, slug, path: `/projects/${slug}` }
         }),
 })
@@ -171,17 +150,15 @@ const experiences = defineCollection({
         .object({
             company: s.string(),
             role: s.string(),
-            start: s.string().regex(YEAR_MONTH),
-            end: s.string().regex(YEAR_MONTH).optional(),
+            start: s.string().refine(isYearMonth, 'expected YYYY-MM'),
+            end: s.string().refine(isYearMonth, 'expected YYYY-MM').optional(),
             location: s.string(),
             summary: s.string(),
             highlights: s.array(s.string()).default([]),
             stack: s.array(s.string()).default([]),
         })
         .transform((data, { meta }) => {
-            const file = meta.path.split('/').pop() ?? ''
-            const slug = file.replace(/\.json$/, '')
-            return { ...data, slug }
+            return { ...data, slug: posix.parse(meta.path).name }
         }),
 })
 
@@ -193,15 +170,13 @@ const education = defineCollection({
             school: s.string(),
             degree: s.string(),
             field: s.string().optional(),
-            start: s.string().regex(YEAR_MONTH),
-            end: s.string().regex(YEAR_MONTH).optional(),
+            start: s.string().refine(isYearMonth, 'expected YYYY-MM'),
+            end: s.string().refine(isYearMonth, 'expected YYYY-MM').optional(),
             location: s.string().optional(),
             notes: s.string().optional(),
         })
         .transform((data, { meta }) => {
-            const file = meta.path.split('/').pop() ?? ''
-            const slug = file.replace(/\.json$/, '')
-            return { ...data, slug }
+            return { ...data, slug: posix.parse(meta.path).name }
         }),
 })
 

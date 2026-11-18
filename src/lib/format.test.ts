@@ -12,9 +12,12 @@ describe('formatMonth', () => {
         expect(formatMonth(undefined)).toBe('present')
     })
 
-    test.each(['2024', '2024-13', 'march 2024'])('rejects %p', value => {
-        expect(() => formatMonth(value)).toThrow()
-    })
+    test.each(['2024', '2024-13', '2024-3', 'march 2024'])(
+        'rejects %p',
+        value => {
+            expect(() => formatMonth(value)).toThrow()
+        }
+    )
 })
 
 describe('formatDate', () => {
