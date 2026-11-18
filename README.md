@@ -73,9 +73,9 @@ The image must be on the CDN before you build — the build fetches it to read i
 
 ## Deploy
 
-`.github/workflows/deploy.yml`:
+`.github/workflows/ci.yml` runs on every PR and, as a reusable workflow, before every deploy; `.github/workflows/deploy.yml` runs on `main` and on manual dispatch. Shared setup is the `.github/actions/setup-bun` composite action; the deploy's shell lives in `scripts/deploy/` (shellcheck-linted, piped to the droplet over SSH).
 
-1. **check** (every push, PR and weekly) — format, lint, typecheck, tests, dependency audit.
+1. **check** — format, lint, typecheck, tests, dependency audit, actionlint and shellcheck. New advisories between pushes come from Dependabot alerts, not a scheduled run.
 2. **image** — builds the Docker image (`output: 'standalone'`, Node 24 LTS runner), runs it with the production constraints, runs `scripts/smoke.ts` against it, and on `main` pushes exactly that image as `ghcr.io/jubstaaa/portfolio:<commit-sha>`.
 3. **deploy** (`main` only, `Production` environment) — copies `docker-compose.yml` to `/opt/portfolio`, then `docker compose up --wait` with `IMAGE_TAG=<sha>`. If the container is not healthy within 120 s it rolls back to the previously running tag and fails the job. `/opt/portfolio/release.env` records the current and previous tags.
 4. **promote** — moves `:latest` to the released SHA, so `:latest` always means "what production runs".
@@ -104,4 +104,4 @@ Dependabot opens weekly PRs. Patch and minor updates merge themselves once the r
 
 ### Monitoring
 
-`.github/workflows/uptime.yml` probes the home page and the feed every 15 minutes; a failed scheduled run is emailed by GitHub. GitHub disables scheduled workflows after 60 days without repository activity — re-enable it from the Actions tab if that happens.
+Nothing in this repo monitors the site — the environment already does: UptimeRobot (uptime and alerts), Beszel (host and container metrics), and the container healthcheck that every deploy waits on. The shared inventory of what runs on the droplet lives outside the repo (`~/.claude/specs/infra/`).

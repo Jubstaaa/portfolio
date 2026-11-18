@@ -24,10 +24,12 @@ Operational guide for this repo. Global rules in `~/.claude/CLAUDE.md` still app
 
 ### Deployment
 
-Not Vercel. `next.config.ts` sets `output: 'standalone'`, and `.github/workflows/deploy.yml`
-runs on pushes, PRs, a weekly schedule and manual dispatch (actions pinned to commit SHAs):
+Not Vercel. `next.config.ts` sets `output: 'standalone'`. `.github/workflows/ci.yml` (PRs, and
+reused by deploy) holds the gate; `.github/workflows/deploy.yml` (push to `main`, manual
+dispatch) releases. Actions are pinned to commit SHAs, shared steps live in the
+`.github/actions/setup-bun` composite action, and the deploy shell lives in `scripts/deploy/`:
 
-1. **check** — `format:check`, `lint`, `typecheck`, `test`, `audit`
+1. **check** — `format:check`, `lint`, `typecheck`, `test`, `audit`, actionlint, shellcheck
 2. **image** — builds the image, runs it with the production constraints, runs
    `scripts/smoke.ts` against it, and on `main` pushes exactly that image as `:<commit-sha>`
 3. **deploy** (`main`, `Production` environment) — copies `docker-compose.yml` to the droplet

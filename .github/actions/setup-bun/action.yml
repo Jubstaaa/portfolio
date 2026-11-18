@@ -1,0 +1,12 @@
+name: Set up Bun
+description: Install the Bun version pinned in package.json and the locked dependencies.
+runs:
+    using: composite
+    steps:
+        - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+          with:
+              bun-version-file: package.json
+        # unrs-resolver's postinstall is only a fallback check: its native binding
+        # arrives from the lockfile as an optional dependency. sharp ships prebuilt.
+        - run: bun install --frozen-lockfile --ignore-scripts
+          shell: bash
