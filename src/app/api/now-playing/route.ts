@@ -16,26 +16,6 @@ const CACHE_HEADERS = {
 
 let warnedMissingCredentials = false
 
-function respond(payload: NowPlayingPayload): NextResponse {
-    return NextResponse.json(payload, { headers: CACHE_HEADERS })
-}
-
-async function fetchRecentTracks(apiKey: string, user: string) {
-    const params = new URLSearchParams({
-        method: 'user.getrecenttracks',
-        api_key: apiKey,
-        format: 'json',
-        limit: '1',
-        user,
-    })
-    const res = await fetch(`${RECENT_TRACKS_ENDPOINT}?${params}`, {
-        next: { revalidate: REVALIDATE_SECONDS },
-        signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
-    })
-    if (!res.ok) throw new Error(`Last.fm responded ${res.status}`)
-    return parseRecentTracks(await res.json())
-}
-
 export async function GET(): Promise<NextResponse> {
     const apiKey = process.env.LASTFM_API_KEY
     const user = process.env.LASTFM_USERNAME
@@ -58,4 +38,24 @@ export async function GET(): Promise<NextResponse> {
         console.error('now-playing: upstream request failed', error)
         return respond({ isPlaying: false })
     }
+}
+
+async function fetchRecentTracks(apiKey: string, user: string) {
+    const params = new URLSearchParams({
+        api_key: apiKey,
+        format: 'json',
+        limit: '1',
+        method: 'user.getrecenttracks',
+        user,
+    })
+    const res = await fetch(`${RECENT_TRACKS_ENDPOINT}?${params}`, {
+        next: { revalidate: REVALIDATE_SECONDS },
+        signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
+    })
+    if (!res.ok) throw new Error(`Last.fm responded ${res.status}`)
+    return parseRecentTracks(await res.json())
+}
+
+function respond(payload: NowPlayingPayload): NextResponse {
+    return NextResponse.json(payload, { headers: CACHE_HEADERS })
 }

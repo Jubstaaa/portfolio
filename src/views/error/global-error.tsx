@@ -1,7 +1,8 @@
 'use client'
 
-import ErrorPage from './error-page'
 import type { ErrorPageProps } from './error-page.types'
+
+import ErrorPage from './error-page'
 
 import '@/app/globals.css'
 

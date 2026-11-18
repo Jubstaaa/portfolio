@@ -1,8 +1,6 @@
+import { ImageResponse } from 'next/og'
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
-
-import { ImageResponse } from 'next/og'
-
 import sharp from 'sharp'
 
 import { OgCard } from '@/components/og-card/og-card'
@@ -13,40 +11,6 @@ const OG_SIZE = { height: 630, width: 1200 } as const
 const OG_CONTENT_TYPE = 'image/jpeg'
 
 const FONT_DIR = join(process.cwd(), 'src/fonts/hermit')
-
-async function loadFonts() {
-    const [regular, bold] = await Promise.all([
-        readFile(join(FONT_DIR, 'Hermit-Regular.otf')),
-        readFile(join(FONT_DIR, 'Hermit-Bold.otf')),
-    ])
-    return [
-        {
-            data: regular,
-            name: 'Hermit',
-            style: 'normal' as const,
-            weight: 400 as const,
-        },
-        {
-            data: bold,
-            name: 'Hermit',
-            style: 'normal' as const,
-            weight: 700 as const,
-        },
-    ]
-}
-
-// Satori cannot decode webp, so the cover is rasterised to PNG and inlined as a
-// data URL. The bytes come from the Spaces CDN (see readImageBytes).
-async function loadCover(src?: string): Promise<string | undefined> {
-    if (!src) return undefined
-
-    const png = await sharp(await readImageBytes(src))
-        .resize(OG_SIZE.width, OG_SIZE.height, { fit: 'cover' })
-        .png()
-        .toBuffer()
-
-    return `data:image/png;base64,${png.toString('base64')}`
-}
 
 interface OgInput {
     cover?: string
@@ -85,4 +49,38 @@ export async function renderOgImage({
             'Content-Type': OG_CONTENT_TYPE,
         },
     })
+}
+
+// Satori cannot decode webp, so the cover is rasterised to PNG and inlined as a
+// data URL. The bytes come from the Spaces CDN (see readImageBytes).
+async function loadCover(src?: string): Promise<string | undefined> {
+    if (!src) return undefined
+
+    const png = await sharp(await readImageBytes(src))
+        .resize(OG_SIZE.width, OG_SIZE.height, { fit: 'cover' })
+        .png()
+        .toBuffer()
+
+    return `data:image/png;base64,${png.toString('base64')}`
+}
+
+async function loadFonts() {
+    const [regular, bold] = await Promise.all([
+        readFile(join(FONT_DIR, 'Hermit-Regular.otf')),
+        readFile(join(FONT_DIR, 'Hermit-Bold.otf')),
+    ])
+    return [
+        {
+            data: regular,
+            name: 'Hermit',
+            style: 'normal' as const,
+            weight: 400 as const,
+        },
+        {
+            data: bold,
+            name: 'Hermit',
+            style: 'normal' as const,
+            weight: 700 as const,
+        },
+    ]
 }

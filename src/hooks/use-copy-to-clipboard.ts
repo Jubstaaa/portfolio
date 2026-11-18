@@ -8,7 +8,7 @@ const RESET_AFTER_MS = 1600
 
 export function useCopyToClipboard() {
     const [status, setStatus] = useState<CopyStatus>('idle')
-    const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+    const timeoutRef = useRef<null | ReturnType<typeof setTimeout>>(null)
 
     useEffect(() => {
         return () => {
@@ -20,10 +20,9 @@ export function useCopyToClipboard() {
         void writeToClipboard(text).then(written => {
             setStatus(written ? 'copied' : 'failed')
             if (timeoutRef.current) clearTimeout(timeoutRef.current)
-            timeoutRef.current = setTimeout(
-                () => setStatus('idle'),
-                RESET_AFTER_MS
-            )
+            timeoutRef.current = setTimeout(() => {
+                setStatus('idle')
+            }, RESET_AFTER_MS)
         })
     }, [])
 

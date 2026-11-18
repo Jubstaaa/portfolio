@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 
 import type { Post } from '@/lib/content'
+
 import {
     byRecency,
     getAdjacent,

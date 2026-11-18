@@ -3,8 +3,9 @@ import Image from 'next/image'
 import { cdnUrl } from '@/lib/cdn'
 import { cn } from '@/lib/utils'
 
-import { CONTENT_IMAGE_CLASS } from './content-image.constants'
 import type { ContentImageProps } from './content-image.types'
+
+import { CONTENT_IMAGE_CLASS } from './content-image.constants'
 
 export function ContentImage({
     alt,

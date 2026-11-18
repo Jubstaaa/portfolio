@@ -14,11 +14,11 @@ export function ContentCard({
 }: ContentCardProps) {
     return (
         <Link
-            href={href}
             className={cn(
                 'hairline group transition-token block border-b py-6 transition-[border-color]',
                 className
-            )}>
+            )}
+            href={href}>
             <p className="text-muted-foreground flex flex-wrap items-center gap-x-3 text-xs">
                 {meta}
             </p>

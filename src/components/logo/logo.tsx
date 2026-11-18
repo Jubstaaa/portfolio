@@ -8,11 +8,11 @@ import type { LogoProps } from './logo.types'
 export function Logo({ className }: LogoProps) {
     return (
         <Link
-            href="/"
             className={cn(
                 'text-foreground hover:text-accent transition-token text-sm tracking-tight',
                 className
-            )}>
+            )}
+            href="/">
             {handlePath()}
             <span className="sr-only"> — home</span>
         </Link>

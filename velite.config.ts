@@ -1,44 +1,45 @@
+import type { Element, Root } from 'hast'
+
+import { posix } from 'node:path'
 import rehypePrettyCode, {
     type Options as PrettyCodeOptions,
 } from 'rehype-pretty-code'
 import remarkGfm from 'remark-gfm'
-import type { Element, Root } from 'hast'
-import { posix } from 'node:path'
 import sharp from 'sharp'
 import { EXIT, visit } from 'unist-util-visit'
-import { defineConfig, defineCollection, s } from 'velite'
+import { defineCollection, defineConfig, s } from 'velite'
 
 import { isYearMonth } from './src/lib/format'
 import { readImageBytes } from './src/lib/image-source'
 import { rehypeNormalizeHeadings } from './src/lib/rehype-normalize-headings'
 
 const prettyCode: PrettyCodeOptions = {
-    theme: { dark: 'github-dark-default', light: 'github-light' },
     defaultLang: 'plaintext',
     keepBackground: false,
+    theme: { dark: 'github-dark-default', light: 'github-light' },
 }
 
 const image = s
     .object({
-        src: s.string(),
         alt: s.string(),
         caption: s.string().optional(),
+        src: s.string(),
     })
     .transform(async data => {
         // Stamp intrinsic dimensions on local images so next/image reserves the
         // aspect-ratio box (no flicker on cover / gallery images).
         const blank = {
             ...data,
-            width: undefined as number | undefined,
             height: undefined as number | undefined,
+            width: undefined as number | undefined,
         }
         if (!data.src.startsWith('/')) return blank
 
-        const { width, height } = await sharp(
+        const { height, width } = await sharp(
             await readImageBytes(data.src)
         ).metadata()
 
-        return { ...data, width, height }
+        return { ...data, height, width }
     })
 
 // Flag the first image in the body so it can be preloaded — it becomes the
@@ -81,19 +82,19 @@ function rehypeImageDimensions() {
 const site = defineCollection({
     name: 'Site',
     pattern: 'site.json',
-    single: true,
     schema: s.object({
-        name: s.string(),
-        handle: s.string(),
-        role: s.string(),
-        location: s.string(),
-        title: s.string(),
         description: s.string(),
-        url: s.string().url(),
         email: s.string().email(),
+        handle: s.string(),
         locale: s.literal('en'),
-        nav: s.array(s.object({ label: s.string(), href: s.string() })),
+        location: s.string(),
+        name: s.string(),
+        nav: s.array(s.object({ href: s.string(), label: s.string() })),
+        role: s.string(),
+        title: s.string(),
+        url: s.string().url(),
     }),
+    single: true,
 })
 
 const posts = defineCollection({
@@ -101,22 +102,22 @@ const posts = defineCollection({
     pattern: 'blog/*.mdx',
     schema: s
         .object({
-            title: s.string(),
-            description: s.string(),
-            date: s.isodate(),
-            updated: s.isodate().optional(),
+            body: s.mdx(),
             category: s.string(),
-            tags: s.array(s.string()).default([]),
-            draft: s.boolean().default(false),
             cover: image.optional(),
+            date: s.isodate(),
+            description: s.string(),
+            draft: s.boolean().default(false),
+            raw: s.raw(),
             showCover: s.boolean().default(true),
             slug: s.path(),
-            body: s.mdx(),
-            raw: s.raw(),
+            tags: s.array(s.string()).default([]),
+            title: s.string(),
+            updated: s.isodate().optional(),
         })
         .transform(data => {
             const slug = posix.basename(data.slug)
-            return { ...data, slug, path: `/blog/${slug}` }
+            return { ...data, path: `/blog/${slug}`, slug }
         }),
 })
 
@@ -125,21 +126,21 @@ const projects = defineCollection({
     pattern: 'projects/*.mdx',
     schema: s
         .object({
-            title: s.string(),
-            summary: s.string(),
-            category: s.string(),
-            order: s.number().optional(),
-            stack: s.array(s.string()).default([]),
-            repo: s.string().url().optional(),
-            url: s.string().url().optional(),
-            images: s.array(image).default([]),
-            highlights: s.array(s.string()).default([]),
             body: s.mdx(),
+            category: s.string(),
+            highlights: s.array(s.string()).default([]),
+            images: s.array(image).default([]),
+            order: s.number().optional(),
             raw: s.raw(),
+            repo: s.string().url().optional(),
+            stack: s.array(s.string()).default([]),
+            summary: s.string(),
+            title: s.string(),
+            url: s.string().url().optional(),
         })
         .transform((data, { meta }) => {
             const slug = posix.parse(meta.path).name
-            return { ...data, slug, path: `/projects/${slug}` }
+            return { ...data, path: `/projects/${slug}`, slug }
         }),
 })
 
@@ -149,13 +150,13 @@ const experiences = defineCollection({
     schema: s
         .object({
             company: s.string(),
-            role: s.string(),
-            start: s.string().refine(isYearMonth, 'expected YYYY-MM'),
             end: s.string().refine(isYearMonth, 'expected YYYY-MM').optional(),
-            location: s.string(),
-            summary: s.string(),
             highlights: s.array(s.string()).default([]),
+            location: s.string(),
+            role: s.string(),
             stack: s.array(s.string()).default([]),
+            start: s.string().refine(isYearMonth, 'expected YYYY-MM'),
+            summary: s.string(),
         })
         .transform((data, { meta }) => {
             return { ...data, slug: posix.parse(meta.path).name }
@@ -167,13 +168,13 @@ const education = defineCollection({
     pattern: 'education/*.json',
     schema: s
         .object({
-            school: s.string(),
             degree: s.string(),
-            field: s.string().optional(),
-            start: s.string().refine(isYearMonth, 'expected YYYY-MM'),
             end: s.string().refine(isYearMonth, 'expected YYYY-MM').optional(),
+            field: s.string().optional(),
             location: s.string().optional(),
             notes: s.string().optional(),
+            school: s.string(),
+            start: s.string().refine(isYearMonth, 'expected YYYY-MM'),
         })
         .transform((data, { meta }) => {
             return { ...data, slug: posix.parse(meta.path).name }
@@ -184,7 +185,6 @@ const skills = defineCollection({
     name: 'Skill',
     pattern: 'data/skills.json',
     schema: s.object({
-        name: s.string(),
         category: s.enum([
             'lang',
             'frontend',
@@ -193,6 +193,7 @@ const skills = defineCollection({
             'design',
             'other',
         ]),
+        name: s.string(),
     }),
 })
 
@@ -200,7 +201,6 @@ const stacks = defineCollection({
     name: 'Stack',
     pattern: 'data/stacks.json',
     schema: s.object({
-        name: s.string(),
         category: s.enum([
             'framework',
             'library',
@@ -209,6 +209,7 @@ const stacks = defineCollection({
             'tooling',
             'design',
         ]),
+        name: s.string(),
     }),
 })
 
@@ -216,37 +217,37 @@ const socials = defineCollection({
     name: 'Social',
     pattern: 'data/socials.json',
     schema: s.object({
-        label: s.string(),
         href: s.string().url(),
+        label: s.string(),
     }),
 })
 
 export default defineConfig({
-    root: 'content',
-    output: {
-        data: '.velite',
-        assets: 'public/_velite',
-        base: '/_velite/',
-        name: '[name]-[hash:8].[ext]',
-        clean: true,
-    },
     collections: {
-        site,
+        education,
+        experiences,
         posts,
         projects,
-        experiences,
-        education,
+        site,
         skills,
-        stacks,
         socials,
+        stacks,
     },
     mdx: {
-        remarkPlugins: [remarkGfm],
         rehypePlugins: [
             rehypeNormalizeHeadings,
             rehypeFirstImagePriority,
             rehypeImageDimensions,
             [rehypePrettyCode, prettyCode],
         ],
+        remarkPlugins: [remarkGfm],
     },
+    output: {
+        assets: 'public/_velite',
+        base: '/_velite/',
+        clean: true,
+        data: '.velite',
+        name: '[name]-[hash:8].[ext]',
+    },
+    root: 'content',
 })

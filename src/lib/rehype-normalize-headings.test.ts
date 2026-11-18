@@ -1,5 +1,6 @@
-import { describe, expect, test } from 'bun:test'
 import type { Root } from 'hast'
+
+import { describe, expect, test } from 'bun:test'
 
 import { normalizeHeadings } from './rehype-normalize-headings'
 

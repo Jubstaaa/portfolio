@@ -5,10 +5,11 @@ import { NowPlaying } from '@/components/now-playing/now-playing'
 import { site } from '@/lib/content'
 import { handlePath } from '@/lib/site'
 
+import type { CommandContext, TerminalCommand } from './commands.types'
+
 import { CommandLine } from './command-line'
 import { CommandPre } from './command-pre'
 import { STATIC_CTX, VIM_ESCAPE_MESSAGE } from './commands.constants'
-import type { CommandContext, TerminalCommand } from './commands.types'
 import {
     ENV_OUTPUT,
     HIDDEN_FILES,
@@ -16,6 +17,17 @@ import {
     TOP_OUTPUT,
 } from './terminal-output.constants'
 import { resolvePage } from './terminal-parser'
+
+function goTo(args: string, ctx: CommandContext): ReactNode {
+    const href = resolvePage(args)
+    if (!href) {
+        return (
+            <CommandLine>{`cd: no such file or directory: ${args}`}</CommandLine>
+        )
+    }
+    ctx.navigate(href)
+    return null
+}
 
 function line(text: string): TerminalCommand['run'] {
     return function LineRun() {
@@ -27,17 +39,6 @@ function pre(text: string): TerminalCommand['run'] {
     return function PreRun() {
         return <CommandPre>{text}</CommandPre>
     }
-}
-
-function goTo(args: string, ctx: CommandContext): ReactNode {
-    const href = resolvePage(args)
-    if (!href) {
-        return (
-            <CommandLine>{`cd: no such file or directory: ${args}`}</CommandLine>
-        )
-    }
-    ctx.navigate(href)
-    return null
 }
 
 export const commands: Record<string, TerminalCommand> = {

@@ -52,13 +52,13 @@ export default function BlogListPage() {
                                 <ContentCard
                                     description={post.description}
                                     href={post.path}
-                                    title={post.title}
                                     meta={
                                         <PostMeta
                                             category={post.category}
                                             date={post.date}
                                         />
                                     }
+                                    title={post.title}
                                     {...(post.tags.length > 0
                                         ? {
                                               tags: post.tags.map(t => (

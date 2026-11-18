@@ -34,7 +34,7 @@ export function Experience() {
                         {exp.highlights.length > 0 ? (
                             <ul className="text-muted-foreground mt-2 space-y-1 text-sm">
                                 {exp.highlights.map(h => (
-                                    <li key={h} className="arrow-bullet">
+                                    <li className="arrow-bullet" key={h}>
                                         {h}
                                     </li>
                                 ))}

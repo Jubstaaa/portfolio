@@ -19,30 +19,6 @@ import {
 
 import type { PostPageProps } from './blog-detail.types'
 
-export function generateStaticParams() {
-    return getPublishedPosts().map(post => ({ slug: post.slug }))
-}
-
-export async function generateMetadata({
-    params,
-}: PostPageProps): Promise<Metadata> {
-    const { slug } = await params
-    const post = getPostBySlug(slug)
-    if (!post) return {}
-    return buildMetadata({
-        authors: [site.name],
-        description: post.description,
-        keywords: post.tags,
-        modifiedTime: post.updated ?? post.date,
-        path: post.path,
-        publishedTime: post.date,
-        section: post.category,
-        tags: post.tags,
-        title: post.title,
-        type: 'article',
-    })
-}
-
 export default async function BlogDetailPage({ params }: PostPageProps) {
     const { slug } = await params
     const post = getPostBySlug(slug)
@@ -52,12 +28,12 @@ export default async function BlogDetailPage({ params }: PostPageProps) {
 
     return (
         <ContentDetail
-            body={post.body}
             adjacent={{
                 ariaLabel: 'Post navigation',
                 ...(prev ? { prev } : {}),
                 ...(next ? { next } : {}),
             }}
+            body={post.body}
             header={{
                 lead: post.description,
                 meta: <PostMeta category={post.category} date={post.date} />,
@@ -96,4 +72,28 @@ export default async function BlogDetailPage({ params }: PostPageProps) {
                 : {})}
         />
     )
+}
+
+export async function generateMetadata({
+    params,
+}: PostPageProps): Promise<Metadata> {
+    const { slug } = await params
+    const post = getPostBySlug(slug)
+    if (!post) return {}
+    return buildMetadata({
+        authors: [site.name],
+        description: post.description,
+        keywords: post.tags,
+        modifiedTime: post.updated ?? post.date,
+        path: post.path,
+        publishedTime: post.date,
+        section: post.category,
+        tags: post.tags,
+        title: post.title,
+        type: 'article',
+    })
+}
+
+export function generateStaticParams() {
+    return getPublishedPosts().map(post => ({ slug: post.slug }))
 }

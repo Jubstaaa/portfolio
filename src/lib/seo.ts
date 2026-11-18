@@ -1,6 +1,4 @@
 import type { Metadata } from 'next'
-
-import { pickBy } from 'lodash-es'
 import type {
     BlogPosting,
     BreadcrumbList,
@@ -10,15 +8,11 @@ import type {
     WithContext,
 } from 'schema-dts'
 
+import { pickBy } from 'lodash-es'
+
 import { cdnUrl } from '@/lib/cdn'
 import { type Post, type Project, site } from '@/lib/content'
 import { absoluteUrl, ogLocale } from '@/lib/site'
-
-// Content image paths are relative in frontmatter but only resolve on the CDN, so
-// structured data has to name the bucket URL rather than a site path that redirects.
-function absoluteImageUrl(src: string): string {
-    return absoluteUrl(cdnUrl(src))
-}
 
 interface BuildMetadataInput {
     authors?: string[]
@@ -31,7 +25,40 @@ interface BuildMetadataInput {
     section?: string
     tags?: string[]
     title: string
-    type?: 'website' | 'article'
+    type?: 'article' | 'website'
+}
+
+export function buildArticleJsonLd(post: Post): WithContext<BlogPosting> {
+    return {
+        '@context': 'https://schema.org',
+        '@type': 'BlogPosting',
+        'author': { '@type': 'Person', 'name': site.name, 'url': site.url },
+        'dateModified': post.updated ?? post.date,
+        'datePublished': post.date,
+        'description': post.description,
+        'headline': post.title,
+        'url': absoluteUrl(post.path),
+        ...(post.cover ? { image: absoluteImageUrl(post.cover.src) } : {}),
+        'articleSection': post.category,
+        'inLanguage': 'en',
+        'keywords': post.tags.join(', '),
+        'mainEntityOfPage': absoluteUrl(post.path),
+    }
+}
+
+export function buildBreadcrumbJsonLd(
+    trail: { name: string; path: string }[]
+): WithContext<BreadcrumbList> {
+    return {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        'itemListElement': trail.map((entry, i) => ({
+            '@type': 'ListItem',
+            'item': absoluteUrl(entry.path),
+            'name': entry.name,
+            'position': i + 1,
+        })),
+    }
 }
 
 export function buildMetadata(input: BuildMetadataInput): Metadata {
@@ -102,39 +129,6 @@ export function buildPersonJsonLd(): WithContext<Person> {
     }
 }
 
-export function buildArticleJsonLd(post: Post): WithContext<BlogPosting> {
-    return {
-        '@context': 'https://schema.org',
-        '@type': 'BlogPosting',
-        'author': { '@type': 'Person', 'name': site.name, 'url': site.url },
-        'dateModified': post.updated ?? post.date,
-        'datePublished': post.date,
-        'description': post.description,
-        'headline': post.title,
-        'url': absoluteUrl(post.path),
-        ...(post.cover ? { image: absoluteImageUrl(post.cover.src) } : {}),
-        'articleSection': post.category,
-        'inLanguage': 'en',
-        'keywords': post.tags.join(', '),
-        'mainEntityOfPage': absoluteUrl(post.path),
-    }
-}
-
-export function buildBreadcrumbJsonLd(
-    trail: Array<{ name: string; path: string }>
-): WithContext<BreadcrumbList> {
-    return {
-        '@context': 'https://schema.org',
-        '@type': 'BreadcrumbList',
-        'itemListElement': trail.map((entry, i) => ({
-            '@type': 'ListItem',
-            'item': absoluteUrl(entry.path),
-            'name': entry.name,
-            'position': i + 1,
-        })),
-    }
-}
-
 // A project with a repository is source code, which is the type that defines
 // codeRepository; the rest are plain creative works.
 export function buildProjectJsonLd(
@@ -157,4 +151,10 @@ export function buildProjectJsonLd(
               'codeRepository': project.repo,
           }
         : { '@context': 'https://schema.org', '@type': 'CreativeWork', ...base }
+}
+
+// Content image paths are relative in frontmatter but only resolve on the CDN, so
+// structured data has to name the bucket URL rather than a site path that redirects.
+function absoluteImageUrl(src: string): string {
+    return absoluteUrl(cdnUrl(src))
 }

@@ -1,7 +1,8 @@
 import { cn } from '@/lib/utils'
 
-import { TONE_CLASS } from './status-dot.constants'
 import type { StatusDotProps } from './status-dot.types'
+
+import { TONE_CLASS } from './status-dot.constants'
 
 export function StatusDot({ className, tone = 'success' }: StatusDotProps) {
     return (

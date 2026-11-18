@@ -1,8 +1,7 @@
 'use client'
 
-import { useEffect } from 'react'
-
 import Link from 'next/link'
+import { useEffect } from 'react'
 
 import { StatusDot } from '@/components/terminal-block/status-dot'
 import { TerminalBlock } from '@/components/terminal-block/terminal-block'
@@ -47,8 +46,8 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
                     <p>
                         <button
                             className={LINK_CLASS}
-                            type="button"
-                            onClick={reset}>
+                            onClick={reset}
+                            type="button">
                             ./reset
                         </button>
                         <span

@@ -1,18 +1,17 @@
 'use client'
 
-import { type ReactNode, useEffect, useRef, useState } from 'react'
-
-import { useRouter } from 'next/navigation'
-
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { useRouter } from 'next/navigation'
+import { type ReactNode, useEffect, useRef, useState } from 'react'
 
 import { TerminalCaret } from '@/components/terminal-block/terminal-caret'
 import { TerminalLine } from '@/components/terminal-block/terminal-line'
 import { cn } from '@/lib/utils'
 
-import { commands } from './commands'
 import type { CommandContext } from './commands.types'
 import type { InteractiveTerminalProps } from './interactive-terminal.types'
+
+import { commands } from './commands'
 import { parseCommand } from './terminal-parser'
 import {
     appendEntry,
@@ -80,8 +79,12 @@ export function InteractiveTerminal({
 
         const ctx: CommandContext = {
             getHistory: () => [...getSessionState().history],
-            glitch: () => setGlitching(true),
-            navigate: href => router.push(href),
+            glitch: () => {
+                setGlitching(true)
+            },
+            navigate: href => {
+                router.push(href)
+            },
         }
 
         let output: ReactNode
@@ -158,7 +161,9 @@ export function InteractiveTerminal({
             inputRef.current?.focus({ preventScroll: true })
         }
         document.addEventListener('click', handleDocumentClick)
-        return () => document.removeEventListener('click', handleDocumentClick)
+        return () => {
+            document.removeEventListener('click', handleDocumentClick)
+        }
     }, [skipIntro])
 
     useEffect(() => {
@@ -179,11 +184,11 @@ export function InteractiveTerminal({
                 }}>
                 {cleared ? null : (
                     <div
-                        data-terminal-static
                         className={cn(
                             'flex flex-col gap-3',
                             !revealStatic && 'hidden'
-                        )}>
+                        )}
+                        data-terminal-static>
                         {children}
                     </div>
                 )}
@@ -192,7 +197,7 @@ export function InteractiveTerminal({
                     aria-live="polite"
                     className="flex flex-col gap-3 empty:hidden">
                     {entries.map(entry => (
-                        <TerminalLine key={entry.id} command={entry.command}>
+                        <TerminalLine command={entry.command} key={entry.id}>
                             {entry.output}
                         </TerminalLine>
                     ))}
@@ -201,7 +206,6 @@ export function InteractiveTerminal({
                 <label className="flex cursor-default items-center">
                     <TerminalCaret />
                     <input
-                        ref={inputRef}
                         aria-label="terminal input — type 'help' for commands"
                         autoCapitalize="off"
                         autoComplete="off"
@@ -210,17 +214,22 @@ export function InteractiveTerminal({
                         enterKeyHint="go"
                         id="terminal-input"
                         name="terminal-input"
-                        readOnly={introStatus === 'playing'}
-                        spellCheck={false}
-                        style={{ width: `${input.length}ch` }}
-                        value={input}
-                        onBlur={() => setFocused(false)}
-                        onFocus={() => setFocused(true)}
-                        onKeyDown={handleKeyDown}
+                        onBlur={() => {
+                            setFocused(false)
+                        }}
                         onChange={event => {
                             resetCompletion()
                             setInput(event.target.value)
                         }}
+                        onFocus={() => {
+                            setFocused(true)
+                        }}
+                        onKeyDown={handleKeyDown}
+                        readOnly={introStatus === 'playing'}
+                        ref={inputRef}
+                        spellCheck={false}
+                        style={{ width: `${input.length}ch` }}
+                        value={input}
                     />
                     <span
                         aria-hidden

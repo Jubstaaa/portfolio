@@ -23,7 +23,7 @@ export default function HomePage() {
 
                     <InteractiveTerminal introCommands={INTRO_COMMANDS}>
                         {INTRO_COMMANDS.map(name => (
-                            <TerminalLine key={name} command={name}>
+                            <TerminalLine command={name} key={name}>
                                 {renderCommandOutput(name)}
                             </TerminalLine>
                         ))}

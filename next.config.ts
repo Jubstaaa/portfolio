@@ -37,40 +37,40 @@ const securityHeaders = [
 ]
 
 const nextConfig: NextConfig = {
-    // Self-hosted on a DigitalOcean droplet: standalone emits a minimal
-    // server.js + traced node_modules, which is what the runner image starts.
-    output: 'standalone',
-    poweredByHeader: false,
+    async headers() {
+        return [{ headers: securityHeaders, source: '/:path*' }]
+    },
     images: {
-        remotePatterns: [
-            {
-                protocol: 'https',
-                hostname: new URL(CDN_BASE).hostname,
-                pathname: '/images/**',
-                // The bucket ignores query strings but the optimizer keys its cache
-                // on them, so allowing any would let a loop of ?x=N fill the disk.
-                search: '',
-            },
-        ],
+        // Content renders at most ~720 CSS px wide, so 2x tops out near 1440.
+        deviceSizes: [640, 750, 828, 1080, 1200, 1920],
         // The cache is bind-mounted from the shared droplet's disk.
         maximumDiskCacheSize: 500_000_000,
         // Source images are immutable once uploaded; re-encoding every 4 hours
         // only burns CPU in a 256 MB container.
         minimumCacheTTL: 2_678_400,
-        // Content renders at most ~720 CSS px wide, so 2x tops out near 1440.
-        deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+        remotePatterns: [
+            {
+                hostname: new URL(CDN_BASE).hostname,
+                pathname: '/images/**',
+                protocol: 'https',
+                // The bucket ignores query strings but the optimizer keys its cache
+                // on them, so allowing any would let a loop of ?x=N fill the disk.
+                search: '',
+            },
+        ],
     },
-    async headers() {
-        return [{ source: '/:path*', headers: securityHeaders }]
-    },
+    // Self-hosted on a DigitalOcean droplet: standalone emits a minimal
+    // server.js + traced node_modules, which is what the runner image starts.
+    output: 'standalone',
+    poweredByHeader: false,
     async redirects() {
         return [
             // Content images used to be served from public/images and are indexed
             // under those paths; they live in the Spaces bucket now.
             {
-                source: '/images/:path*',
                 destination: `${CDN_BASE}/images/:path*`,
                 permanent: true,
+                source: '/images/:path*',
             },
             // Legacy `/_next/image?url=/images/...` URLs are indexed as well and
             // cannot be salvaged: the optimizer resolves a relative `url` through
@@ -78,23 +78,23 @@ const nextConfig: NextConfig = {
             // ("isn't a valid image ... received null", HTTP 400). A rule on
             // /_next/image never fires — internal routes are matched before custom
             // redirects. The log line is expected crawler noise, not a live bug.
-            { source: '/bio', destination: '/about', permanent: true },
-            { source: '/stack', destination: '/about', permanent: true },
-            { source: '/portfolio', destination: '/projects', permanent: true },
+            { destination: '/about', permanent: true, source: '/bio' },
+            { destination: '/about', permanent: true, source: '/stack' },
+            { destination: '/projects', permanent: true, source: '/portfolio' },
             {
+                destination: '/projects',
+                permanent: true,
                 source: '/portfolio/portfolio-site',
-                destination: '/projects',
-                permanent: true,
             },
             {
+                destination: '/projects',
+                permanent: true,
                 source: '/portfolio/portfolio-site-old',
-                destination: '/projects',
-                permanent: true,
             },
             {
-                source: '/portfolio/:slug',
                 destination: '/projects/:slug',
                 permanent: true,
+                source: '/portfolio/:slug',
             },
         ]
     },

@@ -1,11 +1,12 @@
 import { site } from '@/lib/content'
 
-import { HIDDEN_FILES } from './terminal-output.constants'
 import type { Completion, ParsedCommand } from './terminal-parser.types'
 
+import { HIDDEN_FILES } from './terminal-output.constants'
+
 const PAGES = new Map<string, string>([
-    ['~', '/'],
     ['home', '/'],
+    ['~', '/'],
     ...site.nav.map(item => [item.label, item.href] as const),
 ])
 
@@ -16,22 +17,6 @@ const ARGUMENT_COMPLETIONS = new Map<string, readonly string[]>([
     ['cd', PAGE_TARGETS],
     ['open', PAGE_TARGETS],
 ])
-
-export function parseCommand(raw: string): null | ParsedCommand {
-    const trimmed = raw.trim()
-    if (!trimmed) return null
-    const spaceIndex = trimmed.indexOf(' ')
-    if (spaceIndex === -1) return { args: '', name: trimmed.toLowerCase() }
-    return {
-        args: trimmed.slice(spaceIndex + 1).trim(),
-        name: trimmed.slice(0, spaceIndex).toLowerCase(),
-    }
-}
-
-export function resolvePage(arg: string): string | undefined {
-    const key = arg.replace(/^\.?\//, '').replace(/\/$/, '') || '~'
-    return PAGES.get(key)
-}
 
 export function getCompletions(
     input: string,
@@ -53,4 +38,20 @@ export function getCompletions(
     return matches.length
         ? { build: match => `${name} ${match}`, matches }
         : null
+}
+
+export function parseCommand(raw: string): null | ParsedCommand {
+    const trimmed = raw.trim()
+    if (!trimmed) return null
+    const spaceIndex = trimmed.indexOf(' ')
+    if (spaceIndex === -1) return { args: '', name: trimmed.toLowerCase() }
+    return {
+        args: trimmed.slice(spaceIndex + 1).trim(),
+        name: trimmed.slice(0, spaceIndex).toLowerCase(),
+    }
+}
+
+export function resolvePage(arg: string): string | undefined {
+    const key = arg.replace(/^\.?\//, '').replace(/\/$/, '') || '~'
+    return PAGES.get(key)
 }

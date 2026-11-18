@@ -11,22 +11,28 @@ type SourceInterceptor = ConstructorParameters<
     typeof InterceptorSource
 >[0]['interceptors'][number]
 
+export function setupMockServer() {
+    const network = defineNetwork({
+        onUnhandledFrame: 'error',
+        sources: [
+            new InterceptorSource({ interceptors: [webFetchInterceptor()] }),
+        ],
+    })
+    beforeAll(() => {
+        network.enable()
+    })
+    afterEach(() => {
+        network.resetHandlers()
+    })
+    afterAll(() => {
+        network.disable()
+    })
+    return network
+}
+
 // The web build of @mswjs/interceptors declares its own copy of the
 // Interceptor class, which TypeScript treats as a different nominal type from
 // the Node build msw's types reference. Same class at runtime.
 function webFetchInterceptor(): SourceInterceptor {
     return new FetchInterceptor() as unknown as SourceInterceptor
-}
-
-export function setupMockServer() {
-    const network = defineNetwork({
-        sources: [
-            new InterceptorSource({ interceptors: [webFetchInterceptor()] }),
-        ],
-        onUnhandledFrame: 'error',
-    })
-    beforeAll(() => network.enable())
-    afterEach(() => network.resetHandlers())
-    afterAll(() => network.disable())
-    return network
 }

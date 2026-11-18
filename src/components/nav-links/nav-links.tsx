@@ -16,9 +16,9 @@ export function NavLinks({ includeHome = false }: NavLinksProps) {
             ) : null}
             {site.nav.map(item => (
                 <Link
-                    key={item.href}
                     className="hover:text-accent transition-token underline-offset-4 hover:underline"
-                    href={item.href}>
+                    href={item.href}
+                    key={item.href}>
                     .{item.href}
                 </Link>
             ))}
