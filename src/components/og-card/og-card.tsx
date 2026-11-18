@@ -90,7 +90,7 @@ export function OgCard({ coverUrl, cta, eyebrow, path, title }: OgCardProps) {
                         fontSize: 28,
                         justifyContent: 'space-between',
                     }}>
-                    <span>{`${site.name} · ${site.url.replace(/^https?:\/\//, '')}`}</span>
+                    <span>{`${site.name} · ${new URL(site.url).host}`}</span>
                     <div
                         style={{
                             alignItems: 'center',
