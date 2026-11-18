@@ -9,13 +9,13 @@ function context() {
 describe('cd', () => {
     test('navigates to a known page', () => {
         const ctx = context()
-        commands.cd?.run('blog', ctx)
+        void commands.cd?.run('blog', ctx)
         expect(ctx.navigate).toHaveBeenCalledWith('/blog')
     })
 
     test('does not navigate for a prototype key', () => {
         const ctx = context()
-        commands.cd?.run('constructor', ctx)
+        void commands.cd?.run('constructor', ctx)
         expect(ctx.navigate).not.toHaveBeenCalled()
     })
 })
