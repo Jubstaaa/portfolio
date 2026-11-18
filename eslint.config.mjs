@@ -1,7 +1,7 @@
 import { defineConfig, globalIgnores } from 'eslint/config'
 import nextVitals from 'eslint-config-next/core-web-vitals'
 import nextTs from 'eslint-config-next/typescript'
-import importPlugin from 'eslint-plugin-import'
+import importX from 'eslint-plugin-import-x'
 import perfectionistPlugin from 'eslint-plugin-perfectionist'
 
 const eslintConfig = defineConfig([
@@ -28,8 +28,8 @@ const eslintConfig = defineConfig([
     {
         files: ['src/**/*.{ts,tsx,js,jsx}'],
         plugins: {
-            import: importPlugin,
-            perfectionist: perfectionistPlugin,
+            'import-x': importX,
+            'perfectionist': perfectionistPlugin,
         },
         rules: {
             'no-console': ['warn', { allow: ['error', 'warn'] }],
@@ -45,7 +45,7 @@ const eslintConfig = defineConfig([
                 'error',
                 { prefer: 'type-imports', fixStyle: 'inline-type-imports' },
             ],
-            'import/order': [
+            'import-x/order': [
                 'error',
                 {
                     'groups': [
