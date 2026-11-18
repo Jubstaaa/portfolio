@@ -2,10 +2,12 @@
 
 import { type HTMLAttributes, useCallback, useRef } from 'react'
 
-import { Check, Copy } from 'lucide-react'
+import { Check, Copy, X } from 'lucide-react'
 
 import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard'
 import { cn } from '@/lib/utils'
+
+import { COPY_CODE_LABEL } from './code-block.constants'
 
 export function CodeBlock({
     children,
@@ -13,7 +15,7 @@ export function CodeBlock({
     ...rest
 }: HTMLAttributes<HTMLPreElement>) {
     const preRef = useRef<HTMLPreElement>(null)
-    const { copied, copy } = useCopyToClipboard()
+    const { copy, status } = useCopyToClipboard()
 
     const onCopy = useCallback(() => {
         const text = preRef.current?.innerText ?? ''
@@ -33,14 +35,20 @@ export function CodeBlock({
                 {children}
             </pre>
             <button
-                aria-label={copied ? 'Copied' : 'Copy code'}
+                aria-label={COPY_CODE_LABEL[status]}
                 className="hairline text-muted-foreground hover:text-foreground bg-background absolute top-2 right-2 inline-flex size-7 items-center justify-center rounded border opacity-0 transition-opacity duration-(--duration-fast) group-hover:opacity-100 focus-visible:opacity-100"
                 type="button"
                 onClick={onCopy}>
-                {copied ? (
+                {status === 'copied' ? (
                     <Check
                         aria-hidden
                         className="text-success size-3.5"
+                        strokeWidth={2}
+                    />
+                ) : status === 'failed' ? (
+                    <X
+                        aria-hidden
+                        className="text-destructive size-3.5"
                         strokeWidth={2}
                     />
                 ) : (
