@@ -49,4 +49,21 @@ describe('response headers', () => {
         expect(csp).toContain("object-src 'none'")
         expect(csp).toContain(CDN_BASE)
     })
+
+    // Cloudflare Web Analytics (automatic setup) injects its beacon into proxied
+    // HTML; blocking it silently breaks the site's analytics.
+    test('lets the Cloudflare Web Analytics beacon load and report', async () => {
+        const rules = (await config.headers?.()) ?? []
+        const csp =
+            rules
+                .find(rule => rule.source === '/:path*')
+                ?.headers.find(h => h.key === 'Content-Security-Policy')
+                ?.value ?? ''
+        const directive = (name: string) =>
+            csp.split('; ').find(d => d.startsWith(`${name} `)) ?? ''
+        expect(directive('script-src')).toContain(
+            'https://static.cloudflareinsights.com'
+        )
+        expect(directive('connect-src')).toContain("'self'")
+    })
 })

@@ -10,7 +10,9 @@ const isDev = process.env.NODE_ENV === 'development'
 // React's stack traces and a websocket for HMR.
 const contentSecurityPolicy = [
     "default-src 'self'",
-    `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''}`,
+    // static.cloudflareinsights.com: the Web Analytics beacon Cloudflare injects
+    // into proxied HTML. It reports to /cdn-cgi/rum on this origin ('self').
+    `script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com${isDev ? " 'unsafe-eval'" : ''}`,
     "style-src 'self' 'unsafe-inline'",
     `img-src 'self' data: blob: ${CDN_BASE}`,
     "font-src 'self'",
