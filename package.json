@@ -68,7 +68,7 @@
         "schema-dts": "^2.1.0",
         "shiki": "^4.6.0",
         "tailwindcss": "^4.3.5",
-        "typescript": "~6.0.3",
+        "typescript": "~7.0.2",
         "unist-util-visit": "^5.2.0",
         "velite": "^0.4.0"
     },
