@@ -72,7 +72,8 @@ jobs:
                   context: .
                   load: true
                   push: false
-                  tags: portfolio:candidate
+                  # Local tag only; docker-compose.yml resolves it via IMAGE_TAG.
+                  tags: ${{ env.IMAGE }}:candidate
                   labels: |
                       org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
                       org.opencontainers.image.revision=${{ github.sha }}
@@ -80,34 +81,28 @@ jobs:
                   cache-to: type=gha,mode=max
                   build-args: |
                       NEXT_PUBLIC_CDN_BASE=${{ vars.NEXT_PUBLIC_CDN_BASE }}
-            # Same constraints as docker-compose.yml, so a hardening regression fails
-            # here instead of in production.
+            # The production compose file itself, so CI exercises exactly the
+            # hardening, healthcheck and limits the droplet runs.
             - name: Start candidate
+              env:
+                  IMAGE_TAG: candidate
+                  IMAGE_CACHE_DIR: ${{ runner.temp }}/image-cache
               run: |
-                  docker run -d --name candidate -p 127.0.0.1:3000:3000 \
-                      --memory 256m --pids-limit 128 --read-only \
-                      --tmpfs /tmp --tmpfs /app/.next/cache/fetch-cache --tmpfs /app/.next/cache/images \
-                      --cap-drop ALL --security-opt no-new-privileges:true \
-                      -e NODE_OPTIONS=--max-old-space-size=160 \
-                      portfolio:candidate
-                  # Docker's port proxy accepts connections before Next listens, so wait
-                  # for a real response rather than trusting curl's retry semantics.
-                  for _ in $(seq 1 30); do
-                      curl -fsS -o /dev/null http://127.0.0.1:3000/ && exit 0
-                      sleep 2
-                  done
-                  docker logs candidate
-                  exit 1
+                  install -d -m 777 "$IMAGE_CACHE_DIR"
+                  docker compose up -d --wait --wait-timeout 120 app
             - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
               with:
                   bun-version-file: package.json
             - name: Smoke test
               env:
                   CDN_BASE: ${{ vars.NEXT_PUBLIC_CDN_BASE }}
-              run: bun scripts/smoke.ts http://127.0.0.1:3000
+                  SMOKE_BASE_URL: http://127.0.0.1:3002
+              run: bun run test:smoke
             - name: Candidate logs
               if: failure()
-              run: docker logs candidate
+              env:
+                  IMAGE_TAG: candidate
+              run: docker compose logs app
             - uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
               if: github.ref == 'refs/heads/main'
               with:
@@ -119,7 +114,7 @@ jobs:
             - name: Push :sha
               if: github.ref == 'refs/heads/main'
               run: |
-                  docker tag portfolio:candidate "$IMAGE:$GITHUB_SHA"
+                  docker tag "$IMAGE:candidate" "$IMAGE:$GITHUB_SHA"
                   docker push "$IMAGE:$GITHUB_SHA"
 
     deploy:
