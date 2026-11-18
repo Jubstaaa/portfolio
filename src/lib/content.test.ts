@@ -23,6 +23,15 @@ describe('selectPublished', () => {
         expect(result.map(p => p.slug)).toEqual(['new', 'old'])
     })
 
+    test('orders posts published on the same day deterministically', () => {
+        const sameDay = [post('b', '2025-04-19'), post('a', '2025-04-19')]
+        expect(selectPublished(sameDay).map(p => p.slug)).toEqual(['a', 'b'])
+        expect(selectPublished(sameDay.toReversed()).map(p => p.slug)).toEqual([
+            'a',
+            'b',
+        ])
+    })
+
     test('leaves its input untouched', () => {
         const input = [post('a', '2025-01-01'), post('b', '2026-01-01')]
         selectPublished(input)

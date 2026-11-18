@@ -21,9 +21,15 @@ export { site, socials }
 export type { Education, Experience, Post, Project, Skill, Stack }
 
 export function selectPublished(all: readonly Post[]): Post[] {
-    return all
-        .filter(post => !post.draft)
-        .toSorted((a, b) => b.date.localeCompare(a.date))
+    return (
+        all
+            .filter(post => !post.draft)
+            // Same-day posts fall back to slug order so lists and feeds stay stable.
+            .toSorted(
+                (a, b) =>
+                    b.date.localeCompare(a.date) || a.slug.localeCompare(b.slug)
+            )
+    )
 }
 
 export function getPublishedPosts(): Post[] {
