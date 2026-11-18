@@ -2,6 +2,7 @@ import { JsonLd } from '@/components/json-ld/json-ld'
 import { TerminalBlock } from '@/components/terminal-block/terminal-block'
 import { TerminalLine } from '@/components/terminal-block/terminal-line'
 import { TerminalMeta } from '@/components/terminal-block/terminal-meta'
+import { site } from '@/lib/content'
 import { buildPersonJsonLd } from '@/lib/seo'
 import { handlePath } from '@/lib/site'
 
@@ -13,6 +14,9 @@ export default function HomePage() {
     return (
         <section className="container-default section-pad flex min-h-0 flex-1 flex-col">
             <JsonLd data={buildPersonJsonLd()} id="ld-person" />
+            <h1 className="sr-only">
+                {site.name} — {site.role}
+            </h1>
             <div className="min-h-0 flex-1 overflow-y-auto">
                 <TerminalBlock>
                     <TerminalMeta branch="main" path={handlePath()} />
