@@ -16,6 +16,16 @@ const eslintConfig = defineConfig([
         'scripts/**',
     ]),
     {
+        // Type-aware: a floating or misused promise is an unhandled rejection waiting
+        // to happen, which the global rules forbid.
+        files: ['src/**/*.{ts,tsx}'],
+        languageOptions: { parserOptions: { projectService: true } },
+        rules: {
+            '@typescript-eslint/no-floating-promises': 'error',
+            '@typescript-eslint/no-misused-promises': 'error',
+        },
+    },
+    {
         files: ['src/**/*.{ts,tsx,js,jsx}'],
         plugins: {
             import: importPlugin,

@@ -1,19 +1,13 @@
 import { cn } from '@/lib/utils'
 
-import type { StatusDotProps, StatusTone } from './status-dot.types'
-
-const toneClass: Record<StatusTone, string> = {
-    danger: 'text-destructive',
-    muted: 'text-muted-foreground',
-    success: 'text-success',
-    warning: 'text-warning',
-}
+import { TONE_CLASS } from './status-dot.constants'
+import type { StatusDotProps } from './status-dot.types'
 
 export function StatusDot({ className, tone = 'success' }: StatusDotProps) {
     return (
         <span
             aria-hidden
-            className={cn('mr-2 select-none', toneClass[tone], className)}>
+            className={cn('mr-2 select-none', TONE_CLASS[tone], className)}>
             ●
         </span>
     )

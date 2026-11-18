@@ -121,6 +121,22 @@
         animation: terminal-glitch 0.4s steps(2) both;
     }
 
+    /* Driven by the root scroller, not time: no JS and no re-render per scroll.
+       Browsers without scroll timelines would run it as a 0s animation and show a
+       full bar, so the bar only appears where the timeline is supported. */
+    .scroll-progress {
+        display: none;
+        transform-origin: left;
+    }
+
+    @supports (animation-timeline: scroll()) {
+        .scroll-progress {
+            display: block;
+            animation: scroll-progress linear both;
+            animation-timeline: scroll(root block);
+        }
+    }
+
     .arrow-bullet {
         @apply pl-[1.5ch];
     }
@@ -144,6 +160,15 @@
     }
     to {
         opacity: 0;
+    }
+}
+
+@keyframes scroll-progress {
+    from {
+        transform: scaleX(0);
+    }
+    to {
+        transform: scaleX(1);
     }
 }
 

@@ -1,5 +1,5 @@
-import type { ReactNode } from 'react'
+import type { CommandPreProps } from './command-pre.types'
 
-export function Pre({ children }: { children: ReactNode }) {
+export function CommandPre({ children }: CommandPreProps) {
     return <pre className="text-muted-foreground leading-snug">{children}</pre>
 }

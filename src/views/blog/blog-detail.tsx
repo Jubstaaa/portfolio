@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
 import { ContentDetail } from '@/components/content-detail/content-detail'
+import { PostMeta } from '@/components/post-meta/post-meta'
 import {
     getAdjacent,
     getPostBySlug,
@@ -59,17 +60,7 @@ export default async function BlogDetailPage({ params }: PostPageProps) {
             }}
             header={{
                 lead: post.description,
-                meta: (
-                    <>
-                        <span className="font-mono tracking-tight">
-                            {formatDate(post.date)}
-                        </span>
-                        <span aria-hidden className="select-none">
-                            ·
-                        </span>
-                        <span>{post.category}</span>
-                    </>
-                ),
+                meta: <PostMeta category={post.category} date={post.date} />,
                 title: post.title,
                 ...(post.tags.length > 0
                     ? {
