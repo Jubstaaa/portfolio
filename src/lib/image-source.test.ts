@@ -39,9 +39,11 @@ test('fails the build on a missing image without retrying', async () => {
         )
     )
     const requests = countRequests()
-    await expect(readImageBytes('/images/missing.webp')).rejects.toThrow(
-        'HTTP 404'
+    const failure = await readImageBytes('/images/missing.webp').catch(
+        (error: unknown) => error
     )
+    expect(failure).toBeInstanceOf(Error)
+    expect(String(failure)).toContain('HTTP 404')
     expect(requests).toHaveBeenCalledTimes(1)
 })
 

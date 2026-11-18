@@ -3,10 +3,11 @@
 // It covers what unit tests cannot see: response headers, Next's routing of
 // unknown slugs, edge-facing caching headers and the image optimizer allow-list.
 import { describe, expect, setDefaultTimeout, test } from 'bun:test'
+import { z } from 'zod'
 
-const base = process.env.SMOKE_BASE_URL
-const cdnBase = process.env.CDN_BASE
-if (!base) throw new Error('SMOKE_BASE_URL is required')
+const { CDN_BASE: cdnBase, SMOKE_BASE_URL: base } = z
+    .object({ CDN_BASE: z.url(), SMOKE_BASE_URL: z.url() })
+    .parse(process.env)
 
 setDefaultTimeout(30_000)
 
@@ -84,11 +85,11 @@ test('feed.xml is RSS', async () => {
 test('now-playing degrades to idle without credentials', async () => {
     const res = await get('/api/now-playing')
     expect(res.status).toBe(200)
-    expect(await res.json()).toMatchObject({ isPlaying: expect.any(Boolean) })
+    const body: unknown = await res.json()
+    expect(body).toMatchObject({ isPlaying: expect.any(Boolean) })
 })
 
 test('the image optimizer rejects cache-busting query strings', async () => {
-    expect(cdnBase).toBeTruthy()
     const src = encodeURIComponent(`${cdnBase}/images/x.webp?cb=1`)
     const res = await get(`/_next/image?url=${src}&w=640&q=75`)
     expect(res.status).toBe(400)

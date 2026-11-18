@@ -1,8 +1,7 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
-
 import { usePathname } from 'next/navigation'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { Logo } from '@/components/logo/logo'
 import { ThemeToggle } from '@/components/theme-toggle/theme-toggle'
@@ -40,8 +39,8 @@ export function Nav() {
                     <ul className="flex items-center gap-5 text-sm">
                         {site.nav.map(item => (
                             <NavItem
-                                key={item.href}
                                 href={item.href}
+                                key={item.href}
                                 pathname={pathname}
                                 variant="desktop"
                             />
@@ -57,8 +56,8 @@ export function Nav() {
                         aria-expanded={open}
                         aria-label="Open menu"
                         className="text-muted-foreground hover:text-foreground transition-token inline-flex h-9 items-center gap-1 text-sm"
-                        type="button"
-                        onClick={openMenu}>
+                        onClick={openMenu}
+                        type="button">
                         <span aria-hidden className="text-accent select-none">
                             ❯
                         </span>
@@ -67,22 +66,27 @@ export function Nav() {
                 </div>
             </div>
 
+            {/* Backdrop click is a pointer convenience; keyboard users close the
+                modal dialog with Escape, which the browser provides. */}
+            {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */}
             <dialog
-                ref={dialogRef}
                 aria-label="Menu"
                 className="bg-background text-foreground fixed inset-0 m-0 size-full max-h-none max-w-none border-0 p-0 backdrop:bg-black/60"
                 id="mobile-menu"
-                onClose={() => setOpen(false)}
                 onClick={event => {
                     if (event.target === dialogRef.current) closeMenu()
-                }}>
+                }}
+                onClose={() => {
+                    setOpen(false)
+                }}
+                ref={dialogRef}>
                 <div className="container-default flex h-14 items-center justify-between border-b">
                     <Logo />
                     <button
                         aria-label="Close menu"
                         className="text-muted-foreground hover:text-foreground transition-token inline-flex h-9 items-center text-sm"
-                        type="button"
-                        onClick={closeMenu}>
+                        onClick={closeMenu}
+                        type="button">
                         <span
                             aria-hidden
                             className="text-accent mr-1 select-none">
@@ -97,11 +101,11 @@ export function Nav() {
                     <ul className="flex flex-col gap-5 text-lg">
                         {site.nav.map(item => (
                             <NavItem
-                                key={item.href}
                                 href={item.href}
+                                key={item.href}
+                                onNavigate={closeMenu}
                                 pathname={pathname}
                                 variant="mobile"
-                                onNavigate={closeMenu}
                             />
                         ))}
                     </ul>

@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 
-import { CDN_BASE } from './src/lib/cdn'
 import config from './next.config'
+import { CDN_BASE } from './src/lib/cdn'
 
 describe('image optimizer', () => {
     const [pattern] = config.images?.remotePatterns ?? []
@@ -9,9 +9,8 @@ describe('image optimizer', () => {
     test('allows only the CDN that cdnUrl() points at', () => {
         expect(pattern).toBeDefined()
         if (!pattern || pattern instanceof URL) return
-        expect(`${pattern.protocol}://${pattern.hostname}`).toBe(
-            new URL(CDN_BASE).origin
-        )
+        expect(pattern.protocol).toBe('https')
+        expect(pattern.hostname).toBe(new URL(CDN_BASE).hostname)
     })
 
     test('refuses query strings, so each image is cached once', () => {
