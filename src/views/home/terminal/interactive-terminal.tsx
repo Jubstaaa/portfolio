@@ -4,6 +4,8 @@ import { type ReactNode, useEffect, useRef, useState } from 'react'
 
 import { useRouter } from 'next/navigation'
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+
 import { TerminalCaret } from '@/components/terminal-block/terminal-caret'
 import { TerminalLine } from '@/components/terminal-block/terminal-line'
 import { cn } from '@/lib/utils'
@@ -29,6 +31,9 @@ export function InteractiveTerminal({
     introCommands,
 }: InteractiveTerminalProps) {
     const router = useRouter()
+    // The terminal is the only TanStack Query consumer (now-playing), so the client
+    // lives here rather than in the root layout, keeping query-core off other pages.
+    const [queryClient] = useState(() => new QueryClient())
     const { cleared, entries, history } = useTerminalSession()
 
     const [input, setInput] = useState('')
@@ -161,70 +166,72 @@ export function InteractiveTerminal({
     }, [entries])
 
     return (
-        <div
-            className={cn(
-                'flex flex-col gap-3',
-                glitching && 'terminal-glitch',
-                className
-            )}
-            onAnimationEnd={event => {
-                if (event.animationName === 'terminal-glitch')
-                    setGlitching(false)
-            }}>
-            {cleared ? null : (
-                <div
-                    data-terminal-static
-                    className={cn(
-                        'flex flex-col gap-3',
-                        !revealStatic && 'hidden'
-                    )}>
-                    {children}
-                </div>
-            )}
-
+        <QueryClientProvider client={queryClient}>
             <div
-                aria-live="polite"
-                className="flex flex-col gap-3 empty:hidden">
-                {entries.map(entry => (
-                    <TerminalLine key={entry.id} command={entry.command}>
-                        {entry.output}
-                    </TerminalLine>
-                ))}
-            </div>
+                className={cn(
+                    'flex flex-col gap-3',
+                    glitching && 'terminal-glitch',
+                    className
+                )}
+                onAnimationEnd={event => {
+                    if (event.animationName === 'terminal-glitch')
+                        setGlitching(false)
+                }}>
+                {cleared ? null : (
+                    <div
+                        data-terminal-static
+                        className={cn(
+                            'flex flex-col gap-3',
+                            !revealStatic && 'hidden'
+                        )}>
+                        {children}
+                    </div>
+                )}
 
-            <label className="flex cursor-default items-center">
-                <TerminalCaret />
-                <input
-                    ref={inputRef}
-                    aria-label="terminal input — type 'help' for commands"
-                    autoCapitalize="off"
-                    autoComplete="off"
-                    autoCorrect="off"
-                    className="text-foreground min-w-0 cursor-default bg-transparent p-0 caret-transparent outline-none"
-                    enterKeyHint="go"
-                    id="terminal-input"
-                    name="terminal-input"
-                    readOnly={introStatus === 'playing'}
-                    spellCheck={false}
-                    style={{ width: `${input.length}ch` }}
-                    value={input}
-                    onBlur={() => setFocused(false)}
-                    onFocus={() => setFocused(true)}
-                    onKeyDown={handleKeyDown}
-                    onChange={event => {
-                        resetCompletion()
-                        setInput(event.target.value)
-                    }}
-                />
-                <span
-                    aria-hidden
-                    className={cn(
-                        'shrink-0 select-none',
-                        focused ? 'cursor-blink' : 'opacity-40'
-                    )}>
-                    _
-                </span>
-            </label>
-        </div>
+                <div
+                    aria-live="polite"
+                    className="flex flex-col gap-3 empty:hidden">
+                    {entries.map(entry => (
+                        <TerminalLine key={entry.id} command={entry.command}>
+                            {entry.output}
+                        </TerminalLine>
+                    ))}
+                </div>
+
+                <label className="flex cursor-default items-center">
+                    <TerminalCaret />
+                    <input
+                        ref={inputRef}
+                        aria-label="terminal input — type 'help' for commands"
+                        autoCapitalize="off"
+                        autoComplete="off"
+                        autoCorrect="off"
+                        className="text-foreground min-w-0 cursor-default bg-transparent p-0 caret-transparent outline-none"
+                        enterKeyHint="go"
+                        id="terminal-input"
+                        name="terminal-input"
+                        readOnly={introStatus === 'playing'}
+                        spellCheck={false}
+                        style={{ width: `${input.length}ch` }}
+                        value={input}
+                        onBlur={() => setFocused(false)}
+                        onFocus={() => setFocused(true)}
+                        onKeyDown={handleKeyDown}
+                        onChange={event => {
+                            resetCompletion()
+                            setInput(event.target.value)
+                        }}
+                    />
+                    <span
+                        aria-hidden
+                        className={cn(
+                            'shrink-0 select-none',
+                            focused ? 'cursor-blink' : 'opacity-40'
+                        )}>
+                        _
+                    </span>
+                </label>
+            </div>
+        </QueryClientProvider>
     )
 }
