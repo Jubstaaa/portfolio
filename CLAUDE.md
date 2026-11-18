@@ -106,7 +106,7 @@ bun scripts/smoke.ts <url>     # post-build smoke test against a running server
 - Prefer `interface` for object shapes; `type` for unions, intersections, mapped/conditional types.
 - `import type { … }` for type-only imports.
 - **No inline type or constant definitions inside `.tsx` files.** A component's props/local types go in a sibling `.types.ts`; magic strings, enums, or lookup tables go in a sibling `.constants.ts`. The `.tsx` file imports both.
-- ESLint sorts automatically — `perfectionist` for interface/object-type members, object literals and named imports, `react/jsx-sort-props` for JSX props, `import/order` for import groups. Don't hand-order them against a `--fix` run.
+- ESLint is built from presets — `eslint-config-next` (core-web-vitals + TypeScript), `typescript-eslint` strict + stylistic **type-checked**, `jsx-a11y` recommended, `perfectionist` recommended-natural (all sorting: imports, objects, types, JSX props), and `eslint-config-prettier` last. `eslint.config.mjs` only adds a few documented project choices; prefer adjusting a preset rule there over hand-ordering code against `--fix`.
 
 ### Data fetching
 
