@@ -167,13 +167,18 @@ jobs:
                       "$DO_HOST" "$DO_USER" > ~/.ssh/config
             - name: Upload compose file
               run: scp docker-compose.yml droplet:/opt/portfolio/docker-compose.yml
-            # The GHCR package is public, so the droplet pulls without credentials.
             - name: Deploy with automatic rollback
               run: |
                   ssh droplet "bash -s -- $IMAGE_TAG ${{ github.server_url }}/${{ github.repository }}" <<'REMOTE'
                   set -euo pipefail
                   new="$1"
                   source_label="$2"
+                  # Other apps' deploys leave their expired GHCR tokens in the shared
+                  # ~/.docker/config.json, and the registry denies a public pull that
+                  # presents one. An empty config pulls this public image anonymously.
+                  DOCKER_CONFIG=$(mktemp -d)
+                  export DOCKER_CONFIG
+                  trap 'rm -rf "$DOCKER_CONFIG"' EXIT
                   cd /opt/portfolio
                   prev=$(docker inspect --format '{{.Config.Image}}' portfolio 2>/dev/null | sed 's/.*://') || true
                   prev=${prev:-latest}
