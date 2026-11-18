@@ -1,13 +1,8 @@
-name: CI / Deploy
+name: Deploy
 
 on:
     push:
         branches: [main]
-    pull_request:
-        branches: [main]
-    schedule:
-        # Advisories land between pushes; the weekly gate surfaces them without a commit.
-        - cron: '0 6 * * 1'
     workflow_dispatch:
         inputs:
             image_tag:
@@ -19,122 +14,27 @@ on:
 permissions:
     contents: read
 
-# PRs supersede each other; main never cancels, so a deploy is never killed halfway
-# through `compose up` and left with the container stopped.
-concurrency:
-    group: ci-${{ github.ref }}
-    cancel-in-progress: ${{ github.event_name == 'pull_request' }}
-
 env:
     IMAGE: ghcr.io/jubstaaa/portfolio
 
 jobs:
-    check:
+    ci:
+        # A rollback skips the gate: that SHA passed it when it was built.
         if: ${{ !inputs.image_tag }}
-        runs-on: ubuntu-latest
-        timeout-minutes: 10
-        steps:
-            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-              with:
-                  persist-credentials: false
-            - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
-              with:
-                  bun-version-file: package.json
-            # unrs-resolver's postinstall is only a fallback check: its native binding
-            # arrives from the lockfile as an optional dependency. sharp ships prebuilt.
-            - run: bun install --frozen-lockfile --ignore-scripts
-            - run: bun run format:check
-            # Type-aware lint resolves #site/content and Next's route types, so the
-            # generated sources must exist first.
-            - name: Generate content and route types
-              run: bun run velite && bunx next typegen
-            - run: bun run lint
-            - run: bun run typecheck
-            - run: bun run test
-            - run: bun run audit
-
-    image:
-        needs: check
-        if: github.event_name != 'schedule'
-        runs-on: ubuntu-latest
-        timeout-minutes: 20
+        uses: ./.github/workflows/ci.yml
         permissions:
             contents: read
             packages: write
-        steps:
-            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-              with:
-                  persist-credentials: false
-            - name: Require the CDN base
-              env:
-                  CDN_BASE: ${{ vars.NEXT_PUBLIC_CDN_BASE }}
-              run: test -n "$CDN_BASE" || { echo "::error::vars.NEXT_PUBLIC_CDN_BASE is empty"; exit 1; }
-            - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
-            - name: Build candidate
-              uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
-              with:
-                  context: .
-                  load: true
-                  push: false
-                  # Local tag only; docker-compose.yml resolves it via IMAGE_TAG.
-                  tags: ${{ env.IMAGE }}:candidate
-                  labels: |
-                      org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
-                      org.opencontainers.image.revision=${{ github.sha }}
-                  cache-from: type=gha
-                  cache-to: type=gha,mode=max
-                  build-args: |
-                      NEXT_PUBLIC_CDN_BASE=${{ vars.NEXT_PUBLIC_CDN_BASE }}
-            # The production compose file itself, so CI exercises exactly the
-            # hardening, healthcheck and limits the droplet runs.
-            - name: Start candidate
-              env:
-                  IMAGE_TAG: candidate
-                  IMAGE_CACHE_DIR: ${{ runner.temp }}/image-cache
-              run: |
-                  install -d -m 777 "$IMAGE_CACHE_DIR"
-                  docker compose up -d --wait --wait-timeout 120 app
-            - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
-              with:
-                  bun-version-file: package.json
-            - run: bun install --frozen-lockfile --ignore-scripts
-            - name: Smoke test
-              env:
-                  CDN_BASE: ${{ vars.NEXT_PUBLIC_CDN_BASE }}
-                  SMOKE_BASE_URL: http://127.0.0.1:3002
-              run: bun run test:smoke
-            - name: Candidate logs
-              if: failure()
-              env:
-                  IMAGE_TAG: candidate
-              run: docker compose logs app
-            - uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
-              if: github.ref == 'refs/heads/main'
-              with:
-                  registry: ghcr.io
-                  username: ${{ github.actor }}
-                  password: ${{ secrets.GITHUB_TOKEN }}
-            # Push the exact image that passed the smoke test. Only :sha here — :latest
-            # moves in `promote`, after production reports healthy.
-            - name: Push :sha
-              if: github.ref == 'refs/heads/main'
-              run: |
-                  docker tag "$IMAGE:candidate" "$IMAGE:$GITHUB_SHA"
-                  docker push "$IMAGE:$GITHUB_SHA"
 
     deploy:
-        needs: [check, image]
-        # A rollback (image_tag set) skips check/image: that SHA was gated when it was built.
-        if: >-
-            !cancelled() &&
-            github.ref == 'refs/heads/main' &&
-            (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
-            (inputs.image_tag || (needs.check.result == 'success' && needs.image.result == 'success'))
+        needs: ci
+        if: ${{ !cancelled() && (inputs.image_tag || needs.ci.result == 'success') }}
         runs-on: ubuntu-latest
         timeout-minutes: 10
         environment:
             name: Production
             url: https://ilkerbalcilar.com
+        # Never cancel a deploy halfway through `compose up`.
         concurrency:
             group: production-deploy
             cancel-in-progress: false
@@ -148,65 +48,26 @@ jobs:
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               with:
                   persist-credentials: false
-                  sparse-checkout: docker-compose.yml
+                  sparse-checkout: |
+                      docker-compose.yml
+                      scripts/deploy
                   sparse-checkout-cone-mode: false
-            # Plain OpenSSH with a pinned host key: no third-party action ever holds
-            # the droplet key, and a spoofed host is refused.
             - name: Configure SSH
               env:
                   SSH_KEY: ${{ secrets.DO_SSH_KEY }}
                   KNOWN_HOSTS: ${{ secrets.DO_KNOWN_HOSTS }}
                   DO_HOST: ${{ secrets.DO_HOST }}
                   DO_USER: ${{ secrets.DO_USER }}
-              run: |
-                  test -n "$KNOWN_HOSTS" || { echo "::error::secret DO_KNOWN_HOSTS is not set"; exit 1; }
-                  install -m 700 -d ~/.ssh
-                  printf '%s\n' "$SSH_KEY" > ~/.ssh/id_deploy && chmod 600 ~/.ssh/id_deploy
-                  printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
-                  printf 'Host droplet\n  HostName %s\n  User %s\n  IdentityFile ~/.ssh/id_deploy\n  IdentitiesOnly yes\n  StrictHostKeyChecking yes\n  ConnectTimeout 15\n' \
-                      "$DO_HOST" "$DO_USER" > ~/.ssh/config
+              run: scripts/deploy/configure-ssh.sh
             - name: Upload compose file
               run: scp docker-compose.yml droplet:/opt/portfolio/docker-compose.yml
             - name: Deploy with automatic rollback
-              run: |
-                  ssh droplet "bash -s -- $IMAGE_TAG ${{ github.server_url }}/${{ github.repository }}" <<'REMOTE'
-                  set -euo pipefail
-                  new="$1"
-                  source_label="$2"
-                  # Other apps' deploys leave their expired GHCR tokens in the shared
-                  # ~/.docker/config.json, and the registry denies a public pull that
-                  # presents one. An empty config pulls this public image anonymously.
-                  DOCKER_CONFIG=$(mktemp -d)
-                  export DOCKER_CONFIG
-                  trap 'rm -rf "$DOCKER_CONFIG"' EXIT
-                  cd /opt/portfolio
-                  prev=$(docker inspect --format '{{.Config.Image}}' portfolio 2>/dev/null | sed 's/.*://') || true
-                  prev=${prev:-latest}
-                  echo "deploying $new (running: $prev)"
-                  IMAGE_TAG="$new" docker compose pull app
-                  if IMAGE_TAG="$new" docker compose up -d --wait --wait-timeout 120 app \
-                      && curl -fsS -o /dev/null --max-time 10 http://127.0.0.1:3002/; then
-                      printf 'IMAGE_TAG=%s\nPREVIOUS_TAG=%s\nDEPLOYED_AT=%s\n' "$new" "$prev" "$(date -u +%FT%TZ)" > release.env
-                      docker image prune -af \
-                          --filter "label=org.opencontainers.image.source=$source_label" \
-                          --filter 'until=168h' \
-                          || echo "::warning::image prune failed; old images remain on disk"
-                      exit 0
-                  fi
-                  echo "::error::$new failed its health check; rolling back to $prev"
-                  IMAGE_TAG="$new" docker compose logs --tail 200 app || true
-                  if IMAGE_TAG="$prev" docker compose up -d --wait --wait-timeout 120 app \
-                      && curl -fsS -o /dev/null --max-time 10 http://127.0.0.1:3002/; then
-                      echo "::error::rolled back; production is serving $prev"
-                  else
-                      echo "::error::ROLLBACK TO $prev FAILED; production is likely down"
-                      IMAGE_TAG="$prev" docker compose logs --tail 200 app || true
-                  fi
-                  exit 1
-                  REMOTE
-            # HTML is cached at the edge until purged: without this, visitors would get
-            # the previous release's pages, which reference chunks the new container
-            # no longer serves. A failed purge fails the job so it is noticed.
+              env:
+                  SOURCE: ${{ github.server_url }}/${{ github.repository }}
+              run: ssh droplet bash -s -- "$IMAGE_TAG" "$SOURCE" < scripts/deploy/remote-deploy.sh
+            # HTML is cached at the edge until purged: without this, visitors would
+            # get the previous release's pages, which reference chunks the new
+            # container no longer serves. A failed purge fails the job.
             - name: Purge Cloudflare cache
               env:
                   CF_PURGE_TOKEN: ${{ secrets.CF_PURGE_TOKEN }}
@@ -217,16 +78,9 @@ jobs:
                       -H "Authorization: Bearer $CF_PURGE_TOKEN" \
                       --json '{"purge_everything":true}' \
                       | jq -e '.success' > /dev/null
-            # Through Cloudflare and Caddy. Warn only: an edge blip must not count as
-            # a failed release after the origin already reported healthy.
-            - name: Public reachability
-              continue-on-error: true
-              run: curl -fsS -o /dev/null --retry 5 --retry-all-errors --retry-delay 3 https://ilkerbalcilar.com/
 
     promote:
         needs: deploy
-        # A rollback skips check/image; without this, the implicit success() would
-        # skip promote too and leave :latest on the release that was rolled back.
         if: ${{ !cancelled() && needs.deploy.result == 'success' }}
         runs-on: ubuntu-latest
         timeout-minutes: 5
