@@ -43,7 +43,7 @@ export default function ProjectsListPage() {
                         <li key={project.slug}>
                             <ContentCard
                                 description={project.summary}
-                                href={`/projects/${project.slug}`}
+                                href={project.path}
                                 meta={<span>{project.category}</span>}
                                 title={project.title}
                                 {...(project.stack.length > 0
