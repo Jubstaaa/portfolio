@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 
+import { pickBy } from 'lodash-es'
+
 import { cdnUrl } from '@/lib/cdn'
 import { type Post, type Project, site } from '@/lib/content'
 import { absoluteUrl, ogLocale } from '@/lib/site'
@@ -31,35 +33,31 @@ export function buildMetadata(input: BuildMetadataInput): Metadata {
     const images = input.ogImage ? [{ url: input.ogImage }] : undefined
     const type = input.type ?? 'website'
 
+    const base = {
+        description,
+        locale: ogLocale,
+        siteName: site.name,
+        title: input.title,
+        url,
+        ...(images ? { images } : {}),
+    }
     const openGraph: Metadata['openGraph'] =
         type === 'article'
             ? {
-                  description,
-                  locale: ogLocale,
-                  siteName: site.name,
-                  title: input.title,
+                  ...base,
                   type: 'article',
-                  url,
-                  ...(input.publishedTime
-                      ? { publishedTime: input.publishedTime }
-                      : {}),
-                  ...(input.modifiedTime
-                      ? { modifiedTime: input.modifiedTime }
-                      : {}),
-                  ...(input.authors ? { authors: input.authors } : {}),
-                  ...(input.section ? { section: input.section } : {}),
-                  ...(input.tags ? { tags: input.tags } : {}),
-                  ...(images ? { images } : {}),
+                  ...pickBy(
+                      {
+                          authors: input.authors,
+                          modifiedTime: input.modifiedTime,
+                          publishedTime: input.publishedTime,
+                          section: input.section,
+                          tags: input.tags,
+                      },
+                      value => value !== undefined
+                  ),
               }
-            : {
-                  description,
-                  locale: ogLocale,
-                  siteName: site.name,
-                  title: input.title,
-                  type: 'website',
-                  url,
-                  ...(images ? { images } : {}),
-              }
+            : { ...base, type: 'website' }
 
     return {
         description,
@@ -100,13 +98,11 @@ export function buildArticleJsonLd(post: Post): Record<string, unknown> {
     return {
         '@context': 'https://schema.org',
         '@type': 'BlogPosting',
+        'author': { '@type': 'Person', 'name': site.name, 'url': site.url },
+        'dateModified': post.updated ?? post.date,
         'datePublished': post.date,
         'description': post.description,
         'headline': post.title,
-        ...(post.updated
-            ? { dateModified: post.updated }
-            : { dateModified: post.date }),
-        'author': { '@type': 'Person', 'name': site.name, 'url': site.url },
         'url': absoluteUrl(post.path),
         ...(post.cover ? { image: absoluteImageUrl(post.cover.src) } : {}),
         'articleSection': post.category,
