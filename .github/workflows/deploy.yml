@@ -90,7 +90,14 @@ jobs:
                       --cap-drop ALL --security-opt no-new-privileges:true \
                       -e NODE_OPTIONS=--max-old-space-size=160 \
                       portfolio:candidate
-                  curl -fsS -o /dev/null --retry 30 --retry-all-errors --retry-delay 2 http://127.0.0.1:3000/
+                  # Docker's port proxy accepts connections before Next listens, so wait
+                  # for a real response rather than trusting curl's retry semantics.
+                  for _ in $(seq 1 30); do
+                      curl -fsS -o /dev/null http://127.0.0.1:3000/ && exit 0
+                      sleep 2
+                  done
+                  docker logs candidate
+                  exit 1
             - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
               with:
                   bun-version-file: package.json

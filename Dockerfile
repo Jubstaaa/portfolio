@@ -5,7 +5,7 @@
 # which is the same flavour the node:alpine runner loads at request time.
 # --ignore-scripts keeps husky's `prepare` from running (no .git in the build
 # context); sharp 0.35 ships prebuilt binaries, so nothing here needs scripts.
-FROM oven/bun:1.3.13-alpine@sha256:4de475389889577f346c636f956b42a5c31501b654664e9ae5726f94d7bb5349 AS deps
+FROM oven/bun:1.4.4-alpine@sha256:4cf82f5686b196504fe119db3fcd9185b191f82ece82c40680e597228ec6070a AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY package.json bun.lock ./
@@ -18,7 +18,7 @@ RUN bun install --frozen-lockfile --ignore-scripts
 # inlined into the prerendered HTML and compiled into the optimizer's remote
 # allow-list. Left empty, src/lib/cdn.ts falls back to the production bucket; CI
 # refuses an empty value so a misconfigured repository variable cannot slip by.
-FROM oven/bun:1.3.13-alpine@sha256:4de475389889577f346c636f956b42a5c31501b654664e9ae5726f94d7bb5349 AS build
+FROM oven/bun:1.4.4-alpine@sha256:4cf82f5686b196504fe119db3fcd9185b191f82ece82c40680e597228ec6070a AS build
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
