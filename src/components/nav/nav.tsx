@@ -2,22 +2,13 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 import { Logo } from '@/components/logo/logo'
 import { ThemeToggle } from '@/components/theme-toggle/theme-toggle'
 import { site } from '@/lib/content'
-import { cn } from '@/lib/utils'
 
-function isActive(pathname: string, href: string): boolean {
-    if (href === '/') return pathname === '/'
-    return pathname === href || pathname.startsWith(`${href}/`)
-}
-
-function routeLabel(href: string): string {
-    return `.${href}`
-}
+import { NavItem } from './nav-item'
 
 export function Nav() {
     const pathname = usePathname()
@@ -47,26 +38,14 @@ export function Nav() {
                     aria-label="Primary"
                     className="hidden items-center gap-6 md:flex">
                     <ul className="flex items-center gap-5 text-sm">
-                        {site.nav.map(item => {
-                            const active = isActive(pathname, item.href)
-                            return (
-                                <li key={item.href}>
-                                    <Link
-                                        href={item.href}
-                                        aria-current={
-                                            active ? 'page' : undefined
-                                        }
-                                        className={cn(
-                                            'transition-token',
-                                            active
-                                                ? 'text-accent'
-                                                : 'text-muted-foreground hover:text-foreground'
-                                        )}>
-                                        {routeLabel(item.href)}
-                                    </Link>
-                                </li>
-                            )
-                        })}
+                        {site.nav.map(item => (
+                            <NavItem
+                                key={item.href}
+                                href={item.href}
+                                pathname={pathname}
+                                variant="desktop"
+                            />
+                        ))}
                     </ul>
                     <ThemeToggle />
                 </nav>
@@ -116,27 +95,15 @@ export function Nav() {
                     aria-label="Primary mobile"
                     className="container-default py-10">
                     <ul className="flex flex-col gap-5 text-lg">
-                        {site.nav.map(item => {
-                            const active = isActive(pathname, item.href)
-                            return (
-                                <li key={item.href}>
-                                    <Link
-                                        href={item.href}
-                                        aria-current={
-                                            active ? 'page' : undefined
-                                        }
-                                        className={cn(
-                                            'transition-token inline-block',
-                                            active
-                                                ? 'text-accent'
-                                                : 'text-foreground hover:text-accent'
-                                        )}
-                                        onClick={closeMenu}>
-                                        {routeLabel(item.href)}
-                                    </Link>
-                                </li>
-                            )
-                        })}
+                        {site.nav.map(item => (
+                            <NavItem
+                                key={item.href}
+                                href={item.href}
+                                pathname={pathname}
+                                variant="mobile"
+                                onNavigate={closeMenu}
+                            />
+                        ))}
                     </ul>
                 </nav>
             </dialog>
