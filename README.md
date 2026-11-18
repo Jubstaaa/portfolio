@@ -80,9 +80,11 @@ The image must be on the CDN before you build — the build fetches it to read i
 3. **deploy** (`main` only, `Production` environment) — copies `docker-compose.yml` to `/opt/portfolio`, then `docker compose up --wait` with `IMAGE_TAG=<sha>`. If the container is not healthy within 120 s it rolls back to the previously running tag and fails the job. `/opt/portfolio/release.env` records the current and previous tags.
 4. **promote** — moves `:latest` to the released SHA, so `:latest` always means "what production runs".
 
+After a healthy deploy the job purges the Cloudflare cache (`CF_PURGE_TOKEN`, a token scoped to Cache Purge on this zone only). HTML is cached at the edge until that purge; requests for RSC payloads (`?_rsc`, `RSC` header), `/api/*` and `/_next/image` bypass the cache.
+
 The container listens on `127.0.0.1:3002`; the shared Caddy in `/opt/proxy` terminates TLS and reverse-proxies `ilkerbalcilar.com` to it.
 
-GitHub configuration: secrets `DO_HOST`, `DO_USER`, `DO_SSH_KEY`, `DO_KNOWN_HOSTS` (in the `Production` environment); repository variable `NEXT_PUBLIC_CDN_BASE`.
+GitHub configuration: secrets `DO_HOST`, `DO_USER`, `DO_SSH_KEY`, `DO_KNOWN_HOSTS`, `CF_PURGE_TOKEN` (in the `Production` environment); repository variables `NEXT_PUBLIC_CDN_BASE`, `CF_ZONE_ID`.
 
 ### Rollback
 

@@ -204,6 +204,19 @@ jobs:
                   fi
                   exit 1
                   REMOTE
+            # HTML is cached at the edge until purged: without this, visitors would get
+            # the previous release's pages, which reference chunks the new container
+            # no longer serves. A failed purge fails the job so it is noticed.
+            - name: Purge Cloudflare cache
+              env:
+                  CF_PURGE_TOKEN: ${{ secrets.CF_PURGE_TOKEN }}
+                  CF_ZONE_ID: ${{ vars.CF_ZONE_ID }}
+              run: |
+                  curl -fsS --retry 3 --retry-all-errors --retry-delay 5 \
+                      -X POST "https://api.cloudflare.com/client/v4/zones/$CF_ZONE_ID/purge_cache" \
+                      -H "Authorization: Bearer $CF_PURGE_TOKEN" \
+                      --json '{"purge_everything":true}' \
+                      | jq -e '.success' > /dev/null
             # Through Cloudflare and Caddy. Warn only: an edge blip must not count as
             # a failed release after the origin already reported healthy.
             - name: Public reachability
