@@ -40,16 +40,6 @@ updates:
           # Must match the Node runtime major (see Dockerfile / engines).
           - dependency-name: '@types/node'
             update-types: ['version-update:semver-major']
-          # typescript-eslint peers on <6.1; revisit when it supports TS 7.
-          - dependency-name: typescript
-            update-types: ['version-update:semver-major']
-          # msw 3 does not intercept fetch under Bun (requests reach the network);
-          # 2.x does. Revisit with each Bun/msw release.
-          - dependency-name: msw
-            update-types: ['version-update:semver-major']
-          # eslint-config-next's eslint-plugin-import/react still peer on ESLint 9.
-          - dependency-name: eslint
-            update-types: ['version-update:semver-major']
       commit-message:
           prefix: chore
           include: scope
