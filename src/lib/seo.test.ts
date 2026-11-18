@@ -59,7 +59,7 @@ describe('buildProjectJsonLd', () => {
 
     test('a project without one stays a CreativeWork', () => {
         const withoutRepo = getAllProjects().find(project => !project.repo)
-        if (!withoutRepo) return
+        if (!withoutRepo) throw new Error('fixture: no project without a repo')
         const jsonLd = buildProjectJsonLd(withoutRepo)
         expect(jsonLd['@type']).toBe('CreativeWork')
         expect(jsonLd).not.toHaveProperty('codeRepository')
