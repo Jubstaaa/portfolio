@@ -44,6 +44,10 @@ jobs:
             # arrives from the lockfile as an optional dependency. sharp ships prebuilt.
             - run: bun install --frozen-lockfile --ignore-scripts
             - run: bun run format:check
+            # Type-aware lint resolves #site/content and Next's route types, so the
+            # generated sources must exist first.
+            - name: Generate content and route types
+              run: bun run velite && bunx next typegen
             - run: bun run lint
             - run: bun run typecheck
             - run: bun run test
