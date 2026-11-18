@@ -1,5 +1,5 @@
-import type { ReactNode } from 'react'
+import type { CommandLineProps } from './command-line.types'
 
-export function Line({ children }: { children: ReactNode }) {
+export function CommandLine({ children }: CommandLineProps) {
     return <p className="text-muted-foreground">{children}</p>
 }

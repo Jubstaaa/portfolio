@@ -2,9 +2,9 @@ import type { Metadata } from 'next'
 
 import { ContentCard } from '@/components/content-card/content-card'
 import { PathBar } from '@/components/path-bar/path-bar'
+import { PostMeta } from '@/components/post-meta/post-meta'
 import { SectionHeading } from '@/components/section-heading/section-heading'
 import { getPublishedPosts } from '@/lib/content'
-import { formatDate } from '@/lib/format'
 import { buildMetadata } from '@/lib/seo'
 
 export const metadata: Metadata = buildMetadata({
@@ -54,17 +54,10 @@ export default function BlogListPage() {
                                     href={post.path}
                                     title={post.title}
                                     meta={
-                                        <>
-                                            <span className="font-mono tracking-tight">
-                                                {formatDate(post.date)}
-                                            </span>
-                                            <span
-                                                aria-hidden
-                                                className="select-none">
-                                                ·
-                                            </span>
-                                            <span>{post.category}</span>
-                                        </>
+                                        <PostMeta
+                                            category={post.category}
+                                            date={post.date}
+                                        />
                                     }
                                     {...(post.tags.length > 0
                                         ? {

@@ -5,8 +5,9 @@ import { NowPlaying } from '@/components/now-playing/now-playing'
 import { site } from '@/lib/content'
 import { handlePath } from '@/lib/site'
 
-import { Line } from './command-line'
-import { Pre } from './command-pre'
+import { CommandLine } from './command-line'
+import { CommandPre } from './command-pre'
+import { STATIC_CTX, VIM_ESCAPE_MESSAGE } from './commands.constants'
 import type { CommandContext, TerminalCommand } from './commands.types'
 import {
     ENV_OUTPUT,
@@ -18,39 +19,37 @@ import { resolvePage } from './terminal-parser'
 
 function line(text: string): TerminalCommand['run'] {
     return function LineRun() {
-        return <Line>{text}</Line>
+        return <CommandLine>{text}</CommandLine>
     }
 }
 
 function pre(text: string): TerminalCommand['run'] {
     return function PreRun() {
-        return <Pre>{text}</Pre>
+        return <CommandPre>{text}</CommandPre>
     }
 }
 
 function goTo(args: string, ctx: CommandContext): ReactNode {
     const href = resolvePage(args)
     if (!href) {
-        return <Line>{`cd: no such file or directory: ${args}`}</Line>
+        return (
+            <CommandLine>{`cd: no such file or directory: ${args}`}</CommandLine>
+        )
     }
     ctx.navigate(href)
     return null
 }
 
-const VIM_ESCAPE = line(
-    "E37: no write since last change — just kidding, you're free."
-)
-
 export const commands: Record<string, TerminalCommand> = {
     ':q': {
         description: '',
         hidden: true,
-        run: VIM_ESCAPE,
+        run: line(VIM_ESCAPE_MESSAGE),
     },
     ':q!': {
         description: '',
         hidden: true,
-        run: VIM_ESCAPE,
+        run: line(VIM_ESCAPE_MESSAGE),
     },
     'cat': {
         description: '',
@@ -59,21 +58,21 @@ export const commands: Record<string, TerminalCommand> = {
             const target = args.trim().replace(/^\.\//, '')
             if (target === 'secret.txt') {
                 return (
-                    <Line>
+                    <CommandLine>
                         {
                             "you found it. now try 'rm -rf /' — what could go wrong?"
                         }
-                    </Line>
+                    </CommandLine>
                 )
             }
             if (target === '.env') {
-                return <Pre>{ENV_OUTPUT}</Pre>
+                return <CommandPre>{ENV_OUTPUT}</CommandPre>
             }
             if (target === '.git' || target === '.git/') {
-                return <Line>{'cat: .git: Is a directory'}</Line>
+                return <CommandLine>{'cat: .git: Is a directory'}</CommandLine>
             }
             return (
-                <Line>{`cat: ${target || 'missing operand'}: no such file or directory`}</Line>
+                <CommandLine>{`cat: ${target || 'missing operand'}: no such file or directory`}</CommandLine>
             )
         },
     },
@@ -102,19 +101,25 @@ export const commands: Record<string, TerminalCommand> = {
             if (sub === 'status') {
                 return (
                     <>
-                        <Line>{'on branch main'}</Line>
-                        <Line>{'nothing to commit, working tree clean.'}</Line>
+                        <CommandLine>{'on branch main'}</CommandLine>
+                        <CommandLine>
+                            {'nothing to commit, working tree clean.'}
+                        </CommandLine>
                     </>
                 )
             }
             if (sub === 'push') {
-                return <Line>{'push to main? not on my watch.'}</Line>
+                return (
+                    <CommandLine>
+                        {'push to main? not on my watch.'}
+                    </CommandLine>
+                )
             }
             if (!sub) {
-                return <Line>{'usage: git <command>'}</Line>
+                return <CommandLine>{'usage: git <command>'}</CommandLine>
             }
             return (
-                <Line>{`git: '${sub}' is not a git command. but nice try.`}</Line>
+                <CommandLine>{`git: '${sub}' is not a git command. but nice try.`}</CommandLine>
             )
         },
     },
@@ -184,9 +189,11 @@ export const commands: Record<string, TerminalCommand> = {
         hidden: true,
         run: args =>
             args.trim() ? (
-                <Line>{"what do I look like, documentation? try 'help'."}</Line>
+                <CommandLine>
+                    {"what do I look like, documentation? try 'help'."}
+                </CommandLine>
             ) : (
-                <Line>{'what manual page do you want?'}</Line>
+                <CommandLine>{'what manual page do you want?'}</CommandLine>
             ),
     },
     'neofetch': {
@@ -206,7 +213,7 @@ export const commands: Record<string, TerminalCommand> = {
         description: '',
         hidden: true,
         run: args => (
-            <Line>{`PING ${args.trim() || 'localhost'}: pong. 0% packet loss, 100% vibes.`}</Line>
+            <CommandLine>{`PING ${args.trim() || 'localhost'}: pong. 0% packet loss, 100% vibes.`}</CommandLine>
         ),
     },
     'pwd': {
@@ -219,9 +226,11 @@ export const commands: Record<string, TerminalCommand> = {
         run: (args, ctx) => {
             if (args.startsWith('-rf')) {
                 ctx.glitch()
-                return <Line>{'site deleted. just kidding.'}</Line>
+                return (
+                    <CommandLine>{'site deleted. just kidding.'}</CommandLine>
+                )
             }
-            return <Line>{'rm: permission denied'}</Line>
+            return <CommandLine>{'rm: permission denied'}</CommandLine>
         },
     },
     'ssh': {
@@ -267,12 +276,6 @@ export const commands: Record<string, TerminalCommand> = {
 export const COMMAND_NAMES = Object.entries(commands)
     .filter(([, command]) => !command.hidden)
     .map(([name]) => name)
-
-const STATIC_CTX: CommandContext = {
-    getHistory: () => [],
-    glitch: () => undefined,
-    navigate: () => undefined,
-}
 
 export function renderCommandOutput(name: string, args = ''): ReactNode {
     return commands[name]?.run(args, STATIC_CTX) ?? null
