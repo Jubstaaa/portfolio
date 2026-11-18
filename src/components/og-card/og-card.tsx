@@ -21,13 +21,13 @@ export function OgCard({ coverUrl, cta, eyebrow, path, title }: OgCardProps) {
                     alt=""
                     height={630}
                     src={coverUrl}
-                    width={1200}
                     style={{
                         left: 0,
                         objectFit: 'cover',
                         position: 'absolute',
                         top: 0,
                     }}
+                    width={1200}
                 />
             ) : null}
             <div

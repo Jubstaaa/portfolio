@@ -15,8 +15,8 @@ const store = createStore<TerminalSessionState>()(() => ({
     nextId: 0,
 }))
 
-export function getSessionState(): TerminalSessionState {
-    return store.getState()
+export function abortIntro(): void {
+    store.setState({ cleared: false, entries: [] })
 }
 
 export function appendEntry(command: string, output: ReactNode): void {
@@ -26,14 +26,6 @@ export function appendEntry(command: string, output: ReactNode): void {
     }))
 }
 
-export function clearTerminal(): void {
-    store.setState({ cleared: true, entries: [] })
-}
-
-export function pushHistory(command: string): void {
-    store.setState(state => ({ history: [...state.history, command] }))
-}
-
 // The intro hides the server-rendered output and replays it as typed commands.
 // It only counts as played once it finishes: a visitor who navigates away midway
 // must come back to the static output, not to a half-typed transcript.
@@ -41,12 +33,20 @@ export function beginIntro(): void {
     store.setState({ cleared: true })
 }
 
+export function clearTerminal(): void {
+    store.setState({ cleared: true, entries: [] })
+}
+
 export function completeIntro(): void {
     store.setState({ introPlayed: true })
 }
 
-export function abortIntro(): void {
-    store.setState({ cleared: false, entries: [] })
+export function getSessionState(): TerminalSessionState {
+    return store.getState()
+}
+
+export function pushHistory(command: string): void {
+    store.setState(state => ({ history: [...state.history, command] }))
 }
 
 export function useTerminalSession(): TerminalSessionState {

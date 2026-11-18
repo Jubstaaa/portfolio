@@ -6,9 +6,10 @@
 // free of path aliases: next.config.ts and velite import it relatively.
 const DEFAULT_CDN_BASE = 'https://ilkerbalcilar.fra1.cdn.digitaloceanspaces.com'
 
-export const CDN_BASE = (
-    process.env.NEXT_PUBLIC_CDN_BASE || DEFAULT_CDN_BASE
-).replace(/\/+$/, '')
+export const CDN_BASE =
+    // An empty variable means unset, which `??` would not catch.
+    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+    (process.env.NEXT_PUBLIC_CDN_BASE || DEFAULT_CDN_BASE).replace(/\/+$/, '')
 
 export function cdnUrl(src: string): string {
     if (!src.startsWith('/images/')) return src

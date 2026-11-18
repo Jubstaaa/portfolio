@@ -5,8 +5,9 @@ import { Check, Copy, X } from 'lucide-react'
 import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard'
 import { cn, LINK_CLASS } from '@/lib/utils'
 
-import { COPY_EMAIL_LABEL } from './copy-email.constants'
 import type { CopyEmailProps } from './copy-email.types'
+
+import { COPY_EMAIL_LABEL } from './copy-email.constants'
 
 export function CopyEmail({ className, email }: CopyEmailProps) {
     const { copy, status } = useCopyToClipboard()
@@ -19,8 +20,10 @@ export function CopyEmail({ className, email }: CopyEmailProps) {
             <button
                 aria-label={COPY_EMAIL_LABEL[status]}
                 className="hairline text-muted-foreground hover:text-foreground transition-token inline-flex size-7 items-center justify-center rounded border"
-                type="button"
-                onClick={() => copy(email)}>
+                onClick={() => {
+                    copy(email)
+                }}
+                type="button">
                 {status === 'copied' ? (
                     <Check
                         aria-hidden

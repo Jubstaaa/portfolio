@@ -13,8 +13,8 @@ export function Timeline<T extends TimelineEntry>({
         <ol className={cn('flex flex-col', className)}>
             {items.map(item => (
                 <TimelineRow
-                    key={item.slug}
-                    dateRange={`${formatMonth(item.start)} — ${formatMonth(item.end)}`}>
+                    dateRange={`${formatMonth(item.start)} — ${formatMonth(item.end)}`}
+                    key={item.slug}>
                     {renderContent(item)}
                 </TimelineRow>
             ))}

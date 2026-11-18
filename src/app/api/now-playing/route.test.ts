@@ -62,10 +62,10 @@ describe('GET /api/now-playing', () => {
     test('returns the playing track with a profile link', async () => {
         lastFm(() => HttpResponse.json(nowPlaying))
         expect(await (await GET()).json()).toMatchObject({
-            url: expect.stringContaining('spotify.com'),
             artist: 'Boards of Canada',
             isPlaying: true,
             title: 'Roygbiv',
+            url: expect.stringContaining('spotify.com'),
         })
     })
 

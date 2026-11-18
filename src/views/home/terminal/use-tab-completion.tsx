@@ -1,11 +1,12 @@
 import { useCallback, useRef } from 'react'
 
-import { COMMAND_NAMES } from './commands'
-import { getCompletions } from './terminal-parser'
 import type {
     CompletionSession,
     UseTabCompletionOptions,
 } from './use-tab-completion.types'
+
+import { COMMAND_NAMES } from './commands'
+import { getCompletions } from './terminal-parser'
 
 export function useTabCompletion({
     appendEntry,

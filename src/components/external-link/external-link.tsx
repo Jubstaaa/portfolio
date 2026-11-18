@@ -11,14 +11,14 @@ export function ExternalLink({
 }: ExternalLinkProps) {
     return (
         <a
-            href={href}
-            rel="noreferrer noopener"
-            target="_blank"
             className={cn(
                 LINK_CLASS,
                 showArrow && 'inline-flex items-center gap-1',
                 className
             )}
+            href={href}
+            rel="noreferrer noopener"
+            target="_blank"
             {...rest}>
             {children}
             {showArrow ? (

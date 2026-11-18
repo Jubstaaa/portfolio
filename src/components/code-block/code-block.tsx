@@ -1,8 +1,7 @@
 'use client'
 
-import { type HTMLAttributes, useCallback, useRef } from 'react'
-
 import { Check, Copy, X } from 'lucide-react'
+import { type HTMLAttributes, useCallback, useRef } from 'react'
 
 import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard'
 import { cn } from '@/lib/utils'
@@ -26,19 +25,19 @@ export function CodeBlock({
     return (
         <div className="group relative my-6">
             <pre
-                ref={preRef}
                 className={cn(
                     'hairline bg-muted overflow-x-auto rounded-md border p-4 text-[0.85rem] leading-relaxed',
                     className
                 )}
+                ref={preRef}
                 {...rest}>
                 {children}
             </pre>
             <button
                 aria-label={COPY_CODE_LABEL[status]}
                 className="hairline text-muted-foreground hover:text-foreground bg-background absolute top-2 right-2 inline-flex size-7 items-center justify-center rounded border opacity-0 transition-opacity duration-(--duration-fast) group-hover:opacity-100 focus-visible:opacity-100"
-                type="button"
-                onClick={onCopy}>
+                onClick={onCopy}
+                type="button">
                 {status === 'copied' ? (
                     <Check
                         aria-hidden

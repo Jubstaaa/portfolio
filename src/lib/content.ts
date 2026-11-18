@@ -20,6 +20,26 @@ import {
 export { site, socials }
 export type { Education, Experience, Post, Project, Skill, Stack }
 
+export function getAllProjects(): Project[] {
+    return projects.toSorted((a, b) => {
+        const ao = a.order ?? Number.POSITIVE_INFINITY
+        const bo = b.order ?? Number.POSITIVE_INFINITY
+        return ao - bo
+    })
+}
+
+export function getPostBySlug(slug: string): Post | undefined {
+    return getPublishedPosts().find(post => post.slug === slug)
+}
+
+export function getProjectBySlug(slug: string): Project | undefined {
+    return projects.find(project => project.slug === slug)
+}
+
+export function getPublishedPosts(): Post[] {
+    return selectPublished(posts)
+}
+
 export function selectPublished(all: readonly Post[]): Post[] {
     return (
         all
@@ -30,26 +50,6 @@ export function selectPublished(all: readonly Post[]): Post[] {
                     b.date.localeCompare(a.date) || a.slug.localeCompare(b.slug)
             )
     )
-}
-
-export function getPublishedPosts(): Post[] {
-    return selectPublished(posts)
-}
-
-export function getPostBySlug(slug: string): Post | undefined {
-    return getPublishedPosts().find(post => post.slug === slug)
-}
-
-export function getAllProjects(): Project[] {
-    return projects.toSorted((a, b) => {
-        const ao = a.order ?? Number.POSITIVE_INFINITY
-        const bo = b.order ?? Number.POSITIVE_INFINITY
-        return ao - bo
-    })
-}
-
-export function getProjectBySlug(slug: string): Project | undefined {
-    return projects.find(project => project.slug === slug)
 }
 
 const CURRENT = '9999-99'
@@ -66,12 +66,23 @@ export function byRecency(a: Datable, b: Datable): number {
     )
 }
 
-export function getExperiencesSorted(): Experience[] {
-    return experiences.toSorted(byRecency)
+export function getAdjacent<T extends { slug: string }>(
+    list: T[],
+    current: T
+): { next?: T; prev?: T } {
+    const index = list.findIndex(item => item.slug === current.slug)
+    if (index === -1) return {}
+    const prev = list[index + 1]
+    const next = list[index - 1]
+    return { ...(prev ? { prev } : {}), ...(next ? { next } : {}) }
 }
 
 export function getEducationSorted(): Education[] {
     return education.toSorted(byRecency)
+}
+
+export function getExperiencesSorted(): Experience[] {
+    return experiences.toSorted(byRecency)
 }
 
 // Categories without entries are absent from the result.
@@ -85,15 +96,4 @@ export function getStacksByCategory(): Partial<
     Record<Stack['category'], Stack[]>
 > {
     return groupBy(stacks, 'category')
-}
-
-export function getAdjacent<T extends { slug: string }>(
-    list: T[],
-    current: T
-): { next?: T; prev?: T } {
-    const index = list.findIndex(item => item.slug === current.slug)
-    if (index === -1) return {}
-    const prev = list[index + 1]
-    const next = list[index - 1]
-    return { ...(prev ? { prev } : {}), ...(next ? { next } : {}) }
 }

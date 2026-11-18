@@ -7,8 +7,9 @@ import { PathBar } from '@/components/path-bar/path-bar'
 import { Prose } from '@/components/prose/prose'
 import { SectionHeading } from '@/components/section-heading/section-heading'
 
-import { DEFERRED_BODY_IMAGES } from './content-detail.constants'
 import type { ContentDetailProps } from './content-detail.types'
+
+import { DEFERRED_BODY_IMAGES } from './content-detail.constants'
 
 export function ContentDetail({
     adjacent,
@@ -42,9 +43,9 @@ export function ContentDetail({
 
                     {cover ? (
                         <ContentImage
-                            preload
                             alt={cover.alt}
                             height={cover.height}
+                            preload
                             src={cover.src}
                             width={cover.width}
                         />
@@ -66,7 +67,7 @@ export function ContentDetail({
                             <SectionHeading title="highlights" />
                             <ul className="text-foreground space-y-2">
                                 {highlights.map(h => (
-                                    <li key={h} className="arrow-bullet">
+                                    <li className="arrow-bullet" key={h}>
                                         {h}
                                     </li>
                                 ))}

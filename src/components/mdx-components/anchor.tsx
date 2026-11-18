@@ -4,11 +4,6 @@ import { ExternalLink } from '@/components/external-link/external-link'
 import { StyledLink } from '@/components/styled-link/styled-link'
 import { cn, LINK_CLASS } from '@/lib/utils'
 
-function isExternal(href: string | undefined): boolean {
-    if (!href) return false
-    return /^https?:\/\//.test(href) || href.startsWith('mailto:')
-}
-
 export function Anchor({
     children,
     className,
@@ -35,4 +30,9 @@ export function Anchor({
             {children}
         </StyledLink>
     )
+}
+
+function isExternal(href: string | undefined): boolean {
+    if (!href) return false
+    return /^https?:\/\//.test(href) || href.startsWith('mailto:')
 }

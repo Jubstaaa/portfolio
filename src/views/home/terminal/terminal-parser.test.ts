@@ -1,6 +1,11 @@
 import { describe, expect, test } from 'bun:test'
 
-import { getCompletions, parseCommand, resolvePage } from './terminal-parser'
+import {
+    getCompletions,
+    PAGE_TARGETS,
+    parseCommand,
+    resolvePage,
+} from './terminal-parser'
 
 describe('parseCommand', () => {
     test.each([
@@ -60,4 +65,9 @@ describe('getCompletions', () => {
     test('empty input has nothing to complete', () => {
         expect(getCompletions('', names)).toBeNull()
     })
+})
+
+// User-facing: `cd <Tab>` lists and cycles pages in this order.
+test('page completions start with the home aliases, then the nav order', () => {
+    expect(PAGE_TARGETS.slice(0, 2)).toEqual(['~', 'home'])
 })

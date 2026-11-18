@@ -2,8 +2,9 @@
 
 import { cn } from '@/lib/utils'
 
-import { useNowPlaying } from './now-playing.hooks'
 import type { NowPlayingProps } from './now-playing.types'
+
+import { useNowPlaying } from './now-playing.hooks'
 
 export function NowPlaying({ className }: NowPlayingProps) {
     const { data } = useNowPlaying()
@@ -25,14 +26,14 @@ export function NowPlaying({ className }: NowPlayingProps) {
     return (
         <a
             aria-label={`Now playing on Spotify: ${label}`}
-            href={data.url}
-            rel="noreferrer noopener"
-            target="_blank"
             className={cn(
                 'inline-flex items-start gap-2',
                 'hover:[&_.text-foreground]:text-accent transition-token group',
                 className
-            )}>
+            )}
+            href={data.url}
+            rel="noreferrer noopener"
+            target="_blank">
             <span
                 aria-hidden
                 className="dot-nudge bg-success inline-block size-1.5 shrink-0 rounded-full"

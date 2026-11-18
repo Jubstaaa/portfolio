@@ -1,4 +1,5 @@
 import type { BorderRowProps } from './border-row.types'
+
 import { RULE } from './mdx-components.constants'
 
 export function BorderRow({ label, left, right }: BorderRowProps) {

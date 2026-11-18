@@ -18,10 +18,6 @@ import {
 
 import type { ProjectPageProps } from './project-detail.types'
 
-export function generateStaticParams() {
-    return getAllProjects().map(project => ({ slug: project.slug }))
-}
-
 export async function generateMetadata({
     params,
 }: ProjectPageProps): Promise<Metadata> {
@@ -37,6 +33,10 @@ export async function generateMetadata({
     })
 }
 
+export function generateStaticParams() {
+    return getAllProjects().map(project => ({ slug: project.slug }))
+}
+
 export default async function ProjectDetailPage({ params }: ProjectPageProps) {
     const { slug } = await params
     const project = getProjectBySlug(slug)
@@ -47,7 +47,6 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
 
     return (
         <ContentDetail
-            highlights={project.highlights}
             adjacent={{
                 ariaLabel: 'Project navigation',
                 ...(prev ? { prev } : {}),
@@ -57,12 +56,12 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
                 children: (
                     <div className="flex flex-wrap items-center gap-x-6 gap-y-2 pt-2 text-sm">
                         {project.url ? (
-                            <ExternalLink showArrow href={project.url}>
+                            <ExternalLink href={project.url} showArrow>
                                 live
                             </ExternalLink>
                         ) : null}
                         {project.repo ? (
-                            <ExternalLink showArrow href={project.repo}>
+                            <ExternalLink href={project.repo} showArrow>
                                 source
                             </ExternalLink>
                         ) : null}
@@ -79,6 +78,7 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
                       }
                     : {}),
             }}
+            highlights={project.highlights}
             jsonLd={{
                 breadcrumb: buildBreadcrumbJsonLd([
                     { name: 'Home', path: '/' },

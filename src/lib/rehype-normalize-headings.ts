@@ -1,4 +1,5 @@
 import type { Root } from 'hast'
+
 import { headingRank } from 'hast-util-heading-rank'
 import { shiftHeading } from 'hast-util-shift-heading'
 import { visit } from 'unist-util-visit'

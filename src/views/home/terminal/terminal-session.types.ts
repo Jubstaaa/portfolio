@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react'
 
 export interface TerminalEntry {
-    id: number
     command: string
+    id: number
     output: ReactNode
 }
 

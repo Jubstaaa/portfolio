@@ -11,8 +11,9 @@ import { site } from '@/lib/content'
 import { ogLocale } from '@/lib/site'
 import { cn } from '@/lib/utils'
 
-import { SITE_KEYWORDS } from './root-layout.constants'
 import type { RootLayoutProps } from './root-layout.types'
+
+import { SITE_KEYWORDS } from './root-layout.constants'
 
 import '@/app/globals.css'
 
@@ -104,12 +105,12 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: RootLayoutProps) {
     return (
         <html
-            suppressHydrationWarning
             className={cn(hermit.variable, hermitItalic.variable)}
-            lang={site.locale}>
+            lang={site.locale}
+            suppressHydrationWarning>
             <body
-                suppressHydrationWarning
-                className="bg-background text-foreground flex min-h-screen flex-col font-mono antialiased">
+                className="bg-background text-foreground flex min-h-screen flex-col font-mono antialiased"
+                suppressHydrationWarning>
                 <Providers>
                     <SkipLink />
                     <Nav />

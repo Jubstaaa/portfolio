@@ -10,7 +10,6 @@
 // /images/projects/foo/cover.webp).
 import { readdir, stat, unlink, writeFile } from 'node:fs/promises'
 import { extname, join } from 'node:path'
-
 import sharp from 'sharp'
 
 const MAX_EDGE = 2000
@@ -20,7 +19,7 @@ const QUALITY = 78
 // generation loss. Only a real win justifies another lossy pass, which also makes
 // repeat runs no-ops.
 const MIN_GAIN = 0.1
-const SOURCES = new Set(['.webp', '.png', '.jpg', '.jpeg', '.avif', '.tiff'])
+const SOURCES = new Set(['.avif', '.jpeg', '.jpg', '.png', '.tiff', '.webp'])
 
 const root = process.argv[2]
 
@@ -44,9 +43,9 @@ for (const file of files) {
     const isWebp = extname(file).toLowerCase() === '.webp'
     const buffer = await sharp(file)
         .resize({
-            width: MAX_EDGE,
-            height: MAX_EDGE,
             fit: 'inside',
+            height: MAX_EDGE,
+            width: MAX_EDGE,
             withoutEnlargement: true,
         })
         .webp({ quality: QUALITY })

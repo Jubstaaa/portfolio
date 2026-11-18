@@ -1,7 +1,8 @@
 import { cn } from '@/lib/utils'
 
-import { TerminalCaret } from './terminal-caret'
 import type { TerminalLineProps } from './terminal-line.types'
+
+import { TerminalCaret } from './terminal-caret'
 
 export function TerminalLine({
     children,

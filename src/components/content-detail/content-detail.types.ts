@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react'
-
 import type { BreadcrumbList, Thing, WithContext } from 'schema-dts'
 
 export interface ContentDetailProps {
@@ -10,7 +9,7 @@ export interface ContentDetailProps {
     }
     body?: string | undefined
     cover?:
-        { alt: string; height: number; src: string; width: number } | undefined
+        undefined | { alt: string; height: number; src: string; width: number }
     header: {
         children?: ReactNode
         lead: string

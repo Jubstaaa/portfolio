@@ -6,10 +6,6 @@ import { renderOgImage } from '@/lib/og'
 
 import type { PostPageProps } from './blog-detail.types'
 
-export function generateStaticParams() {
-    return getPublishedPosts().map(post => ({ slug: post.slug }))
-}
-
 export default async function BlogOgImage({ params }: PostPageProps) {
     const { slug } = await params
     const post = getPostBySlug(slug)
@@ -20,4 +16,8 @@ export default async function BlogOgImage({ params }: PostPageProps) {
         title: post.title,
         ...(post.cover ? { cover: post.cover.src } : {}),
     })
+}
+
+export function generateStaticParams() {
+    return getPublishedPosts().map(post => ({ slug: post.slug }))
 }

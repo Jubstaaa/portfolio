@@ -1,198 +1,104 @@
-import { defineConfig, globalIgnores } from 'eslint/config'
+/**
+ * Presets carry the rules; this file only wires them together and adds the few
+ * project-specific choices at the end.
+ */
+
 import nextVitals from 'eslint-config-next/core-web-vitals'
 import nextTs from 'eslint-config-next/typescript'
-import importX from 'eslint-plugin-import-x'
-import perfectionistPlugin from 'eslint-plugin-perfectionist'
+import prettier from 'eslint-config-prettier/flat'
+import jsxA11y from 'eslint-plugin-jsx-a11y'
+import perfectionist from 'eslint-plugin-perfectionist'
+import { defineConfig, globalIgnores } from 'eslint/config'
+import tseslint from 'typescript-eslint'
 
-const eslintConfig = defineConfig([
-    ...nextVitals,
-    ...nextTs,
+export default defineConfig([
     globalIgnores([
         '.next/**',
+        '.velite/**',
         'out/**',
         'build/**',
-        '.velite/**',
         'next-env.d.ts',
-        'scripts/**',
     ]),
+
+    ...nextVitals,
+    ...nextTs,
+
+    // eslint-config-next registers jsx-a11y but enables only a handful of its rules.
+    { rules: jsxA11y.flatConfigs.recommended.rules },
+
     {
-        // Type-aware: a floating or misused promise is an unhandled rejection waiting
-        // to happen, which the global rules forbid.
-        files: ['src/**/*.{ts,tsx}'],
-        languageOptions: { parserOptions: { projectService: true } },
-        rules: {
-            '@typescript-eslint/no-floating-promises': 'error',
-            '@typescript-eslint/no-misused-promises': 'error',
-        },
-    },
-    {
-        files: ['src/**/*.{ts,tsx,js,jsx}'],
-        plugins: {
-            'import-x': importX,
-            'perfectionist': perfectionistPlugin,
+        extends: [
+            tseslint.configs.strictTypeChecked,
+            tseslint.configs.stylisticTypeChecked,
+        ],
+        files: ['**/*.{ts,tsx,mts}'],
+        languageOptions: {
+            parserOptions: {
+                projectService: true,
+                tsconfigRootDir: import.meta.dirname,
+            },
         },
         rules: {
-            'no-console': ['warn', { allow: ['error', 'warn'] }],
+            // verbatimModuleSyntax needs type-only imports to be marked as such.
+            '@typescript-eslint/consistent-type-imports': [
+                'error',
+                { fixStyle: 'inline-type-imports' },
+            ],
+            '@typescript-eslint/no-import-type-side-effects': 'error',
             '@typescript-eslint/no-unused-vars': [
                 'error',
                 {
                     argsIgnorePattern: '^_',
-                    varsIgnorePattern: '^_',
                     caughtErrorsIgnorePattern: '^_',
+                    varsIgnorePattern: '^_',
                 },
             ],
-            '@typescript-eslint/consistent-type-imports': [
+            // Numbers in template literals are unambiguous; the strict preset bans
+            // them, the recommended one does not.
+            '@typescript-eslint/restrict-template-expressions': [
                 'error',
-                { prefer: 'type-imports', fixStyle: 'inline-type-imports' },
+                { allowNumber: true },
             ],
-            'import-x/order': [
+        },
+    },
+
+    perfectionist.configs['recommended-natural'],
+    {
+        rules: {
+            'perfectionist/sort-imports': [
                 'error',
-                {
-                    'groups': [
-                        'builtin',
-                        'external',
-                        'internal',
-                        'parent',
-                        'sibling',
-                        'index',
-                    ],
-                    'pathGroups': [
-                        {
-                            pattern: 'react',
-                            group: 'external',
-                            position: 'before',
-                        },
-                        {
-                            pattern: 'react-*',
-                            group: 'external',
-                            position: 'before',
-                        },
-                        {
-                            pattern: 'next',
-                            group: 'external',
-                            position: 'before',
-                        },
-                        {
-                            pattern: 'next/**',
-                            group: 'external',
-                            position: 'before',
-                        },
-                        {
-                            pattern: '@/**',
-                            group: 'internal',
-                            position: 'after',
-                        },
-                        {
-                            pattern: '#site/**',
-                            group: 'internal',
-                            position: 'after',
-                        },
-                    ],
-                    'pathGroupsExcludedImportTypes': ['react'],
-                    'newlines-between': 'always',
-                    'alphabetize': { order: 'asc', caseInsensitive: true },
-                },
+                { internalPattern: ['^@/', '^#site/'], type: 'natural' },
             ],
-            'perfectionist/sort-interfaces': [
-                'error',
-                {
-                    customGroups: [
-                        {
-                            elementNamePattern: '^(id|uuid)$',
-                            groupName: 'identity',
-                        },
-                        {
-                            elementNamePattern: '^on[A-Z]',
-                            groupName: 'callbacks',
-                        },
-                    ],
-                    groups: ['identity', 'unknown', 'callbacks'],
-                    order: 'asc',
-                    type: 'alphabetical',
-                },
-            ],
-            'perfectionist/sort-object-types': [
-                'error',
-                {
-                    customGroups: [
-                        {
-                            elementNamePattern: '^(id|uuid)$',
-                            groupName: 'identity',
-                        },
-                        {
-                            elementNamePattern: '^on[A-Z]',
-                            groupName: 'callbacks',
-                        },
-                    ],
-                    groups: ['identity', 'unknown', 'callbacks'],
-                    order: 'asc',
-                    type: 'alphabetical',
-                },
-            ],
-            'perfectionist/sort-named-imports': [
-                'warn',
-                { order: 'asc', type: 'alphabetical' },
-            ],
-            'perfectionist/sort-objects': [
-                'warn',
-                {
-                    customGroups: [
-                        {
-                            elementNamePattern: '^on[A-Z]',
-                            groupName: 'callbacks',
-                        },
-                    ],
-                    groups: ['unknown', 'callbacks'],
-                    order: 'asc',
-                    type: 'alphabetical',
-                },
-            ],
-            'react/jsx-sort-props': [
-                'warn',
-                {
-                    callbacksLast: true,
-                    ignoreCase: true,
-                    locale: 'auto',
-                    multiline: 'last',
-                    reservedFirst: ['key', 'ref'],
-                    shorthandFirst: true,
-                    shorthandLast: false,
-                },
-            ],
+        },
+    },
+
+    {
+        rules: {
+            // Server logs go through console.error / console.warn; nothing else ships.
+            'no-console': ['error', { allow: ['error', 'warn'] }],
+        },
+    },
+
+    {
+        // Asymmetric matchers (expect.any, expect.stringContaining, …) are typed
+        // `any` by the test runner.
+        files: ['**/*.test.{ts,tsx}', 'e2e/**'],
+        rules: {
+            '@typescript-eslint/no-unsafe-argument': 'off',
+            '@typescript-eslint/no-unsafe-assignment': 'off',
         },
     },
     {
-        files: ['**/api/**/*.ts', '**/route.ts'],
-        rules: {
-            'perfectionist/sort-objects': [
-                'warn',
-                {
-                    customGroups: [
-                        {
-                            elementNamePattern: '^url$',
-                            groupName: 'request-url',
-                        },
-                        {
-                            elementNamePattern: '^method$',
-                            groupName: 'request-method',
-                        },
-                        {
-                            elementNamePattern: '^(body|params|headers)$',
-                            groupName: 'request-body',
-                        },
-                    ],
-                    groups: [
-                        'request-url',
-                        'request-method',
-                        'request-body',
-                        'unknown',
-                    ],
-                    order: 'asc',
-                    type: 'alphabetical',
-                },
-            ],
-        },
+        // Next.js documents headers()/redirects() as async functions.
+        files: ['next.config.ts'],
+        rules: { '@typescript-eslint/require-await': 'off' },
     },
-])
+    {
+        // CLI scripts report to the terminal.
+        files: ['scripts/**'],
+        rules: { 'no-console': 'off' },
+    },
 
-export default eslintConfig
+    // Must stay last: turns off every rule Prettier owns.
+    prettier,
+])
