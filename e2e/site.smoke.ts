@@ -1,0 +1,95 @@
+// Runs against a live server (CI points it at the candidate container):
+//   SMOKE_BASE_URL=http://127.0.0.1:3002 CDN_BASE=https://… bun run test:smoke
+// It covers what unit tests cannot see: response headers, Next's routing of
+// unknown slugs, edge-facing caching headers and the image optimizer allow-list.
+import { describe, expect, setDefaultTimeout, test } from 'bun:test'
+
+const base = process.env.SMOKE_BASE_URL
+const cdnBase = process.env.CDN_BASE
+if (!base) throw new Error('SMOKE_BASE_URL is required')
+
+setDefaultTimeout(30_000)
+
+function get(path: string): Promise<Response> {
+    return fetch(base + path, { signal: AbortSignal.timeout(10_000) })
+}
+
+async function html(path: string): Promise<string> {
+    const res = await get(path)
+    expect(res.status).toBe(200)
+    return res.text()
+}
+
+describe('home', () => {
+    test('serves the security headers and hides the framework', async () => {
+        const res = await get('/')
+        expect(res.status).toBe(200)
+        for (const header of [
+            'content-security-policy',
+            'permissions-policy',
+            'referrer-policy',
+            'strict-transport-security',
+            'x-content-type-options',
+        ]) {
+            expect(res.headers.has(header)).toBe(true)
+        }
+        expect(res.headers.has('x-powered-by')).toBe(false)
+    })
+
+    test('server-renders the terminal output visibly', async () => {
+        const page = await html('/')
+        expect(page).toContain('<h1')
+        const tag = /<div[^>]*data-terminal-static[^>]*>/.exec(page)?.[0]
+        expect(tag).toBeDefined()
+        expect(tag).not.toMatch(/class="[^"]*\bhidden\b/)
+    })
+})
+
+test.each(['/', '/about', '/blog'])(
+    '%s starts with a skip link to the main content',
+    async path => {
+        const page = await html(path)
+        expect(/<a\b[^>]*>/.exec(page)?.[0]).toContain('href="#main"')
+        expect(page).toContain('id="main"')
+    }
+)
+
+test.each(['/blog/__smoke__', '/projects/__smoke__'])(
+    'unknown slug %s is a 404 that no cache keeps',
+    async path => {
+        const res = await get(path)
+        expect(res.status).toBe(404)
+        expect(res.headers.get('cache-control') ?? '').not.toMatch(
+            /s-maxage|public/
+        )
+    }
+)
+
+test('detail pages preload at most one image (the LCP candidate)', async () => {
+    const listing = await html('/projects')
+    const paths = [...new Set(listing.match(/\/projects\/[a-z0-9-]+(?=")/g))]
+    expect(paths.length).toBeGreaterThan(0)
+    for (const path of paths) {
+        const preloads = (await html(path)).match(/<link[^>]*as="image"[^>]*>/g)
+        expect(preloads?.length ?? 0).toBeLessThanOrEqual(1)
+    }
+})
+
+test('feed.xml is RSS', async () => {
+    const res = await get('/feed.xml')
+    expect(res.status).toBe(200)
+    expect(res.headers.get('content-type')).toContain('rss')
+})
+
+test('now-playing degrades to idle without credentials', async () => {
+    const res = await get('/api/now-playing')
+    expect(res.status).toBe(200)
+    expect(await res.json()).toMatchObject({ isPlaying: expect.any(Boolean) })
+})
+
+test('the image optimizer rejects cache-busting query strings', async () => {
+    expect(cdnBase).toBeTruthy()
+    const src = encodeURIComponent(`${cdnBase}/images/x.webp?cb=1`)
+    const res = await get(`/_next/image?url=${src}&w=640&q=75`)
+    expect(res.status).toBe(400)
+})
