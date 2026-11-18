@@ -98,6 +98,10 @@ Find good SHAs in `/opt/portfolio/release.env` (`PREVIOUS_TAG`), `git log --firs
 - `/opt/portfolio/` — `docker-compose.yml` (overwritten by every deploy), `.env`, `release.env`, `cache/images/` (the persisted `/_next/image` cache, capped by `images.maximumDiskCacheSize`).
 - `/opt/proxy/` — the shared Caddy for every site on the droplet. The `ilkerbalcilar.com` block only accepts Cloudflare IPs (`cfonly`) and holds requests for up to 30 s (`lb_try_duration`) while a deploy recreates the container, so visitors see a short wait instead of a 502.
 
+### Dependency updates
+
+Dependabot opens weekly PRs. Patch and minor updates merge themselves once the required checks (`check`, `image`) pass; majors wait for review. GitHub does not start workflows from those bot merges, so they reach production with the next deploy (any push to `main`, or `gh workflow run deploy.yml`).
+
 ### Monitoring
 
 `.github/workflows/uptime.yml` probes the home page and the feed every 15 minutes; a failed scheduled run is emailed by GitHub. GitHub disables scheduled workflows after 60 days without repository activity — re-enable it from the Actions tab if that happens.
