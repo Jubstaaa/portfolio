@@ -9,8 +9,8 @@ import sharp from 'sharp'
 import { EXIT, visit } from 'unist-util-visit'
 import { defineCollection, defineConfig, s } from 'velite'
 
-import { readImageBytes } from './src/features/content/image-source'
-import { rehypeNormalizeHeadings } from './src/features/content/rehype-normalize-headings'
+import { readImageBytes } from './src/features/content/pipeline/image-source'
+import { rehypeNormalizeHeadings } from './src/features/content/pipeline/rehype-normalize-headings'
 import { isYearMonth } from './src/lib/format'
 
 const prettyCode: PrettyCodeOptions = {

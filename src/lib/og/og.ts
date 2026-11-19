@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import sharp from 'sharp'
 
-import { readImageBytes } from '@/features/content/image-source'
+import { readImageBytes } from '@/features/content/pipeline/image-source'
 import { handlePath } from '@/lib/site'
 
 import { OgCard } from './og-card'

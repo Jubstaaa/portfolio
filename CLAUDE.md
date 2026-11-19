@@ -99,6 +99,7 @@ src/
     about/_components/      parts used only by /about (likewise blog/, contact/)
   features/                 code shared across routes, or a self-contained feature with its own state and tests
     content/                velite read path, MDX rendering, content cards and detail views, RSS
+      pipeline/             Node-only content processing for velite and OG images (image bytes, heading normalisation)
     terminal/               the home page terminal (commands, parser, session store, hooks)
     now-playing/            Last.fm parsing, client hook and widget
   components/               small UI parts used by more than one route or feature
