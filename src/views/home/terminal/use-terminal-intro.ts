@@ -1,7 +1,5 @@
 import { useCallback, useEffect, useEffectEvent, useRef, useState } from 'react'
 
-import { useHasMounted } from '@/hooks/use-has-mounted'
-
 import {
     abortIntro,
     beginIntro,
@@ -11,10 +9,32 @@ import {
 
 export type IntroStatus = 'done' | 'idle' | 'playing'
 
+interface IntroConditions {
+    commands: string[] | undefined
+    introPlayed: boolean
+    reducedMotion: boolean
+}
+
 interface UseTerminalIntroOptions {
     execute: (raw: string) => void
     introCommands: string[] | undefined
     setInput: (value: string) => void
+}
+
+// Plays once per session, on a cold load too: the typing is the first thing a
+// visitor sees. Later visits in the session and reduced motion show the output
+// directly.
+export function shouldPlayIntro({
+    commands,
+    introPlayed,
+    reducedMotion,
+}: IntroConditions): boolean {
+    return (
+        commands !== undefined &&
+        commands.length > 0 &&
+        !introPlayed &&
+        !reducedMotion
+    )
 }
 
 export function useTerminalIntro({
@@ -23,14 +43,8 @@ export function useTerminalIntro({
     setInput,
 }: UseTerminalIntroOptions) {
     const [status, setStatus] = useState<IntroStatus>('idle')
-    // Latched on the first render: false while hydrating a server-rendered page,
-    // true when the terminal mounts after a client-side navigation. A cold load
-    // keeps the server-rendered output on screen (it is the LCP element); the
-    // typing intro only replays it for visitors arriving from elsewhere on the site.
-    const hasMounted = useHasMounted()
-    const [coldLoad] = useState(() => !hasMounted)
     const [revealStatic, setRevealStatic] = useState(
-        () => coldLoad || !introCommands || introCommands.length === 0
+        () => !introCommands || introCommands.length === 0
     )
 
     const machineRef = useRef({ active: false, skip: new AbortController() })
@@ -45,10 +59,15 @@ export function useTerminalIntro({
     }, [])
 
     useEffect(() => {
-        if (coldLoad || !introCommands || introCommands.length === 0) return
         if (
-            getSessionState().introPlayed ||
-            window.matchMedia('(prefers-reduced-motion: reduce)').matches
+            !introCommands ||
+            !shouldPlayIntro({
+                commands: introCommands,
+                introPlayed: getSessionState().introPlayed,
+                reducedMotion: window.matchMedia(
+                    '(prefers-reduced-motion: reduce)'
+                ).matches,
+            })
         ) {
             queueMicrotask(() => {
                 setRevealStatic(true)
@@ -121,7 +140,7 @@ export function useTerminalIntro({
                 abortIntro()
             }
         }
-    }, [coldLoad, introCommands, setInput])
+    }, [introCommands, setInput])
 
     return { revealStatic, skipIntro, status }
 }

@@ -186,7 +186,8 @@ export function InteractiveTerminal({
                     <div
                         className={cn(
                             'flex flex-col gap-3',
-                            !revealStatic && 'hidden'
+                            !revealStatic &&
+                                'motion-safe:[@media(scripting:enabled)]:hidden'
                         )}
                         data-terminal-static>
                         {children}

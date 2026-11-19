@@ -37,12 +37,15 @@ describe('home', () => {
         expect(res.headers.has('x-powered-by')).toBe(false)
     })
 
-    test('server-renders the terminal output visibly', async () => {
+    // The typing intro hides this output only when scripts run and motion is
+    // allowed; without JavaScript it must still be readable.
+    test('server-renders the terminal output for visitors without JavaScript', async () => {
         const page = await html('/')
         expect(page).toContain('<h1')
         const tag = /<div[^>]*data-terminal-static[^>]*>/.exec(page)?.[0]
         expect(tag).toBeDefined()
-        expect(tag).not.toMatch(/class="[^"]*\bhidden\b/)
+        const classes = /class="([^"]*)"/.exec(tag ?? '')?.[1]?.split(/\s+/)
+        expect(classes).not.toContain('hidden')
     })
 })
 
