@@ -60,7 +60,7 @@ jobs:
                   registry: ghcr.io
                   username: ${{ github.actor }}
                   password: ${{ secrets.GITHUB_TOKEN }}
-            - uses: Jubstaaa/deploy-actions/ssh@fe798b53bd39de86318a04ae42416fa939c8debe # v1.1.0
+            - uses: Jubstaaa/deploy-actions/ssh@1d9b582d7547aa6f02352b655c0721dd5a88071f # v1.3.0
               with:
                   host: ${{ secrets.DO_HOST }}
                   user: ${{ secrets.DO_USER }}
@@ -68,7 +68,7 @@ jobs:
                   known-hosts: ${{ secrets.DO_KNOWN_HOSTS }}
             # Health-gated compose up with automatic rollback, then :latest moves to
             # the released SHA so it always means "what production runs".
-            - uses: Jubstaaa/deploy-actions/compose@fe798b53bd39de86318a04ae42416fa939c8debe # v1.1.0
+            - uses: Jubstaaa/deploy-actions/compose@1d9b582d7547aa6f02352b655c0721dd5a88071f # v1.3.0
               with:
                   app-dir: /opt/portfolio
                   container: portfolio
