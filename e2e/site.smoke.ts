@@ -90,7 +90,11 @@ test('now-playing degrades to idle without credentials', async () => {
 })
 
 test('the image optimizer rejects cache-busting query strings', async () => {
-    const src = encodeURIComponent(`${cdnBase}/images/x.webp?cb=1`)
-    const res = await get(`/_next/image?url=${src}&w=640&q=75`)
+    const query = new URLSearchParams({
+        q: '75',
+        url: `${cdnBase}/images/x.webp?cb=1`,
+        w: '640',
+    })
+    const res = await get(`/_next/image?${query}`)
     expect(res.status).toBe(400)
 })
