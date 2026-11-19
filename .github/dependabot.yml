@@ -4,6 +4,10 @@ updates:
       directory: /
       schedule:
           interval: weekly
+      # Wait a week before proposing a new release: compromised versions are
+      # usually caught and pulled within days.
+      cooldown:
+          default-days: 7
       groups:
           actions:
               patterns: ['*']
@@ -14,6 +18,10 @@ updates:
       directory: /
       schedule:
           interval: weekly
+      # Wait a week before proposing a new release: compromised versions are
+      # usually caught and pulled within days.
+      cooldown:
+          default-days: 7
       # Production stays on the Active LTS line; odd/current Node majors are
       # not LTS, and an LTS move is a deliberate change (engines, @types/node).
       ignore:
