@@ -44,6 +44,14 @@ updates:
           prod-dependencies:
               dependency-type: production
               update-types: [minor, patch]
+          next:
+              patterns: ['next', '@next/*', 'eslint-config-next']
+          # react and react-dom refuse to run at different versions.
+          react:
+              patterns:
+                  ['react', 'react-dom', '@types/react', '@types/react-dom']
+          tailwind:
+              patterns: ['tailwindcss', '@tailwindcss/*']
       ignore:
           # Must match the Node runtime major (see Dockerfile / engines).
           - dependency-name: '@types/node'
