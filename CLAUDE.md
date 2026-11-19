@@ -97,7 +97,7 @@ src/
   app/                      routes; each segment holds its own page/layout/opengraph-image
     _components/            site-wide layout parts (nav, footer, skip link, providers)
     about/_components/      parts used only by /about (likewise blog/, contact/)
-  features/                 code shared across routes, grouped by feature
+  features/                 code shared across routes, or a self-contained feature with its own state and tests
     content/                velite read path, MDX rendering, content cards and detail views, RSS
     terminal/               the home page terminal (commands, parser, session store, hooks)
     now-playing/            Last.fm parsing, client hook and widget
@@ -268,7 +268,7 @@ Use `superpowers:systematic-debugging` for anything non-trivial. No guessing fix
 - Don't write package versions by hand. `bun add <pkg>` or `bun add <pkg>@latest`.
 - Don't mirror TanStack Query results into local state or context — read from the query cache.
 - Don't add an `index.ts` barrel anywhere — import the file directly.
-- Don't put single-use code in `src/components/` or `src/features/`; colocate it with the route that uses it.
+- Don't put single-use code in `src/components/`; colocate it with the route that uses it. `src/features/` takes single-route code only when it is a self-contained feature (own state, sub-modules and tests), like the home terminal.
 - Don't reach for an arbitrary pixel value when a Tailwind v4 scale step (including half-steps) covers it.
 - Don't add emoji anywhere in UI or content unless explicitly asked.
 - Don't introduce a database, auth, or API layer — this is a static site.

@@ -1,7 +1,5 @@
 import pRetry, { AbortError } from 'p-retry'
 
-// Relative, not the @/ alias: velite bundles this file with its own esbuild pass,
-// which does not read tsconfig paths.
 import { CDN_BASE } from '@/lib/cdn'
 
 const FETCH_TIMEOUT_MS = 15_000
