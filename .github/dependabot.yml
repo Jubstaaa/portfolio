@@ -56,6 +56,9 @@ updates:
           # Must match the Node runtime major (see Dockerfile / engines).
           - dependency-name: '@types/node'
             update-types: ['version-update:semver-major']
+          # typescript-eslint does not support TypeScript 7 yet.
+          - dependency-name: typescript
+            versions: ['>=7']
       commit-message:
           prefix: chore
           include: scope
