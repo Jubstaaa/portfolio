@@ -1,0 +1,252 @@
+'use client'
+
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { useRouter } from 'next/navigation'
+import { type ReactNode, useEffect, useRef, useState } from 'react'
+
+import { TerminalCaret } from '@/components/terminal-block/terminal-caret'
+import { TerminalLine } from '@/components/terminal-block/terminal-line'
+import { cn } from '@/lib/utils'
+
+import type { CommandContext } from './commands.types'
+
+import { commands } from './commands'
+import { parseCommand } from './terminal-parser'
+import {
+    appendEntry,
+    clearTerminal,
+    getSessionState,
+    pushHistory,
+    useTerminalSession,
+} from './terminal-session'
+import { useCommandHistory } from './use-command-history'
+import { useTabCompletion } from './use-tab-completion'
+import { useTerminalIntro } from './use-terminal-intro'
+
+interface InteractiveTerminalProps {
+    children?: ReactNode
+    className?: string
+    introCommands?: string[]
+}
+
+export function InteractiveTerminal({
+    children,
+    className,
+    introCommands,
+}: InteractiveTerminalProps) {
+    const router = useRouter()
+    // The terminal is the only TanStack Query consumer (now-playing), so the client
+    // lives here rather than in the root layout, keeping query-core off other pages.
+    const [queryClient] = useState(() => new QueryClient())
+    const { cleared, entries, history } = useTerminalSession()
+
+    const [input, setInput] = useState('')
+    const [glitching, setGlitching] = useState(false)
+    const [focused, setFocused] = useState(false)
+
+    const inputRef = useRef<HTMLInputElement>(null)
+
+    const { handleArrowDown, handleArrowUp, resetHistoryNavigation } =
+        useCommandHistory({
+            history,
+            input,
+            setInput,
+        })
+
+    const execute = (raw: string) => {
+        resetHistoryNavigation()
+
+        const parsed = parseCommand(raw)
+        if (!parsed) {
+            appendEntry('', null)
+            return
+        }
+
+        const trimmed = raw.trim()
+        pushHistory(trimmed)
+        const { args, name } = parsed
+
+        if (name === 'clear') {
+            clearTerminal()
+            return
+        }
+
+        const command = Object.hasOwn(commands, name)
+            ? commands[name]
+            : undefined
+        if (!command) {
+            appendEntry(
+                trimmed,
+                <p className="text-muted-foreground">{`command not found: ${name} — try 'help'`}</p>
+            )
+            return
+        }
+
+        const ctx: CommandContext = {
+            getHistory: () => [...getSessionState().history],
+            glitch: () => {
+                setGlitching(true)
+            },
+            navigate: href => {
+                router.push(href)
+            },
+        }
+
+        let output: ReactNode
+        try {
+            output = command.run(args, ctx)
+        } catch (error) {
+            console.error(`terminal: '${name}' failed`, error)
+            output = (
+                <p className="text-muted-foreground">
+                    error: something went wrong
+                </p>
+            )
+        }
+        appendEntry(trimmed, output)
+    }
+
+    const {
+        revealStatic,
+        skipIntro,
+        status: introStatus,
+    } = useTerminalIntro({ execute, introCommands, setInput })
+
+    const { complete, resetCompletion } = useTabCompletion({
+        appendEntry,
+        input,
+        setInput,
+    })
+
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (skipIntro()) return
+        if (event.nativeEvent.isComposing) return
+
+        if (event.key === 'Enter') {
+            event.preventDefault()
+            resetCompletion()
+            execute(input)
+            setInput('')
+            return
+        }
+
+        if (event.key === 'Tab' && !event.shiftKey) {
+            if (complete()) {
+                event.preventDefault()
+            }
+            return
+        }
+
+        if (event.key === 'ArrowUp') {
+            if (handleArrowUp(event)) resetCompletion()
+            return
+        }
+
+        if (event.key === 'ArrowDown') {
+            if (handleArrowDown(event)) resetCompletion()
+        }
+    }
+
+    useEffect(() => {
+        if (window.matchMedia('(pointer: fine)').matches) {
+            inputRef.current?.focus({ preventScroll: true })
+        }
+
+        const handleDocumentClick = (event: MouseEvent) => {
+            if (skipIntro()) return
+            if (window.getSelection()?.toString()) return
+            if (!(event.target instanceof HTMLElement)) return
+            if (!event.target.closest('#main')) return
+            if (
+                event.target.closest(
+                    "a, button, input, textarea, select, [role='button']"
+                )
+            )
+                return
+            inputRef.current?.focus({ preventScroll: true })
+        }
+        document.addEventListener('click', handleDocumentClick)
+        return () => {
+            document.removeEventListener('click', handleDocumentClick)
+        }
+    }, [skipIntro])
+
+    useEffect(() => {
+        inputRef.current?.scrollIntoView({ block: 'nearest' })
+    }, [entries])
+
+    return (
+        <QueryClientProvider client={queryClient}>
+            <div
+                className={cn(
+                    'flex flex-col gap-3',
+                    glitching && 'terminal-glitch',
+                    className
+                )}
+                onAnimationEnd={event => {
+                    if (event.animationName === 'terminal-glitch')
+                        setGlitching(false)
+                }}>
+                {cleared ? null : (
+                    <div
+                        className={cn(
+                            'flex flex-col gap-3',
+                            !revealStatic &&
+                                'motion-safe:[@media(scripting:enabled)]:hidden'
+                        )}
+                        data-terminal-static>
+                        {children}
+                    </div>
+                )}
+
+                <div
+                    aria-live="polite"
+                    className="flex flex-col gap-3 empty:hidden">
+                    {entries.map(entry => (
+                        <TerminalLine command={entry.command} key={entry.id}>
+                            {entry.output}
+                        </TerminalLine>
+                    ))}
+                </div>
+
+                <label className="flex cursor-default items-center">
+                    <TerminalCaret />
+                    <input
+                        aria-label="terminal input — type 'help' for commands"
+                        autoCapitalize="off"
+                        autoComplete="off"
+                        autoCorrect="off"
+                        className="text-foreground min-w-0 cursor-default bg-transparent p-0 caret-transparent outline-none"
+                        enterKeyHint="go"
+                        id="terminal-input"
+                        name="terminal-input"
+                        onBlur={() => {
+                            setFocused(false)
+                        }}
+                        onChange={event => {
+                            resetCompletion()
+                            setInput(event.target.value)
+                        }}
+                        onFocus={() => {
+                            setFocused(true)
+                        }}
+                        onKeyDown={handleKeyDown}
+                        readOnly={introStatus === 'playing'}
+                        ref={inputRef}
+                        spellCheck={false}
+                        style={{ width: `${input.length}ch` }}
+                        value={input}
+                    />
+                    <span
+                        aria-hidden
+                        className={cn(
+                            'shrink-0 select-none',
+                            focused ? 'cursor-blink' : 'opacity-40'
+                        )}>
+                        _
+                    </span>
+                </label>
+            </div>
+        </QueryClientProvider>
+    )
+}

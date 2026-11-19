@@ -1,9 +1,9 @@
 import { describe, expect, test } from 'bun:test'
 
-import { getAllProjects, getPublishedPosts } from '@/lib/content'
+import { getAllProjects, getPublishedPosts } from '@/features/content/content'
 
 // Next reads segment config statically from the route file itself, so these must
-// be literal exports there; a re-export fails the Turbopack build.
+// stay literal exports there.
 describe.each([
     ['blog page', () => import('./blog/[slug]/page')],
     ['blog OG image', () => import('./blog/[slug]/opengraph-image')],

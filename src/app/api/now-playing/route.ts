@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server'
 
-import { type NowPlayingPayload, parseRecentTracks } from '@/lib/now-playing'
+import {
+    type NowPlayingPayload,
+    parseRecentTracks,
+} from '@/features/now-playing/last-fm'
 
 const RECENT_TRACKS_ENDPOINT = 'https://ws.audioscrobbler.com/2.0/'
 const SPOTIFY_PROFILE_URL = 'https://open.spotify.com/user/11154024788'

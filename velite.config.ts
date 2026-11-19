@@ -9,9 +9,9 @@ import sharp from 'sharp'
 import { EXIT, visit } from 'unist-util-visit'
 import { defineCollection, defineConfig, s } from 'velite'
 
+import { readImageBytes } from './src/features/content/image-source'
+import { rehypeNormalizeHeadings } from './src/features/content/rehype-normalize-headings'
 import { isYearMonth } from './src/lib/format'
-import { readImageBytes } from './src/lib/image-source'
-import { rehypeNormalizeHeadings } from './src/lib/rehype-normalize-headings'
 
 const prettyCode: PrettyCodeOptions = {
     defaultLang: 'plaintext',

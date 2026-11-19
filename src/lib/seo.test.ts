@@ -1,7 +1,8 @@
 import { describe, expect, test } from 'bun:test'
 
-import { getAllProjects, site } from '@/lib/content'
-import { buildMetadata, buildProjectJsonLd } from '@/lib/seo'
+import { getAllProjects, site } from '@/features/content/content'
+
+import { buildMetadata, buildProjectJsonLd } from './seo'
 
 describe('buildMetadata', () => {
     test('a website page gets an absolute canonical matching og:url', () => {

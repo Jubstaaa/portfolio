@@ -1,7 +1,27 @@
-export { default, generateStaticParams } from '@/views/blog/blog-og-image'
+import { notFound } from 'next/navigation'
 
-// Route segment and image config must be literals in the route file: Next parses
-// them statically and rejects re-exports.
+import { getPostBySlug, getPublishedPosts } from '@/features/content/content'
+import { formatDate } from '@/lib/format'
+import { renderOgImage } from '@/lib/og/og'
+
+import type { PostPageProps } from './page.types'
+
+export default async function BlogOgImage({ params }: PostPageProps) {
+    const { slug } = await params
+    const post = getPostBySlug(slug)
+    if (!post) notFound()
+    return renderOgImage({
+        eyebrow: `${post.category} · ${formatDate(post.date)}`,
+        segment: 'blog',
+        title: post.title,
+        ...(post.cover ? { cover: post.cover.src } : {}),
+    })
+}
+
+export function generateStaticParams() {
+    return getPublishedPosts().map(post => ({ slug: post.slug }))
+}
+
 export const dynamicParams = false
 export const size = { height: 630, width: 1200 }
 export const contentType = 'image/jpeg'
