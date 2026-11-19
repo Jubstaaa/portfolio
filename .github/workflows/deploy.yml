@@ -38,6 +38,9 @@ jobs:
         concurrency:
             group: production-deploy
             cancel-in-progress: false
+        permissions:
+            contents: read
+            packages: write
         env:
             IMAGE_TAG: ${{ inputs.image_tag || github.sha }}
         steps:
@@ -45,26 +48,33 @@ jobs:
               run: |
                   [[ "$IMAGE_TAG" =~ ^[0-9a-f]{40}$ ]] || { echo "::error::image_tag must be a full 40-char commit SHA"; exit 1; }
                   docker buildx imagetools inspect "$IMAGE:$IMAGE_TAG" > /dev/null
+            # The compose file comes from the repository, so the server never drifts from git.
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               with:
                   persist-credentials: false
-                  sparse-checkout: |
-                      docker-compose.yml
-                      scripts/deploy
+                  sparse-checkout: docker-compose.yml
                   sparse-checkout-cone-mode: false
-            - name: Configure SSH
-              env:
-                  SSH_KEY: ${{ secrets.DO_SSH_KEY }}
-                  KNOWN_HOSTS: ${{ secrets.DO_KNOWN_HOSTS }}
-                  DO_HOST: ${{ secrets.DO_HOST }}
-                  DO_USER: ${{ secrets.DO_USER }}
-              run: scripts/deploy/configure-ssh.sh
-            - name: Upload compose file
-              run: scp docker-compose.yml droplet:/opt/portfolio/docker-compose.yml
-            - name: Deploy with automatic rollback
-              env:
-                  SOURCE: ${{ github.server_url }}/${{ github.repository }}
-              run: ssh droplet bash -s -- "$IMAGE_TAG" "$SOURCE" < scripts/deploy/remote-deploy.sh
+            # For promoting :latest once the release is healthy.
+            - uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
+              with:
+                  registry: ghcr.io
+                  username: ${{ github.actor }}
+                  password: ${{ secrets.GITHUB_TOKEN }}
+            - uses: Jubstaaa/deploy-actions/ssh@bf5c90422dc8dc2ed3d5ec002510817500913469
+              with:
+                  host: ${{ secrets.DO_HOST }}
+                  user: ${{ secrets.DO_USER }}
+                  key: ${{ secrets.DO_SSH_KEY }}
+                  known-hosts: ${{ secrets.DO_KNOWN_HOSTS }}
+            # Health-gated compose up with automatic rollback, then :latest moves to
+            # the released SHA so it always means "what production runs".
+            - uses: Jubstaaa/deploy-actions/compose@bf5c90422dc8dc2ed3d5ec002510817500913469
+              with:
+                  app-dir: /opt/portfolio
+                  container: portfolio
+                  image: ${{ env.IMAGE }}
+                  tag: ${{ env.IMAGE_TAG }}
+                  health-url: http://127.0.0.1:3002/
             # HTML is cached at the edge until purged: without this, visitors would
             # get the previous release's pages, which reference chunks the new
             # container no longer serves. A failed purge fails the job.
@@ -78,23 +88,3 @@ jobs:
                       -H "Authorization: Bearer $CF_PURGE_TOKEN" \
                       --json '{"purge_everything":true}' \
                       | jq -e '.success' > /dev/null
-
-    promote:
-        needs: deploy
-        if: ${{ !cancelled() && needs.deploy.result == 'success' }}
-        runs-on: ubuntu-latest
-        timeout-minutes: 5
-        permissions:
-            contents: read
-            packages: write
-        env:
-            IMAGE_TAG: ${{ inputs.image_tag || github.sha }}
-        steps:
-            - uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
-              with:
-                  registry: ghcr.io
-                  username: ${{ github.actor }}
-                  password: ${{ secrets.GITHUB_TOKEN }}
-            # :latest always means "what production runs", so compose's
-            # ${IMAGE_TAG:-latest} fallback is the last good release.
-            - run: docker buildx imagetools create --tag "$IMAGE:latest" "$IMAGE:$IMAGE_TAG"

@@ -27,15 +27,16 @@ Operational guide for this repo. Global rules in `~/.claude/CLAUDE.md` still app
 Not Vercel. `next.config.ts` sets `output: 'standalone'`. `.github/workflows/ci.yml` (PRs, and
 reused by deploy) holds the gate; `.github/workflows/deploy.yml` (push to `main`, manual
 dispatch) releases. Actions are pinned to commit SHAs, shared steps live in the
-`.github/actions/setup-bun` composite action, and the deploy shell lives in `scripts/deploy/`:
+`.github/actions/setup-bun` composite action, and the deploy uses the shared
+[Jubstaaa/deploy-actions](https://github.com/Jubstaaa/deploy-actions) (`ssh`, `compose`):
 
-1. **check** — `format:check`, `lint`, `typecheck`, `test`, `audit`, actionlint, shellcheck
+1. **check** — `format:check`, `lint`, `typecheck`, `test`, `audit`, actionlint
 2. **image** — builds the image, runs it with the production constraints, runs
    `scripts/smoke.ts` against it, and on `main` pushes exactly that image as `:<commit-sha>`
 3. **deploy** (`main`, `Production` environment) — copies `docker-compose.yml` to the droplet
    over plain OpenSSH (pinned host key) and runs `docker compose up --wait` with
-   `IMAGE_TAG=<sha>`; an unhealthy container is rolled back to the previous tag automatically
-4. **promote** — moves `:latest` to the released SHA
+   `IMAGE_TAG=<sha>`; an unhealthy container is rolled back to the previous tag automatically,
+   and `:latest` moves to the released SHA after a healthy release
 
 Rollback: `gh workflow run deploy.yml --ref main -f image_tag=<good-sha>` (see README).
 
