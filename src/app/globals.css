@@ -132,6 +132,9 @@
     @supports (animation-timeline: scroll()) {
         .scroll-progress {
             display: block;
+            /* A page too short to scroll has an inactive timeline, which applies
+               no keyframes; start empty so the bar does not render full width. */
+            transform: scaleX(0);
             animation: scroll-progress linear both;
             animation-timeline: scroll(root block);
         }
