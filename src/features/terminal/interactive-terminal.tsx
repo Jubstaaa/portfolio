@@ -9,7 +9,6 @@ import { TerminalLine } from '@/components/terminal-block/terminal-line'
 import { cn } from '@/lib/utils'
 
 import type { CommandContext } from './commands.types'
-import type { InteractiveTerminalProps } from './interactive-terminal.types'
 
 import { commands } from './commands'
 import { parseCommand } from './terminal-parser'
@@ -23,6 +22,12 @@ import {
 import { useCommandHistory } from './use-command-history'
 import { useTabCompletion } from './use-tab-completion'
 import { useTerminalIntro } from './use-terminal-intro'
+
+interface InteractiveTerminalProps {
+    children?: ReactNode
+    className?: string
+    introCommands?: string[]
+}
 
 export function InteractiveTerminal({
     children,

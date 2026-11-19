@@ -1,8 +1,14 @@
+import type { ReactNode } from 'react'
+
 import { cn } from '@/lib/utils'
 
-import type { TerminalLineProps } from './terminal-line.types'
-
 import { TerminalCaret } from './terminal-caret'
+
+interface TerminalLineProps {
+    children?: ReactNode
+    className?: string
+    command: string
+}
 
 export function TerminalLine({
     children,

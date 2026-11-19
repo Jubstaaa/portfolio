@@ -1,5 +1,9 @@
-import type { HeadingProps } from './heading.types'
+import type { ReactNode } from 'react'
 
+interface HeadingProps {
+    as?: 'h1' | 'h2' | 'h3'
+    title: ReactNode
+}
 export function Heading({ as = 'h2', title }: HeadingProps) {
     const Tag = as
 

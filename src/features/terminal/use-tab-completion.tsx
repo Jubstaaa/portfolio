@@ -1,12 +1,21 @@
+import type { ReactNode } from 'react'
+
 import { useCallback, useRef } from 'react'
 
-import type {
-    CompletionSession,
-    UseTabCompletionOptions,
-} from './use-tab-completion.types'
+import type { Completion } from './terminal-parser.types'
 
 import { COMMAND_NAMES } from './commands'
 import { getCompletions } from './terminal-parser'
+
+interface CompletionSession extends Completion {
+    index: number
+}
+
+interface UseTabCompletionOptions {
+    appendEntry: (command: string, output: ReactNode) => void
+    input: string
+    setInput: (value: string) => void
+}
 
 export function useTabCompletion({
     appendEntry,

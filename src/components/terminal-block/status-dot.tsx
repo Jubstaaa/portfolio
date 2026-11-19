@@ -1,8 +1,18 @@
 import { cn } from '@/lib/utils'
 
-import type { StatusDotProps } from './status-dot.types'
+interface StatusDotProps {
+    className?: string
+    tone?: StatusTone
+}
 
-import { TONE_CLASS } from './status-dot.constants'
+type StatusTone = 'danger' | 'muted' | 'success' | 'warning'
+
+const TONE_CLASS: Record<StatusTone, string> = {
+    danger: 'text-destructive',
+    muted: 'text-muted-foreground',
+    success: 'text-success',
+    warning: 'text-warning',
+}
 
 export function StatusDot({ className, tone = 'success' }: StatusDotProps) {
     return (

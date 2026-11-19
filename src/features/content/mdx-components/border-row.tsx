@@ -1,6 +1,12 @@
-import type { BorderRowProps } from './border-row.types'
+import type { ReactNode } from 'react'
 
 import { RULE } from './mdx-components.constants'
+
+interface BorderRowProps {
+    label?: ReactNode
+    left: string
+    right: string
+}
 
 export function BorderRow({ label, left, right }: BorderRowProps) {
     return (

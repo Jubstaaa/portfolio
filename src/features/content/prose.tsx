@@ -1,6 +1,11 @@
+import type { ReactNode } from 'react'
+
 import { cn } from '@/lib/utils'
 
-import type { ProseProps } from './prose.types'
+interface ProseProps {
+    children: ReactNode
+    className?: string
+}
 
 export function Prose({ children, className }: ProseProps) {
     return (

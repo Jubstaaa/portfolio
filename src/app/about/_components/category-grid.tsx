@@ -1,6 +1,11 @@
-import type { CategoryGridProps } from './category-grid.types'
-
 import { LabeledGrid } from './labeled-grid'
+
+interface CategoryGridProps<T extends string> {
+    buckets: Partial<Record<T, { name: string }[]>>
+    className?: string
+    label: Record<T, string>
+    order: T[]
+}
 
 export function CategoryGrid<T extends string>({
     buckets,

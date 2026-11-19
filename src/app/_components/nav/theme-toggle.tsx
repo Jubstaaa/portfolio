@@ -6,7 +6,9 @@ import { useTheme } from 'next-themes'
 import { useHasMounted } from '@/hooks/use-has-mounted'
 import { cn } from '@/lib/utils'
 
-import type { ThemeToggleProps } from './theme-toggle.types'
+interface ThemeToggleProps {
+    className?: string
+}
 
 export function ThemeToggle({ className }: ThemeToggleProps) {
     const { resolvedTheme, setTheme } = useTheme()

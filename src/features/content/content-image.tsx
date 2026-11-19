@@ -3,9 +3,16 @@ import Image from 'next/image'
 import { cdnUrl } from '@/lib/cdn'
 import { cn } from '@/lib/utils'
 
-import type { ContentImageProps } from './content-image.types'
-
 import { CONTENT_IMAGE_CLASS } from './content-image.constants'
+
+interface ContentImageProps {
+    alt: string
+    className?: string
+    height: number
+    preload?: boolean
+    src: string
+    width: number
+}
 
 export function ContentImage({
     alt,

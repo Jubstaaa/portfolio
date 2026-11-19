@@ -1,6 +1,12 @@
 import { site } from '@/features/content/content'
 
-import type { OgCardProps } from './og-card.types'
+interface OgCardProps {
+    coverUrl?: string | undefined
+    cta: string
+    eyebrow: string
+    path: string
+    title: string
+}
 
 export function OgCard({ coverUrl, cta, eyebrow, path, title }: OgCardProps) {
     const overlay = coverUrl

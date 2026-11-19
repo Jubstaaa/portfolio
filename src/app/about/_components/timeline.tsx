@@ -1,9 +1,21 @@
+import type { ReactNode } from 'react'
+
 import { formatMonth } from '@/lib/format'
 import { cn } from '@/lib/utils'
 
-import type { TimelineEntry, TimelineProps } from './timeline.types'
-
 import { TimelineRow } from './timeline-row'
+
+interface TimelineEntry {
+    end?: string | undefined
+    slug: string
+    start: string
+}
+
+interface TimelineProps<T extends TimelineEntry> {
+    className?: string
+    items: T[]
+    renderContent: (item: T) => ReactNode
+}
 
 export function Timeline<T extends TimelineEntry>({
     className,

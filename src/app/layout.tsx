@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next'
+import type { ReactNode } from 'react'
 
 import localFont from 'next/font/local'
 
@@ -9,13 +10,28 @@ import { ScrollProgress } from '@/app/_components/scroll-progress'
 import { SkipLink } from '@/app/_components/skip-link'
 import { site } from '@/features/content/content'
 import { ogLocale } from '@/lib/site'
+
+import './globals.css'
 import { cn } from '@/lib/utils'
 
-import type { RootLayoutProps } from './layout.types'
+interface RootLayoutProps {
+    children: ReactNode
+}
 
-import { SITE_KEYWORDS } from './layout.constants'
-
-import '@/app/globals.css'
+const SITE_KEYWORDS = [
+    'ilker balcilar',
+    'software engineer',
+    'frontend engineer',
+    'full-stack developer',
+    'istanbul',
+    'nextjs',
+    'typescript',
+    'react',
+    'react native',
+    'node.js',
+    'hono',
+    'portfolio',
+]
 
 // Upright faces are on every page, so they are preloaded. Italics only appear in
 // MDX emphasis and blockquotes; a separate family keeps them off the critical path.
@@ -23,12 +39,12 @@ const hermit = localFont({
     display: 'swap',
     src: [
         {
-            path: '../../fonts/hermit/Hermit-Regular.woff2',
+            path: '../fonts/hermit/Hermit-Regular.woff2',
             style: 'normal',
             weight: '400',
         },
         {
-            path: '../../fonts/hermit/Hermit-Bold.woff2',
+            path: '../fonts/hermit/Hermit-Bold.woff2',
             style: 'normal',
             weight: '700',
         },
@@ -41,12 +57,12 @@ const hermitItalic = localFont({
     preload: false,
     src: [
         {
-            path: '../../fonts/hermit/Hermit-RegularItalic.woff2',
+            path: '../fonts/hermit/Hermit-RegularItalic.woff2',
             style: 'italic',
             weight: '400',
         },
         {
-            path: '../../fonts/hermit/Hermit-BoldItalic.woff2',
+            path: '../fonts/hermit/Hermit-BoldItalic.woff2',
             style: 'italic',
             weight: '700',
         },

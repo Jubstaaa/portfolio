@@ -1,6 +1,9 @@
 import { formatDate } from '@/lib/format'
 
-import type { PostMetaProps } from './post-meta.types'
+interface PostMetaProps {
+    category: string
+    date: string
+}
 
 export function PostMeta({ category, date }: PostMetaProps) {
     return (

@@ -1,8 +1,17 @@
+import type { ReactNode } from 'react'
+
 import Link from 'next/link'
 
 import { cn } from '@/lib/utils'
 
-import type { ContentCardProps } from './content-card.types'
+interface ContentCardProps {
+    className?: string
+    description: string
+    href: string
+    meta: ReactNode
+    tags?: ReactNode
+    title: string
+}
 
 export function ContentCard({
     className,

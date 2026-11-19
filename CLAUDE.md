@@ -88,18 +88,29 @@ bun scripts/smoke.ts <url>     # post-build smoke test against a running server
 
 ## Repository Standards
 
-> A global `frontend-standards` skill holds the canonical, project-agnostic version of these conventions. This section is the project-specific application of it — when in doubt, the skill wins.
+Next.js is unopinionated about layout; this repo follows its "split project files by feature or route" strategy with colocation: code lives next to the only place that uses it, and moves to a shared folder once a second user appears.
 
-### View-based structure
+### Folder structure
 
-- Route logic lives in `src/views/<feature>/`, not in `src/app/`. Each `app/**/page.tsx` (and `layout.tsx`, `opengraph-image.tsx`, etc.) is a thin re-export:
-    ```ts
-    export { default, metadata } from '@/views/blog/blog-list'
-    ```
-    The one exception is route segment config (`dynamicParams`, `revalidate`, …) and image-route config (`size`, `contentType`): Next parses these statically from the route file and rejects re-exports, so they stay as literal `export const` in `app/`.
-- Inside a view folder, files sit flat and share the feature's base name with a dot suffix: `blog-list.tsx`, `blog-list.types.ts`, `blog-list.constants.ts`, `blog-list.hooks.ts`. No `ui/`, `lib/`, or other subfolders — except one level of sub-feature folder when a view contains a self-contained sub-feature with its own modules (e.g. `views/home/terminal/`: command registry, session store, parser, hooks). Files inside it follow the same flat, kebab-case rules.
-- **No `index.ts` barrels anywhere** — not under `src/views/`, not under `src/components/`. Components live at `component-name/component-name.tsx` (+ `component-name.types.ts` / `component-name.constants.ts` as needed); each `.tsx` file holds exactly one component and one export. Importers use the direct file path (`@/components/foo/foo`, types from `@/components/foo/foo.types`), never a folder-level import.
-- Sub-components stay at the same level inside the component/view folder until reuse elsewhere earns them promotion to `src/components/`.
+```
+src/
+  app/                      routes; each segment holds its own page/layout/opengraph-image
+    _components/            site-wide layout parts (nav, footer, skip link, providers)
+    about/_components/      parts used only by /about (likewise blog/, contact/)
+  features/                 code shared across routes, grouped by feature
+    content/                velite read path, MDX rendering, content cards and detail views, RSS
+    terminal/               the home page terminal (commands, parser, session store, hooks)
+    now-playing/            Last.fm parsing, client hook and widget
+  components/               small UI parts used by more than one route or feature
+  hooks/                    generic hooks shared across features
+  lib/                      cross-cutting infrastructure: seo, og, cdn, site, format, utils
+```
+
+- `page.tsx`, `layout.tsx`, `opengraph-image.tsx` and the other special files hold their own code; there is no separate view layer. Route segment config (`dynamicParams`, `size`, `contentType`, …) is a literal `export const` in the route file, as Next requires.
+- `_`-prefixed folders inside `app/` are private: never routable, safe for colocated components.
+- A component's props interface and its small constants live in the component file. A separate `*.types.ts` / `*.constants.ts` file exists only when several files share it (e.g. `features/terminal/commands.types.ts`). No project-wide `types/` or `constants/` dumping ground.
+- Imports: `./x` within the same folder, `@/…` everywhere else. No `index.ts` barrels; import the file directly.
+- Multi-file parts get a folder (`app/_components/nav/`, `components/terminal-block/`); single-file parts are a file (`components/heading.tsx`).
 - **Everything is kebab-case** — folders, files, routes, lib, hooks, styles, content. React component identifiers stay PascalCase.
 - Server Components by default. Add `'use client'` only when unavoidable (state, effects, browser APIs, form inputs). Client islands stay leaf-level; don't bubble `'use client'` upward.
 
@@ -109,7 +120,6 @@ bun scripts/smoke.ts <url>     # post-build smoke test against a running server
 - No `any`. Use `unknown` + narrow, or model the type properly.
 - Prefer `interface` for object shapes; `type` for unions, intersections, mapped/conditional types.
 - `import type { … }` for type-only imports.
-- **No inline type or constant definitions inside `.tsx` files.** A component's props/local types go in a sibling `.types.ts`; magic strings, enums, or lookup tables go in a sibling `.constants.ts`. The `.tsx` file imports both.
 - ESLint is built from presets — `eslint-config-next` (core-web-vitals + TypeScript), `typescript-eslint` strict + stylistic **type-checked**, `jsx-a11y` recommended, `perfectionist` recommended-natural (all sorting: imports, objects, types, JSX props), and `eslint-config-prettier` last. `eslint.config.mjs` only adds a few documented project choices; prefer adjusting a preset rule there over hand-ordering code against `--fix`.
 
 ### Data fetching
@@ -203,7 +213,7 @@ Long-form description as MDX. Same pipeline as blog posts — `remark-gfm`, Shik
 
 ### Experience / Education / Skills / Stacks / Socials
 
-Schema lives in `velite.config.ts`. Add a JSON file; re-run `bun run velite` or rely on the dev watcher. Typed helpers in `src/lib/content.ts` are the only read path — do **not** import JSON directly elsewhere.
+Schema lives in `velite.config.ts`. Add a JSON file; re-run `bun run velite` or rely on the dev watcher. Typed helpers in `src/features/content/content.ts` are the only read path — do **not** import JSON directly elsewhere.
 
 ### One MDX map, two surfaces
 
@@ -257,8 +267,8 @@ Use `superpowers:systematic-debugging` for anything non-trivial. No guessing fix
 - Don't ship `console.log` — ESLint flags it.
 - Don't write package versions by hand. `bun add <pkg>` or `bun add <pkg>@latest`.
 - Don't mirror TanStack Query results into local state or context — read from the query cache.
-- Don't add an `index.ts` barrel anywhere — under `src/views/` the `app/**/page.tsx` re-export is the only consumer, and under `src/components/` importers use the direct file path instead.
-- Don't define types or constants inline in a `.tsx` file — split them into `.types.ts` / `.constants.ts`.
+- Don't add an `index.ts` barrel anywhere — import the file directly.
+- Don't put single-use code in `src/components/` or `src/features/`; colocate it with the route that uses it.
 - Don't reach for an arbitrary pixel value when a Tailwind v4 scale step (including half-steps) covers it.
 - Don't add emoji anywhere in UI or content unless explicitly asked.
 - Don't introduce a database, auth, or API layer — this is a static site.

@@ -3,10 +3,16 @@
 import { Check, Copy, X } from 'lucide-react'
 import { type HTMLAttributes, useCallback, useRef } from 'react'
 
+import type { CopyStatus } from '@/hooks/use-copy-to-clipboard.types'
+
 import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard'
 import { cn } from '@/lib/utils'
 
-import { COPY_CODE_LABEL } from './code-block.constants'
+const COPY_CODE_LABEL: Record<CopyStatus, string> = {
+    copied: 'Copied',
+    failed: 'Copy failed — select the code instead',
+    idle: 'Copy code',
+}
 
 export function CodeBlock({
     children,

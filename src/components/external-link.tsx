@@ -1,6 +1,11 @@
+import type { AnchorHTMLAttributes } from 'react'
+
 import { cn, LINK_CLASS } from '@/lib/utils'
 
-import type { ExternalLinkProps } from './external-link.types'
+interface ExternalLinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
+    href: string
+    showArrow?: boolean
+}
 
 export function ExternalLink({
     children,

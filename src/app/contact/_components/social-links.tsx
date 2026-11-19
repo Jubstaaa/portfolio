@@ -2,7 +2,9 @@ import { ExternalLink } from '@/components/external-link'
 import { socials } from '@/features/content/content'
 import { cn } from '@/lib/utils'
 
-import type { SocialLinksProps } from './social-links.types'
+interface SocialLinksProps {
+    className?: string
+}
 
 export function SocialLinks({ className }: SocialLinksProps) {
     return (

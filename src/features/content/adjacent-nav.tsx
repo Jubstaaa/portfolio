@@ -1,6 +1,10 @@
 import Link from 'next/link'
 
-import type { AdjacentNavProps } from './adjacent-nav.types'
+interface AdjacentNavProps {
+    ariaLabel: string
+    next?: { path: string; title: string }
+    prev?: { path: string; title: string }
+}
 
 export function AdjacentNav({ ariaLabel, next, prev }: AdjacentNavProps) {
     if (!prev && !next) return null

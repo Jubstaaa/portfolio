@@ -3,7 +3,9 @@ import Link from 'next/link'
 import { handlePath } from '@/lib/site'
 import { cn } from '@/lib/utils'
 
-import type { LogoProps } from './logo.types'
+interface LogoProps {
+    className?: string
+}
 
 export function Logo({ className }: LogoProps) {
     return (

@@ -1,15 +1,44 @@
+import type { ReactNode } from 'react'
+import type { BreadcrumbList, Thing, WithContext } from 'schema-dts'
+
 import { JsonLd } from '@/components/json-ld'
 import { PathBar } from '@/components/path-bar'
 import { SectionHeading } from '@/components/section-heading'
-
-import type { ContentDetailProps } from './content-detail.types'
+import { DeferredImg } from '@/features/content/mdx-components/deferred-image'
 
 import { AdjacentNav } from './adjacent-nav'
 import { ArticleHeader } from './article-header'
-import { DEFERRED_BODY_IMAGES } from './content-detail.constants'
 import { ContentImage } from './content-image'
 import { Mdx } from './mdx'
 import { Prose } from './prose'
+
+interface ContentDetailProps {
+    adjacent: {
+        ariaLabel: string
+        next?: { path: string; title: string }
+        prev?: { path: string; title: string }
+    }
+    body?: string | undefined
+    cover?:
+        undefined | { alt: string; height: number; src: string; width: number }
+    header: {
+        children?: ReactNode
+        lead: string
+        meta: ReactNode
+        tags?: ReactNode
+        title: string
+    }
+    highlights?: string[] | undefined
+    jsonLd: {
+        breadcrumb: WithContext<BreadcrumbList>
+        entity: WithContext<Thing>
+        idPrefix: string
+        slug: string
+    }
+    pathBar: { meta: string; segment: string }
+}
+
+const DEFERRED_BODY_IMAGES = { img: DeferredImg }
 
 export function ContentDetail({
     adjacent,

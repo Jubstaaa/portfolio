@@ -8,7 +8,7 @@ import { InteractiveTerminal } from '@/features/terminal/interactive-terminal'
 import { buildPersonJsonLd } from '@/lib/seo'
 import { handlePath } from '@/lib/site'
 
-import { INTRO_COMMANDS } from './page.constants'
+const INTRO_COMMANDS = ['whoami', 'ls', 'now-playing']
 
 export default function HomePage() {
     return (

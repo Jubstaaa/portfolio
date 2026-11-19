@@ -1,6 +1,14 @@
+import type { ReactNode } from 'react'
+
 import { Heading } from '@/components/heading'
 
-import type { ArticleHeaderProps } from './article-header.types'
+interface ArticleHeaderProps {
+    children?: ReactNode
+    lead: string
+    meta: ReactNode
+    tags?: ReactNode
+    title: string
+}
 
 export function ArticleHeader({
     children,

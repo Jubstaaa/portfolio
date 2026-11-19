@@ -1,8 +1,14 @@
 import { cn } from '@/lib/utils'
 
-import type { SectionHeadingProps } from './section-heading.types'
-
 import { Heading } from './heading'
+
+interface SectionHeadingProps {
+    as?: 'h1' | 'h2' | 'h3'
+    className?: string
+    description?: string
+    number?: string
+    title: string
+}
 
 export function SectionHeading({
     as = 'h2',

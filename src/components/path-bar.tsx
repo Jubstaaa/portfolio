@@ -1,7 +1,11 @@
 import { site } from '@/features/content/content'
 import { cn } from '@/lib/utils'
 
-import type { PathBarProps } from './path-bar.types'
+interface PathBarProps {
+    className?: string
+    meta?: string
+    segment?: string
+}
 
 export function PathBar({ className, meta, segment }: PathBarProps) {
     return (

@@ -2,9 +2,11 @@
 
 import { cn } from '@/lib/utils'
 
-import type { NowPlayingProps } from './now-playing.types'
-
 import { useNowPlaying } from './now-playing.hooks'
+
+interface NowPlayingProps {
+    className?: string
+}
 
 export function NowPlaying({ className }: NowPlayingProps) {
     const { data } = useNowPlaying()

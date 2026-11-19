@@ -1,6 +1,14 @@
 import { cn } from '@/lib/utils'
 
-import type { LabeledGridProps } from './labeled-grid.types'
+interface LabeledGridGroup {
+    items: string[]
+    label: string
+}
+
+interface LabeledGridProps {
+    className?: string
+    groups: LabeledGridGroup[]
+}
 
 export function LabeledGrid({ className, groups }: LabeledGridProps) {
     return (

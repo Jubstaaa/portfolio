@@ -2,12 +2,21 @@
 
 import { Check, Copy, X } from 'lucide-react'
 
+import type { CopyStatus } from '@/hooks/use-copy-to-clipboard.types'
+
 import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard'
 import { cn, LINK_CLASS } from '@/lib/utils'
 
-import type { CopyEmailProps } from './copy-email.types'
+interface CopyEmailProps {
+    className?: string
+    email: string
+}
 
-import { COPY_EMAIL_LABEL } from './copy-email.constants'
+const COPY_EMAIL_LABEL: Record<CopyStatus, string> = {
+    copied: 'Email copied',
+    failed: 'Copy failed — select the address instead',
+    idle: 'Copy email',
+}
 
 export function CopyEmail({ className, email }: CopyEmailProps) {
     const { copy, status } = useCopyToClipboard()

@@ -2,7 +2,9 @@ import Link from 'next/link'
 
 import { site } from '@/features/content/content'
 
-import type { NavLinksProps } from './nav-links.types'
+interface NavLinksProps {
+    includeHome?: boolean
+}
 
 export function NavLinks({ includeHome = false }: NavLinksProps) {
     return (

@@ -9,7 +9,6 @@ import type { CommandContext, TerminalCommand } from './commands.types'
 
 import { CommandLine } from './command-line'
 import { CommandPre } from './command-pre'
-import { STATIC_CTX, VIM_ESCAPE_MESSAGE } from './commands.constants'
 import {
     ENV_OUTPUT,
     HIDDEN_FILES,
@@ -17,6 +16,16 @@ import {
     TOP_OUTPUT,
 } from './terminal-output.constants'
 import { resolvePage } from './terminal-parser'
+
+const VIM_ESCAPE_MESSAGE =
+    "E37: no write since last change — just kidding, you're free."
+
+// Context for rendering command output on the server, where nothing can navigate.
+const STATIC_CTX: CommandContext = {
+    getHistory: () => [],
+    glitch: () => undefined,
+    navigate: () => undefined,
+}
 
 function goTo(args: string, ctx: CommandContext): ReactNode {
     const href = resolvePage(args)

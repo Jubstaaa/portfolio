@@ -3,7 +3,19 @@ import type { ReactNode } from 'react'
 import { useStore } from 'zustand'
 import { createStore } from 'zustand/vanilla'
 
-import type { TerminalSessionState } from './terminal-session.types'
+interface TerminalEntry {
+    command: string
+    id: number
+    output: ReactNode
+}
+
+interface TerminalSessionState {
+    cleared: boolean
+    entries: TerminalEntry[]
+    history: string[]
+    introPlayed: boolean
+    nextId: number
+}
 
 // Module-level so the transcript survives client-side navigation away from and
 // back to the home page; the server always renders the initial state.
