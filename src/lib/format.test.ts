@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 
-import { formatDate, formatMonth } from '@/lib/format'
+import { formatDate, formatMonth } from './format'
 
 describe('formatMonth', () => {
     test('formats YYYY-MM as a short lowercase month', () => {

@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next'
 
-import { getAllProjects, getPublishedPosts } from '@/lib/content'
+import { getAllProjects, getPublishedPosts } from '@/features/content/content'
 import { absoluteUrl } from '@/lib/site'
 
 export default function sitemap(): MetadataRoute.Sitemap {

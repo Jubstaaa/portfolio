@@ -1,6 +1,6 @@
 import { expect, spyOn, test } from 'bun:test'
 
-import { writeToClipboard } from '@/lib/clipboard'
+import { writeToClipboard } from './clipboard'
 
 test('reports success when the browser accepts the write', async () => {
     const clipboard = { writeText: () => Promise.resolve() }

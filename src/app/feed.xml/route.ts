@@ -1,4 +1,4 @@
-import { buildRss } from '@/lib/rss'
+import { buildRss } from '@/features/content/rss'
 
 export const dynamic = 'force-static'
 

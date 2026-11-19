@@ -1,10 +1,26 @@
-export {
-    default,
-    generateStaticParams,
-} from '@/views/projects/project-og-image'
+import { notFound } from 'next/navigation'
 
-// Route segment and image config must be literals in the route file: Next parses
-// them statically and rejects re-exports.
+import { getAllProjects, getProjectBySlug } from '@/features/content/content'
+import { renderOgImage } from '@/lib/og/og'
+
+import type { ProjectPageProps } from './page.types'
+
+export function generateStaticParams() {
+    return getAllProjects().map(project => ({ slug: project.slug }))
+}
+
+export default async function ProjectOgImage({ params }: ProjectPageProps) {
+    const { slug } = await params
+    const project = getProjectBySlug(slug)
+    if (!project) notFound()
+    return renderOgImage({
+        eyebrow: project.category,
+        segment: 'projects',
+        title: project.title,
+        ...(project.images[0] ? { cover: project.images[0].src } : {}),
+    })
+}
+
 export const dynamicParams = false
 export const size = { height: 630, width: 1200 }
 export const contentType = 'image/jpeg'

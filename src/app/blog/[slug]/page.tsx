@@ -1,9 +1,102 @@
-export {
-    default,
-    generateMetadata,
-    generateStaticParams,
-} from '@/views/blog/blog-detail'
+import type { Metadata } from 'next'
 
-// Segment config must be a literal in the route file: Next parses it statically
-// and rejects re-exports. Unknown slugs 404 instead of rendering on demand.
+import { notFound } from 'next/navigation'
+
+import { PostMeta } from '@/app/blog/_components/post-meta'
+import {
+    getAdjacent,
+    getPostBySlug,
+    getPublishedPosts,
+    site,
+} from '@/features/content/content'
+import { ContentDetail } from '@/features/content/content-detail'
+import { formatDate } from '@/lib/format'
+import {
+    buildArticleJsonLd,
+    buildBreadcrumbJsonLd,
+    buildMetadata,
+} from '@/lib/seo'
+
+import type { PostPageProps } from './page.types'
+
+export default async function BlogDetailPage({ params }: PostPageProps) {
+    const { slug } = await params
+    const post = getPostBySlug(slug)
+    if (!post) notFound()
+
+    const { next, prev } = getAdjacent(getPublishedPosts(), post)
+
+    return (
+        <ContentDetail
+            adjacent={{
+                ariaLabel: 'Post navigation',
+                ...(prev ? { prev } : {}),
+                ...(next ? { next } : {}),
+            }}
+            body={post.body}
+            header={{
+                lead: post.description,
+                meta: <PostMeta category={post.category} date={post.date} />,
+                title: post.title,
+                ...(post.tags.length > 0
+                    ? {
+                          tags: post.tags.map(tag => (
+                              <span key={tag}>#{tag}</span>
+                          )),
+                      }
+                    : {}),
+            }}
+            jsonLd={{
+                breadcrumb: buildBreadcrumbJsonLd([
+                    { name: 'Home', path: '/' },
+                    { name: 'Blog', path: '/blog' },
+                    { name: post.title, path: post.path },
+                ]),
+                entity: buildArticleJsonLd(post),
+                idPrefix: 'article',
+                slug: post.slug,
+            }}
+            pathBar={{
+                meta: `${formatDate(post.date)} · ${post.category}`,
+                segment: `blog/${post.slug}`,
+            }}
+            {...(post.cover && post.showCover
+                ? {
+                      cover: {
+                          alt: post.cover.alt,
+                          height: post.cover.height ?? 0,
+                          src: post.cover.src,
+                          width: post.cover.width ?? 0,
+                      },
+                  }
+                : {})}
+        />
+    )
+}
+
+export async function generateMetadata({
+    params,
+}: PostPageProps): Promise<Metadata> {
+    const { slug } = await params
+    const post = getPostBySlug(slug)
+    if (!post) return {}
+    return buildMetadata({
+        authors: [site.name],
+        description: post.description,
+        keywords: post.tags,
+        modifiedTime: post.updated ?? post.date,
+        path: post.path,
+        publishedTime: post.date,
+        section: post.category,
+        tags: post.tags,
+        title: post.title,
+        type: 'article',
+    })
+}
+
+export function generateStaticParams() {
+    return getPublishedPosts().map(post => ({ slug: post.slug }))
+}
+
+// Unknown slugs 404 instead of rendering on demand.
 export const dynamicParams = false
