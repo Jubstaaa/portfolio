@@ -22,11 +22,11 @@ updates:
       # usually caught and pulled within days.
       cooldown:
           default-days: 7
-      # Production stays on the Active LTS line; odd/current Node majors are
-      # not LTS, and an LTS move is a deliberate change (engines, @types/node).
+      # Only even majors become LTS; odd (Current) lines never do, so skip
+      # them. Even majors are proposed as they ship.
       ignore:
           - dependency-name: node
-            update-types: ['version-update:semver-major']
+            versions: ['25.x', '27.x', '29.x', '31.x']
       commit-message:
           prefix: build
 
@@ -53,10 +53,12 @@ updates:
           tailwind:
               patterns: ['tailwindcss', '@tailwindcss/*']
       ignore:
-          # Must match the Node runtime major (see Dockerfile / engines).
+          # Odd Node majors are never LTS; the types follow the runtime line.
           - dependency-name: '@types/node'
-            update-types: ['version-update:semver-major']
-          # typescript-eslint does not support TypeScript 7 yet.
+            versions: ['25.x', '27.x', '29.x', '31.x']
+          # `typescript` here is an alias for @typescript/typescript6 (the API
+          # typescript-eslint and next build load); TS 7 itself updates through
+          # @typescript/native, so Dependabot must not bump the alias key to 7.
           - dependency-name: typescript
             versions: ['>=7']
       commit-message:
