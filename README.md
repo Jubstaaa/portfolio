@@ -73,12 +73,11 @@ The image must be on the CDN before you build — the build fetches it to read i
 
 ## Deploy
 
-`.github/workflows/ci.yml` runs on every PR and, as a reusable workflow, before every deploy; `.github/workflows/deploy.yml` runs on `main` and on manual dispatch. Shared setup is the `.github/actions/setup-bun` composite action; the deploy's shell lives in `scripts/deploy/` (shellcheck-linted, piped to the droplet over SSH).
+`.github/workflows/ci.yml` runs on every PR and, as a reusable workflow, before every deploy; `.github/workflows/deploy.yml` runs on `main` and on manual dispatch. Shared setup is the `.github/actions/setup-bun` composite action; the deploy itself uses [Jubstaaa/deploy-actions](https://github.com/Jubstaaa/deploy-actions) (`ssh` with a pinned host key, `compose` for the health-gated release), shared with the other apps on the droplet.
 
-1. **check** — format, lint, typecheck, tests, dependency audit, actionlint and shellcheck. New advisories between pushes come from Dependabot alerts, not a scheduled run.
+1. **check** — format, lint, typecheck, tests, dependency audit and actionlint. New advisories between pushes come from Dependabot alerts, not a scheduled run.
 2. **image** — builds the Docker image (`output: 'standalone'`, Node 24 LTS runner), runs it with the production constraints, runs `scripts/smoke.ts` against it, and on `main` pushes exactly that image as `ghcr.io/jubstaaa/portfolio:<commit-sha>`.
-3. **deploy** (`main` only, `Production` environment) — copies `docker-compose.yml` to `/opt/portfolio`, then `docker compose up --wait` with `IMAGE_TAG=<sha>`. If the container is not healthy within 120 s it rolls back to the previously running tag and fails the job. `/opt/portfolio/release.env` records the current and previous tags.
-4. **promote** — moves `:latest` to the released SHA, so `:latest` always means "what production runs".
+3. **deploy** (`main` only, `Production` environment) — copies `docker-compose.yml` to `/opt/portfolio`, then `docker compose up --wait` with `IMAGE_TAG=<sha>`. If the container is not healthy within 120 s it rolls back to the previously running tag and fails the job. `/opt/portfolio/release.env` records the current and previous tags, and `:latest` moves to the released SHA, so it always means "what production runs".
 
 After a healthy deploy the job purges the Cloudflare cache (`CF_PURGE_TOKEN`, a token scoped to Cache Purge on this zone only). HTML is cached at the edge until that purge; requests for RSC payloads (`?_rsc`, `RSC` header), `/api/*` and `/_next/image` bypass the cache.
 
