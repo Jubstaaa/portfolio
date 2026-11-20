@@ -10,37 +10,40 @@ interface NowPlayingProps {
 
 export function NowPlaying({ className }: NowPlayingProps) {
     const { data } = useNowPlaying()
+    const track = data?.isPlaying ? data : undefined
+    const label = track && `${track.title} — ${track.artist}`
 
-    if (!data) {
-        return <span className={cn('text-muted-foreground', className)}>—</span>
-    }
-
-    if (!data.isPlaying) {
-        return (
-            <span className={cn('text-muted-foreground', className)}>
-                — not listening
-            </span>
-        )
-    }
-
-    const label = `${data.title} — ${data.artist}`
-
+    // Every state renders its text into the same label block: Chrome records a
+    // block's LCP once, at first paint, so the track name that arrives after
+    // hydration does not become the home page's LCP.
     return (
-        <a
-            aria-label={`Now playing on Spotify: ${label}`}
-            className={cn(
-                'inline-flex items-start gap-2',
-                'hover:[&_.text-foreground]:text-accent transition-token group',
-                className
+        <span className={cn('inline-flex items-start gap-2', className)}>
+            {track && (
+                <span
+                    aria-hidden
+                    className="dot-nudge bg-success inline-block size-1.5 shrink-0 rounded-full"
+                />
             )}
-            href={data.url}
-            rel="noreferrer noopener"
-            target="_blank">
             <span
-                aria-hidden
-                className="dot-nudge bg-success inline-block size-1.5 shrink-0 rounded-full"
-            />
-            <span className="text-foreground min-w-0 break-all">{label}</span>
-        </a>
+                className={cn(
+                    'min-w-0 break-all',
+                    track ? 'text-foreground' : 'text-muted-foreground'
+                )}>
+                {track ? (
+                    <a
+                        aria-label={`Now playing on Spotify: ${label}`}
+                        className="hover:text-accent transition-token"
+                        href={track.url}
+                        rel="noreferrer noopener"
+                        target="_blank">
+                        {label}
+                    </a>
+                ) : data ? (
+                    '— not listening'
+                ) : (
+                    '—'
+                )}
+            </span>
+        </span>
     )
 }
