@@ -19,9 +19,13 @@ env:
 
 jobs:
     ci:
-        # A rollback skips the gate: that SHA passed it when it was built.
+        # Builds, smoke-tests and pushes the release image. The check job is not
+        # re-run: the ruleset only merges up-to-date branches whose check passed.
+        # A rollback skips this entirely: that SHA's image already exists.
         if: ${{ !inputs.image_tag }}
         uses: ./.github/workflows/ci.yml
+        with:
+            run-check: false
         permissions:
             contents: read
             packages: write
