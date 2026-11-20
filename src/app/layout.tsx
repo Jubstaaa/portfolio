@@ -1,8 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import type { ReactNode } from 'react'
 
-import localFont from 'next/font/local'
-
 import { Footer } from '@/app/_components/footer'
 import { Nav } from '@/app/_components/nav/nav'
 import { Providers } from '@/app/_components/providers'
@@ -12,7 +10,7 @@ import { site } from '@/features/content/content'
 import { ogLocale } from '@/lib/site'
 
 import './globals.css'
-import { cn } from '@/lib/utils'
+import { fontVariables } from '@/styles/fonts'
 
 interface RootLayoutProps {
     children: ReactNode
@@ -32,43 +30,6 @@ const SITE_KEYWORDS = [
     'hono',
     'portfolio',
 ]
-
-// Upright faces are on every page, so they are preloaded. Italics only appear in
-// MDX emphasis and blockquotes; a separate family keeps them off the critical path.
-const hermit = localFont({
-    display: 'swap',
-    src: [
-        {
-            path: '../fonts/hermit/Hermit-Regular.woff2',
-            style: 'normal',
-            weight: '400',
-        },
-        {
-            path: '../fonts/hermit/Hermit-Bold.woff2',
-            style: 'normal',
-            weight: '700',
-        },
-    ],
-    variable: '--font-hermit',
-})
-
-const hermitItalic = localFont({
-    display: 'swap',
-    preload: false,
-    src: [
-        {
-            path: '../fonts/hermit/Hermit-RegularItalic.woff2',
-            style: 'italic',
-            weight: '400',
-        },
-        {
-            path: '../fonts/hermit/Hermit-BoldItalic.woff2',
-            style: 'italic',
-            weight: '700',
-        },
-    ],
-    variable: '--font-hermit-italic',
-})
 
 export const metadata: Metadata = {
     alternates: {
@@ -121,7 +82,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: RootLayoutProps) {
     return (
         <html
-            className={cn(hermit.variable, hermitItalic.variable)}
+            className={fontVariables}
             lang={site.locale}
             suppressHydrationWarning>
             <body

@@ -2,6 +2,9 @@
 
 import type { ComponentProps } from 'react'
 
+import { site } from '@/features/content/content'
+import { fontVariables } from '@/styles/fonts'
+
 import ErrorPage from './error'
 
 import '@/app/globals.css'
@@ -10,7 +13,7 @@ import '@/app/globals.css'
 // document shell and stylesheet.
 export default function GlobalError(props: ComponentProps<typeof ErrorPage>) {
     return (
-        <html lang="en">
+        <html className={fontVariables} lang={site.locale}>
             <body className="bg-background text-foreground flex min-h-screen flex-col font-mono antialiased">
                 <main className="flex flex-1 flex-col">
                     <ErrorPage {...props} />
