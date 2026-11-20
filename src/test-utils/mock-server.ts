@@ -6,13 +6,15 @@ import { defineNetwork, InterceptorSource } from 'msw/experimental'
 // internals that Bun does not have, so Bun gets the setup the MSW maintainers
 // recommend for other runtimes: a network that patches the global fetch
 // (mswjs/msw#2811, #2812). Unhandled requests fail the test, so nothing
-// silently reaches the real network.
+// silently reaches the real network. `quiet` drops MSW's per-request log,
+// which otherwise buries real test output.
 type SourceInterceptor = ConstructorParameters<
     typeof InterceptorSource
 >[0]['interceptors'][number]
 
 export function setupMockServer() {
     const network = defineNetwork({
+        context: { quiet: true },
         onUnhandledFrame: 'error',
         sources: [
             new InterceptorSource({ interceptors: [webFetchInterceptor()] }),
