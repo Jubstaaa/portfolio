@@ -116,6 +116,16 @@ const config = {
             },
         },
 
+        {
+            comment:
+                'src/lib is cross-cutting infrastructure; code that describes content ' +
+                'belongs in features/content, so lib must not depend on a feature.',
+            from: { path: '^src/lib/' },
+            name: 'lib-not-to-features',
+            severity: 'error',
+            to: { path: '^src/features/' },
+        },
+
         // rules you might want to tweak for your specific situation:
 
         {
