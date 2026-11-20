@@ -17,9 +17,9 @@ import {
     buildMetadata,
 } from '@/lib/seo'
 
-import type { PostPageProps } from './page.types'
-
-export default async function BlogDetailPage({ params }: PostPageProps) {
+export default async function BlogDetailPage({
+    params,
+}: PageProps<'/blog/[slug]'>) {
     const { slug } = await params
     const post = getPostBySlug(slug)
     if (!post) notFound()
@@ -76,7 +76,7 @@ export default async function BlogDetailPage({ params }: PostPageProps) {
 
 export async function generateMetadata({
     params,
-}: PostPageProps): Promise<Metadata> {
+}: PageProps<'/blog/[slug]'>): Promise<Metadata> {
     const { slug } = await params
     const post = getPostBySlug(slug)
     if (!post) return {}
