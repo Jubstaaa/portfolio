@@ -1,6 +1,6 @@
 'use client'
 
-import type { ErrorPageProps } from './error.types'
+import type { ComponentProps } from 'react'
 
 import ErrorPage from './error'
 
@@ -8,7 +8,7 @@ import '@/app/globals.css'
 
 // Replaces the root layout when the layout itself throws, so it renders its own
 // document shell and stylesheet.
-export default function GlobalError(props: ErrorPageProps) {
+export default function GlobalError(props: ComponentProps<typeof ErrorPage>) {
     return (
         <html lang="en">
             <body className="bg-background text-foreground flex min-h-screen flex-col font-mono antialiased">
