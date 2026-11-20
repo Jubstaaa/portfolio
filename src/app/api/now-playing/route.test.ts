@@ -9,6 +9,7 @@ import {
 } from 'bun:test'
 import { delay, http, HttpResponse } from 'msw'
 
+import { getSocialHref } from '@/features/content/content'
 import { setupMockServer } from '@/test-utils/mock-server'
 
 import { GET } from './route'
@@ -59,13 +60,13 @@ describe('GET /api/now-playing', () => {
         server.events.removeAllListeners()
     })
 
-    test('returns the playing track with a profile link', async () => {
+    test('returns the playing track with the Spotify profile from socials', async () => {
         lastFm(() => HttpResponse.json(nowPlaying))
         expect(await (await GET()).json()).toMatchObject({
             artist: 'Boards of Canada',
             isPlaying: true,
             title: 'Roygbiv',
-            url: expect.stringContaining('spotify.com'),
+            url: getSocialHref('Spotify'),
         })
     })
 

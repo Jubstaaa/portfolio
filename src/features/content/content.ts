@@ -85,11 +85,19 @@ export function getExperiencesSorted(): Experience[] {
     return experiences.toSorted(byRecency)
 }
 
-// Categories without entries are absent from the result.
 export function getSkillsByCategory(): Partial<
     Record<Skill['category'], Skill[]>
 > {
     return groupBy(skills, 'category')
+}
+
+// Categories without entries are absent from the result.
+// Identity links live in content/data/socials.json; a missing label is a content
+// error that should fail the build, not render a dead link.
+export function getSocialHref(label: string): string {
+    const social = socials.find(entry => entry.label === label)
+    if (!social) throw new Error(`no "${label}" entry in socials.json`)
+    return social.href
 }
 
 export function getStacksByCategory(): Partial<
