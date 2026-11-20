@@ -9,7 +9,7 @@ Operational guide for this repo. Global rules in `~/.claude/CLAUDE.md` still app
 | Concern       | Tech                                                                       |
 | ------------- | -------------------------------------------------------------------------- |
 | Framework     | Next.js 16 (App Router, Turbopack default, React 19)                       |
-| Language      | TypeScript 5.9, `strict: true`, no `any`                                   |
+| Language      | TypeScript 7 (native `tsc`; TS 6 API for tooling), `strict`, no `any`      |
 | Styling       | Tailwind CSS 4 (CSS-first via `@theme`), tokens in `src/styles/tokens.css` |
 | UI primitives | Hand-rolled components in `src/components/` + Lucide icons only (no kit)   |
 | Content       | velite (Zod-validated MDX + JSON) → `.velite/` → typed imports             |
@@ -87,7 +87,7 @@ bun run format                 # prettier --write .
 bun run format:check           # prettier --check .
 bun run velite                 # build content pipeline only
 bun run velite:watch           # velite build --watch (use alongside bun dev when editing content)
-bun run optimize:images <dir>  # webp q78, ≤2000px — before uploading to the CDN bucket
+bun run optimize:images <src> <out>  # webp q78, ≤2000px copies into <out> — before uploading to the CDN bucket
 ```
 
 > Always run `bun run typecheck && bun run lint && bun run test && bun run knip && bun run jscpd && bun run depcruise && bun run build` before committing a slice.
@@ -106,13 +106,16 @@ src/
     _components/            site-wide layout parts (nav, footer, skip link, providers)
     about/_components/      parts used only by /about (likewise blog/, contact/)
   features/                 code shared across routes, or a self-contained feature with its own state and tests
-    content/                velite read path, MDX rendering, content cards and detail views, RSS
-      pipeline/             Node-only content processing for velite and OG images (image bytes, heading normalisation)
+    content/                velite read path, MDX rendering, content cards and detail views, RSS, SEO/JSON-LD, site URLs
+      og/                   OG image renderer (Satori card → JPEG) for the opengraph-image routes
+      pipeline/             Node-only content processing for velite and OG images (image bytes and dimensions, rehype plugins, image schema)
     terminal/               the home page terminal (commands, parser, session store, hooks)
     now-playing/            Last.fm parsing, client hook and widget
   components/               small UI parts used by more than one route or feature
   hooks/                    generic hooks shared across features
-  lib/                      cross-cutting infrastructure: seo, og, cdn, site, format, utils
+  lib/                      cross-cutting infrastructure: cdn, format, clipboard, utils — never imports from features/ (depcruise `lib-not-to-features`)
+  styles/                   design tokens and the shared next/font definitions (fonts.ts)
+  test-utils/               test-only helpers (MSW network setup)
 ```
 
 - `page.tsx`, `layout.tsx`, `opengraph-image.tsx` and the other special files hold their own code; there is no separate view layer. Route segment config (`dynamicParams`, `size`, `contentType`, …) is a literal `export const` in the route file, as Next requires.
@@ -159,7 +162,7 @@ src/
 
 ### SEO
 
-- Static routes export `metadata` built with `buildMetadata()`; dynamic `[slug]` routes export `generateMetadata`. Rely on `src/lib/seo.ts` helpers.
+- Static routes export `metadata` built with `buildMetadata()`; dynamic `[slug]` routes export `generateMetadata`. Rely on `src/features/content/seo.ts` helpers.
 - JSON-LD is injected server-side on posts (BlogPosting + BreadcrumbList), projects (CreativeWork), and the site root (Person).
 - Per-post OG images via a route-segment `opengraph-image.tsx`.
 
