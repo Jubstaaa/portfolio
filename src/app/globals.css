@@ -70,7 +70,7 @@
         background-color: var(--background);
         color: var(--foreground);
         font-family: var(--font-mono);
-        font-size: 15px;
+        font-size: 0.9375rem;
         line-height: 1.6;
     }
 
