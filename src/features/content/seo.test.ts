@@ -1,8 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 
-import { getAllProjects, site } from '@/features/content/content'
-
-import { buildMetadata, buildProjectJsonLd } from './seo'
+import { getAllProjects, getPublishedPosts, site } from './content'
+import { buildArticleJsonLd, buildMetadata, buildProjectJsonLd } from './seo'
 
 describe('buildMetadata', () => {
     test('a website page gets an absolute canonical matching og:url', () => {
@@ -64,5 +63,13 @@ describe('buildProjectJsonLd', () => {
         const jsonLd = buildProjectJsonLd(withoutRepo)
         expect(jsonLd['@type']).toBe('CreativeWork')
         expect(jsonLd).not.toHaveProperty('codeRepository')
+    })
+})
+
+describe('buildArticleJsonLd', () => {
+    test('declares the site language', () => {
+        const [post] = getPublishedPosts()
+        if (!post) throw new Error('fixture: no published post')
+        expect(buildArticleJsonLd(post).inLanguage).toBe(site.locale)
     })
 })

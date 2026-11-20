@@ -70,7 +70,7 @@
         background-color: var(--background);
         color: var(--foreground);
         font-family: var(--font-mono);
-        font-size: 15px;
+        font-size: 0.9375rem;
         line-height: 1.6;
     }
 
@@ -108,7 +108,7 @@
     }
 
     .cursor-blink {
-        animation: cursor-blink 1.2s steps(2) infinite;
+        animation: cursor-blink var(--duration-blink) steps(2) infinite;
     }
 
     .term-rule {
@@ -118,7 +118,7 @@
     }
 
     .terminal-glitch {
-        animation: terminal-glitch 0.4s steps(2) both;
+        animation: terminal-glitch var(--duration-glitch) steps(2) both;
     }
 
     /* Types a command one character per step over text that is already laid
@@ -222,16 +222,5 @@
     100% {
         transform: translate(0);
         opacity: 1;
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .cursor-blink {
-        animation: none;
-        opacity: 1;
-    }
-
-    .terminal-glitch {
-        animation: none;
     }
 }

@@ -1,8 +1,6 @@
 import { z } from 'zod'
 
-export type NowPlayingPayload =
-    | { artist: string; isPlaying: true; title: string; url: string }
-    | { isPlaying: false }
+import type { NowPlayingPayload } from './now-playing.schema'
 
 export type NowPlayingTrack = Omit<
     Extract<NowPlayingPayload, { isPlaying: true }>,

@@ -14,13 +14,11 @@ import {
     buildBreadcrumbJsonLd,
     buildMetadata,
     buildProjectJsonLd,
-} from '@/lib/seo'
-
-import type { ProjectPageProps } from './page.types'
+} from '@/features/content/seo'
 
 export async function generateMetadata({
     params,
-}: ProjectPageProps): Promise<Metadata> {
+}: PageProps<'/projects/[slug]'>): Promise<Metadata> {
     const { slug } = await params
     const project = getProjectBySlug(slug)
     if (!project) return {}
@@ -37,7 +35,9 @@ export function generateStaticParams() {
     return getAllProjects().map(project => ({ slug: project.slug }))
 }
 
-export default async function ProjectDetailPage({ params }: ProjectPageProps) {
+export default async function ProjectDetailPage({
+    params,
+}: PageProps<'/projects/[slug]'>) {
     const { slug } = await params
     const project = getProjectBySlug(slug)
     if (!project) notFound()
@@ -98,9 +98,9 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
                 ? {
                       cover: {
                           alt: cover.alt,
-                          height: cover.height ?? 0,
+                          height: cover.height,
                           src: cover.src,
-                          width: cover.width ?? 0,
+                          width: cover.width,
                       },
                   }
                 : {})}

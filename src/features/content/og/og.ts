@@ -4,7 +4,7 @@ import { join } from 'node:path'
 import sharp from 'sharp'
 
 import { readImageBytes } from '@/features/content/pipeline/image-source'
-import { handlePath } from '@/lib/site'
+import { handlePath } from '@/features/content/site'
 
 import { OgCard } from './og-card'
 

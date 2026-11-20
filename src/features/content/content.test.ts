@@ -7,6 +7,7 @@ import {
     getAdjacent,
     getPostBySlug,
     getPublishedPosts,
+    getSocialHref,
     selectPublished,
 } from './content'
 
@@ -87,5 +88,15 @@ describe('byRecency', () => {
             { end: '2022-06', start: '2021-01' },
             { end: '2022-06', start: '2020-01' },
         ])
+    })
+})
+
+describe('getSocialHref', () => {
+    test('finds a profile by its label', () => {
+        expect(getSocialHref('Spotify')).toContain('open.spotify.com')
+    })
+
+    test('fails loudly on a profile that is not in socials.json', () => {
+        expect(() => getSocialHref('MySpace')).toThrow('MySpace')
     })
 })

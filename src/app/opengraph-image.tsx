@@ -1,5 +1,5 @@
 import { site } from '@/features/content/content'
-import { renderOgImage } from '@/lib/og/og'
+import { renderOgImage } from '@/features/content/og/og'
 
 export default function HomeOgImage() {
     return renderOgImage({

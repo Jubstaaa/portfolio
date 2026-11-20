@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { expect, test } from 'bun:test'
 import { renderToStaticMarkup } from 'react-dom/server'
 
-import type { NowPlayingPayload } from './last-fm'
+import type { NowPlayingPayload } from './now-playing.schema'
 
 import { NowPlaying } from './now-playing'
 

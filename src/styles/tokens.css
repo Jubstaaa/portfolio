@@ -37,6 +37,8 @@
     --duration-typing-char: 57ms;
     --duration-typing-lead: 400ms;
     --duration-typing-pause: 550ms;
+    --duration-blink: 1.2s;
+    --duration-glitch: 400ms;
 
     --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 
@@ -93,6 +95,8 @@
         --duration-typing-char: 0ms;
         --duration-typing-lead: 0ms;
         --duration-typing-pause: 0ms;
+        --duration-blink: 0ms;
+        --duration-glitch: 0ms;
     }
 }
 

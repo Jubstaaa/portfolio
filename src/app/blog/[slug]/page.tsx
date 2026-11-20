@@ -10,16 +10,16 @@ import {
     site,
 } from '@/features/content/content'
 import { ContentDetail } from '@/features/content/content-detail'
-import { formatDate } from '@/lib/format'
 import {
     buildArticleJsonLd,
     buildBreadcrumbJsonLd,
     buildMetadata,
-} from '@/lib/seo'
+} from '@/features/content/seo'
+import { formatDate } from '@/lib/format'
 
-import type { PostPageProps } from './page.types'
-
-export default async function BlogDetailPage({ params }: PostPageProps) {
+export default async function BlogDetailPage({
+    params,
+}: PageProps<'/blog/[slug]'>) {
     const { slug } = await params
     const post = getPostBySlug(slug)
     if (!post) notFound()
@@ -64,9 +64,9 @@ export default async function BlogDetailPage({ params }: PostPageProps) {
                 ? {
                       cover: {
                           alt: post.cover.alt,
-                          height: post.cover.height ?? 0,
+                          height: post.cover.height,
                           src: post.cover.src,
-                          width: post.cover.width ?? 0,
+                          width: post.cover.width,
                       },
                   }
                 : {})}
@@ -76,7 +76,7 @@ export default async function BlogDetailPage({ params }: PostPageProps) {
 
 export async function generateMetadata({
     params,
-}: PostPageProps): Promise<Metadata> {
+}: PageProps<'/blog/[slug]'>): Promise<Metadata> {
     const { slug } = await params
     const post = getPostBySlug(slug)
     if (!post) return {}

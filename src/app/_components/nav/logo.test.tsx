@@ -1,7 +1,7 @@
 import { expect, test } from 'bun:test'
 import { renderToStaticMarkup } from 'react-dom/server'
 
-import { handlePath } from '@/lib/site'
+import { handlePath } from '@/features/content/site'
 
 import { Logo } from './logo'
 

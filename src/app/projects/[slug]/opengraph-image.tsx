@@ -1,15 +1,15 @@
 import { notFound } from 'next/navigation'
 
 import { getAllProjects, getProjectBySlug } from '@/features/content/content'
-import { renderOgImage } from '@/lib/og/og'
-
-import type { ProjectPageProps } from './page.types'
+import { renderOgImage } from '@/features/content/og/og'
 
 export function generateStaticParams() {
     return getAllProjects().map(project => ({ slug: project.slug }))
 }
 
-export default async function ProjectOgImage({ params }: ProjectPageProps) {
+export default async function ProjectOgImage({
+    params,
+}: Pick<PageProps<'/projects/[slug]'>, 'params'>) {
     const { slug } = await params
     const project = getProjectBySlug(slug)
     if (!project) notFound()

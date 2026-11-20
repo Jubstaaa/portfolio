@@ -1,6 +1,6 @@
 # portfolio
 
-Personal site + MDX blog. Next.js 16 · React 19 · TypeScript 5.9 · Tailwind CSS 4 · velite · Shiki. Self-hosted: Docker → GHCR → DigitalOcean droplet behind Caddy.
+Personal site + MDX blog. Next.js 16 · React 19 · TypeScript 7 · Tailwind CSS 4 · velite · Shiki. Self-hosted: Docker → GHCR → DigitalOcean droplet behind Caddy.
 
 ## Quickstart
 
@@ -29,23 +29,23 @@ Locally they go in `.env.local` (see `.env.example`); on the droplet in `/opt/po
 
 ## Scripts
 
-| Command                           | What it does                                                  |
-| --------------------------------- | ------------------------------------------------------------- |
-| `bun dev`                         | velite + `next dev`                                           |
-| `bun run build`                   | velite + `next build`                                         |
-| `bun start`                       | `next start` (local only — production runs `server.js`)       |
-| `bun run generate`                | velite + `next typegen`                                       |
-| `bun run typecheck`               | `generate` + `tsc --noEmit`                                   |
-| `bun run test`                    | `bun test`                                                    |
-| `bun run audit`                   | `bun audit --audit-level=high`                                |
-| `bun run knip`                    | unused files, exports and dependencies                        |
-| `bun run jscpd`                   | duplication in `src/` (fails above 1 %)                       |
-| `bun run depcruise`               | module graph: no cycles, orphans or dev deps in `src/`        |
-| `bun run lint` / `lint:fix`       | ESLint                                                        |
-| `bun run format` / `format:check` | Prettier                                                      |
-| `bun run velite` / `velite:watch` | build / watch the content pipeline                            |
-| `bun run optimize:images <dir>`   | webp q78, ≤2000px long edge — run before uploading to the CDN |
-| `bun run test:smoke`              | smoke test against `SMOKE_BASE_URL` (CI: the candidate image) |
+| Command                               | What it does                                                                      |
+| ------------------------------------- | --------------------------------------------------------------------------------- |
+| `bun dev`                             | velite + `next dev`                                                               |
+| `bun run build`                       | velite + `next build`                                                             |
+| `bun start`                           | `next start` (local only — production runs `server.js`)                           |
+| `bun run generate`                    | velite + `next typegen`                                                           |
+| `bun run typecheck`                   | `generate` + `tsc --noEmit`                                                       |
+| `bun run test`                        | `bun test`                                                                        |
+| `bun run audit`                       | `bun audit --audit-level=high`                                                    |
+| `bun run knip`                        | unused files, exports and dependencies                                            |
+| `bun run jscpd`                       | duplication in `src/` (fails above 1 %)                                           |
+| `bun run depcruise`                   | module graph: no cycles, orphans or dev deps in `src/`                            |
+| `bun run lint` / `lint:fix`           | ESLint                                                                            |
+| `bun run format` / `format:check`     | Prettier                                                                          |
+| `bun run velite` / `velite:watch`     | build / watch the content pipeline                                                |
+| `bun run optimize:images <src> <out>` | webp q78, ≤2000px long edge copies into `<out>` — run before uploading to the CDN |
+| `bun run test:smoke`                  | smoke test against `SMOKE_BASE_URL` (CI: the candidate image)                     |
 
 ## Content authoring
 
@@ -62,9 +62,9 @@ All content is Zod-validated at build time by [`velite.config.ts`](./velite.conf
 
 Content images live only in the DigitalOcean Spaces bucket, never in the repo.
 
-1. `bun run optimize:images <dir>` — converts to webp q78 and caps the long edge at 2000px.
+1. `bun run optimize:images <source-dir> <output-dir>` — writes webp q78 copies, long edge capped at 2000px, to the output folder; the sources are left untouched.
 2. Upload the output to the bucket under `images/`, preserving the subpath, with public-read access.
-3. Reference it root-relative: `/images/projects/foo/cover.webp`.
+3. Reference it root-relative: `/images/projects/foo/cover.webp`. Paths outside `/images/` fail the build.
 
 The image must be on the CDN before you build — the build fetches it to read its dimensions and fails if it is missing.
 

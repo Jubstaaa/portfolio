@@ -9,12 +9,17 @@ import { TerminalLine } from '@/components/terminal-block/terminal-line'
 import { TerminalMeta } from '@/components/terminal-block/terminal-meta'
 import { LINK_CLASS } from '@/lib/utils'
 
-import type { ErrorPageProps } from './error.types'
+interface ErrorPageProps {
+    error: unknown
+    retry: () => void
+}
 
-export default function ErrorPage({ error, reset }: ErrorPageProps) {
+export default function ErrorPage({ error, retry }: ErrorPageProps) {
     useEffect(() => {
         console.error(error)
     }, [error])
+
+    const digest = errorDigest(error)
 
     return (
         <section className="container-default section-pad">
@@ -32,12 +37,12 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
                         </span>
                         the page failed to render
                     </p>
-                    {error.digest ? (
+                    {digest ? (
                         <p className="text-muted-foreground">
                             <span aria-hidden className="mr-1 select-none">
                                 →
                             </span>
-                            ref: {error.digest}
+                            ref: {digest}
                         </p>
                     ) : null}
                 </TerminalLine>
@@ -46,7 +51,7 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
                     <p>
                         <button
                             className={LINK_CLASS}
-                            onClick={reset}
+                            onClick={retry}
                             type="button">
                             ./reset
                         </button>
@@ -65,4 +70,11 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
             </TerminalBlock>
         </section>
     )
+}
+
+// Server Component errors arrive as an Error carrying a digest; a Client
+// Component may throw any value, which Next forwards untouched.
+function errorDigest(error: unknown): string | undefined {
+    if (!(error instanceof Error) || !('digest' in error)) return undefined
+    return typeof error.digest === 'string' ? error.digest : undefined
 }

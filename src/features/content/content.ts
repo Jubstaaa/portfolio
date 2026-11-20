@@ -92,6 +92,14 @@ export function getSkillsByCategory(): Partial<
     return groupBy(skills, 'category')
 }
 
+// Identity links live in content/data/socials.json; a missing label is a content
+// error that should fail the build, not render a dead link.
+export function getSocialHref(label: string): string {
+    const social = socials.find(entry => entry.label === label)
+    if (!social) throw new Error(`no "${label}" entry in socials.json`)
+    return social.href
+}
+
 export function getStacksByCategory(): Partial<
     Record<Stack['category'], Stack[]>
 > {

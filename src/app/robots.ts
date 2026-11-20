@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next'
 
 import { site } from '@/features/content/content'
-import { absoluteUrl } from '@/lib/site'
+import { absoluteUrl } from '@/features/content/site'
 
 export default function robots(): MetadataRoute.Robots {
     return {

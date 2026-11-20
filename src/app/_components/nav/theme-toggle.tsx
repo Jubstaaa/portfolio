@@ -3,8 +3,9 @@
 import { Moon, Sun } from 'lucide-react'
 import { useTheme } from 'next-themes'
 
-import { useHasMounted } from '@/hooks/use-has-mounted'
 import { cn } from '@/lib/utils'
+
+import { useHasMounted } from './use-has-mounted'
 
 interface ThemeToggleProps {
     className?: string

@@ -10,9 +10,9 @@ import type {
 
 import { pickBy } from 'lodash-es'
 
-import { type Post, type Project, site } from '@/features/content/content'
+import { cdnUrl } from '@/lib/cdn'
 
-import { cdnUrl } from './cdn'
+import { type Post, type Project, site } from './content'
 import { absoluteUrl, ogLocale } from './site'
 
 interface BuildMetadataInput {
@@ -41,7 +41,7 @@ export function buildArticleJsonLd(post: Post): WithContext<BlogPosting> {
         'url': absoluteUrl(post.path),
         ...(post.cover ? { image: absoluteImageUrl(post.cover.src) } : {}),
         'articleSection': post.category,
-        'inLanguage': 'en',
+        'inLanguage': site.locale,
         'keywords': post.tags.join(', '),
         'mainEntityOfPage': absoluteUrl(post.path),
     }
