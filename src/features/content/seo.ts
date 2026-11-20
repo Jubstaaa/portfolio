@@ -41,7 +41,7 @@ export function buildArticleJsonLd(post: Post): WithContext<BlogPosting> {
         'url': absoluteUrl(post.path),
         ...(post.cover ? { image: absoluteImageUrl(post.cover.src) } : {}),
         'articleSection': post.category,
-        'inLanguage': 'en',
+        'inLanguage': site.locale,
         'keywords': post.tags.join(', '),
         'mainEntityOfPage': absoluteUrl(post.path),
     }
