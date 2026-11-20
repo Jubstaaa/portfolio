@@ -50,7 +50,7 @@ describe('runCommand', () => {
         )
     })
 
-    test('a failing command reports an error instead of crashing', () => {
+    test('a command that throws reports an error instead of crashing', () => {
         const consoleError = spyOn(console, 'error').mockImplementation(
             () => undefined
         )

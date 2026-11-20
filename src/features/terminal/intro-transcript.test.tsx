@@ -21,3 +21,14 @@ test('the output is server-rendered visible and only the command is typed', () =
         /<span class="terminal-typing" style="--typing-chars:2;--typing-index:0;--typing-offset:0">ls<\/span>/
     )
 })
+
+// A misspelled or renamed intro command must fail the prerender, not ship a
+// typed prompt with no output under it.
+test.each(['nope', 'constructor'])(
+    'an unknown intro command %s fails the render',
+    name => {
+        expect(() =>
+            renderToStaticMarkup(<IntroTranscript commands={[name]} />)
+        ).toThrow(`unknown command '${name}'`)
+    }
+)

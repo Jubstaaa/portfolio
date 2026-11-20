@@ -288,5 +288,8 @@ export const COMMAND_NAMES = Object.entries(commands)
     .map(([name]) => name)
 
 export function renderCommandOutput(name: string, args = ''): ReactNode {
-    return commands[name]?.run(args, STATIC_CTX) ?? null
+    const command = Object.hasOwn(commands, name) ? commands[name] : undefined
+    if (!command)
+        throw new Error(`renderCommandOutput: unknown command '${name}'`)
+    return command.run(args, STATIC_CTX)
 }
