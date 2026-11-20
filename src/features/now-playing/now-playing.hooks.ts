@@ -1,13 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
 
-import type { NowPlayingPayload } from './last-fm'
+import { type NowPlayingPayload, nowPlayingPayloadSchema } from './last-fm'
 
 export function useNowPlaying() {
     return useQuery<NowPlayingPayload>({
         queryFn: async () => {
             const res = await fetch('/api/now-playing')
             if (!res.ok) throw new Error(`now-playing: HTTP ${res.status}`)
-            return (await res.json()) as NowPlayingPayload
+            return nowPlayingPayloadSchema.parse(await res.json())
         },
         queryKey: ['now-playing'],
         refetchInterval: 30_000,
