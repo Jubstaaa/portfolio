@@ -43,3 +43,25 @@ test('refuses to run without an output folder', async () => {
         true
     )
 })
+
+test.each(['in', 'in/out'])(
+    'refuses an output folder at or inside the sources (%s)',
+    async out => {
+        const result = run(join(work, 'in'), join(work, out))
+        expect(result.exitCode).not.toBe(0)
+        expect(await readdir(join(work, 'in/projects/foo'))).toEqual([
+            'cover.png',
+        ])
+    }
+)
+
+test('refuses two sources that would write the same webp', async () => {
+    await sharp({
+        create: { background: '#000', channels: 3, height: 4, width: 4 },
+    })
+        .jpeg()
+        .toFile(join(work, 'in/projects/foo/cover.jpg'))
+    const result = run(join(work, 'in'), join(work, 'out'))
+    expect(result.exitCode).not.toBe(0)
+    expect(result.stderr.toString()).toContain('cover.webp')
+})
