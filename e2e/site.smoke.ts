@@ -37,9 +37,9 @@ describe('home', () => {
         expect(res.headers.has('x-powered-by')).toBe(false)
     })
 
-    // The typing intro hides this output only when scripts run and motion is
-    // allowed; without JavaScript it must still be readable.
-    test('server-renders the terminal output for visitors without JavaScript', async () => {
+    // The output is the LCP element: the typing intro animates only the command
+    // text, so the output must be in the HTML and never hidden.
+    test('server-renders the terminal output visible', async () => {
         const page = await html('/')
         expect(page).toContain('<h1')
         const tag = /<div[^>]*data-terminal-static[^>]*>/.exec(page)?.[0]

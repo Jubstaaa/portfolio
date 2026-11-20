@@ -32,6 +32,11 @@
 
     --duration-fast: 150ms;
     --duration-base: 240ms;
+    /* Home terminal intro: per typed character, before the first command, and
+       between commands. */
+    --duration-typing-char: 57ms;
+    --duration-typing-lead: 400ms;
+    --duration-typing-pause: 550ms;
 
     --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 
@@ -85,6 +90,9 @@
     .light {
         --duration-fast: 0ms;
         --duration-base: 0ms;
+        --duration-typing-char: 0ms;
+        --duration-typing-lead: 0ms;
+        --duration-typing-pause: 0ms;
     }
 }
 

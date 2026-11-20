@@ -1,6 +1,9 @@
 import Image from 'next/image'
 
-import { CONTENT_IMAGE_MAX_HEIGHT_CLASS } from '@/features/content/content-image.constants'
+import {
+    CONTENT_IMAGE_MAX_HEIGHT_CLASS,
+    LCP_IMAGE_PROPS,
+} from '@/features/content/content-image.constants'
 import { cdnUrl } from '@/lib/cdn'
 import { cn } from '@/lib/utils'
 
@@ -17,7 +20,7 @@ export function Img({
     if (typeof src !== 'string') return null
     const resolvedSrc = cdnUrl(src)
     // The first body image is the LCP candidate when no cover is shown.
-    const preload = dataPriority === 'true'
+    const priorityProps = dataPriority === 'true' ? LCP_IMAGE_PROPS : {}
     const w = Number(width) || undefined
     const h = Number(height) || undefined
     const sharedClassName = cn(
@@ -34,7 +37,7 @@ export function Img({
                 height={h}
                 src={resolvedSrc}
                 width={w}
-                {...(preload ? { preload: true } : {})}
+                {...priorityProps}
                 className={cn(sharedClassName, 'h-auto')}
                 sizes="(min-width: 768px) 720px, 100vw"
             />
@@ -47,7 +50,7 @@ export function Img({
             height={0}
             src={resolvedSrc}
             width={0}
-            {...(preload ? { preload: true } : {})}
+            {...priorityProps}
             className={sharedClassName}
             sizes="100vw"
         />
