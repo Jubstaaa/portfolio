@@ -6,9 +6,9 @@ export interface CalloutProps {
     tone?: CalloutTone
 }
 
-export type CalloutTone = 'note' | 'warn'
-
 export interface CalloutWrapperProps {
     children: ReactNode
     label?: string
 }
+
+type CalloutTone = 'note' | 'warn'
