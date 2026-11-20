@@ -24,15 +24,18 @@ Operational guide for this repo. Global rules in `~/.claude/CLAUDE.md` still app
 
 ### Deployment
 
-Not Vercel. `next.config.ts` sets `output: 'standalone'`. `.github/workflows/ci.yml` (PRs, and
-reused by deploy) holds the gate; `.github/workflows/deploy.yml` (push to `main`, manual
+Not Vercel. `next.config.ts` sets `output: 'standalone'`. `.github/workflows/ci.yml` (PRs; deploy
+reuses its `image` job) holds the gate; `.github/workflows/deploy.yml` (push to `main`, manual
 dispatch) releases. Actions are pinned to commit SHAs, shared steps live in the
 `.github/actions/setup-bun` composite action, and the deploy uses the shared
 [Jubstaaa/deploy-actions](https://github.com/Jubstaaa/deploy-actions) (`ssh`, `compose`):
 
-1. **check** — `format:check`, `lint`, `typecheck`, `test`, `audit`, actionlint
+1. **check** — Trivy (lockfile, Dockerfile, secrets; HIGH/CRITICAL fail), `format:check`,
+   `generate`, `lint`, `tsc`, `test`, `audit`, `knip`, `jscpd`, `depcruise`, actionlint
 2. **image** — builds the image, runs it with the production constraints, runs
-   `scripts/smoke.ts` against it, and on `main` pushes exactly that image as `:<commit-sha>`
+   `bun run test:smoke` (`e2e/site.smoke.ts`) against it, and on `main` pushes exactly that
+   image as `:<commit-sha>`. On `main` only this job runs before deploy: `check` already
+   passed on the up-to-date PR branch, so it is not repeated
 3. **deploy** (`main`, `Production` environment) — copies `docker-compose.yml` to the droplet
    over plain OpenSSH (pinned host key) and runs `docker compose up --wait` with
    `IMAGE_TAG=<sha>`; an unhealthy container is rolled back to the previous tag automatically,
@@ -40,7 +43,7 @@ dispatch) releases. Actions are pinned to commit SHAs, shared steps live in the
 
 Rollback: `gh workflow run deploy.yml --ref main -f image_tag=<good-sha>` (see README).
 
-`main` is protected by the `protect-main` ruleset: no direct pushes, no force-push or deletion, and every PR needs the `check` and `image` jobs green before it can merge — there is no bypass. Dependabot patch/minor PRs auto-merge once green (`dependabot-auto-merge.yml`); they ship with the next deploy because bot merges do not trigger workflows.
+`main` is protected by the `protect-main` ruleset: no direct pushes, no force-push or deletion, and every PR needs the `check` and `image` jobs green on a branch that is up to date with `main` before it can merge — there is no bypass. Dependabot patch/minor PRs auto-merge once green (`dependabot-auto-merge.yml`): the workflow merges, then dispatches `deploy.yml` itself, because a merge made with `GITHUB_TOKEN` starts no workflows; a branch left behind is sent back with `@dependabot rebase`.
 
 The container listens on `127.0.0.1:3002`; a shared Caddy at `/opt/proxy` on the droplet
 terminates TLS and reverse-proxies `ilkerbalcilar.com` to it, alongside the other sites on
@@ -70,9 +73,14 @@ Defined in `package.json`. Invoke with `bun <script>` (Bun's script runner is th
 bun dev                        # velite build && next dev (Turbopack is the default)
 bun run build                  # velite build && next build
 bun start                      # next start
-bun run typecheck              # velite build && next typegen && tsc --noEmit
+bun run generate               # velite build && next typegen (content + route types)
+bun run typecheck              # generate && tsc --noEmit
 bun run test                   # bun test
-bun run audit                  # bun audit --audit-level=high (reviewed ignores inline)
+bun run test:smoke             # e2e/site.smoke.ts against SMOKE_BASE_URL (a running server)
+bun run audit                  # bun audit --audit-level=high
+bun run knip                   # unused files, exports and dependencies (knip.json)
+bun run jscpd                  # duplication in src/, fails above 1% (.jscpd.json)
+bun run depcruise              # module graph: no cycles, orphans, dev deps in src (.dependency-cruiser.mjs)
 bun run lint                   # eslint
 bun run lint:fix               # eslint --fix
 bun run format                 # prettier --write .
@@ -80,10 +88,9 @@ bun run format:check           # prettier --check .
 bun run velite                 # build content pipeline only
 bun run velite:watch           # velite build --watch (use alongside bun dev when editing content)
 bun run optimize:images <dir>  # webp q78, ≤2000px — before uploading to the CDN bucket
-bun scripts/smoke.ts <url>     # post-build smoke test against a running server
 ```
 
-> Always run `bun run typecheck && bun run lint && bun run test && bun run build` before committing a slice.
+> Always run `bun run typecheck && bun run lint && bun run test && bun run knip && bun run jscpd && bun run depcruise && bun run build` before committing a slice.
 
 ---
 
