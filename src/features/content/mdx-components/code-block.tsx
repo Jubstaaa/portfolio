@@ -1,10 +1,10 @@
 'use client'
 
-import { Check, Copy, X } from 'lucide-react'
 import { type HTMLAttributes, useCallback, useRef } from 'react'
 
 import type { CopyStatus } from '@/hooks/use-copy-to-clipboard.types'
 
+import { CopyStatusIcon } from '@/components/copy-status-icon'
 import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard'
 import { cn } from '@/lib/utils'
 
@@ -44,21 +44,7 @@ export function CodeBlock({
                 className="hairline text-muted-foreground hover:text-foreground bg-background absolute top-2 right-2 inline-flex size-7 items-center justify-center rounded border opacity-0 transition-opacity duration-(--duration-fast) group-hover:opacity-100 focus-visible:opacity-100"
                 onClick={onCopy}
                 type="button">
-                {status === 'copied' ? (
-                    <Check
-                        aria-hidden
-                        className="text-success size-3.5"
-                        strokeWidth={2}
-                    />
-                ) : status === 'failed' ? (
-                    <X
-                        aria-hidden
-                        className="text-destructive size-3.5"
-                        strokeWidth={2}
-                    />
-                ) : (
-                    <Copy aria-hidden className="size-3.5" strokeWidth={1.75} />
-                )}
+                <CopyStatusIcon status={status} />
             </button>
         </div>
     )

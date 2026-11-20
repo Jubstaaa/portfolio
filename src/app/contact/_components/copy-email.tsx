@@ -1,9 +1,8 @@
 'use client'
 
-import { Check, Copy, X } from 'lucide-react'
-
 import type { CopyStatus } from '@/hooks/use-copy-to-clipboard.types'
 
+import { CopyStatusIcon } from '@/components/copy-status-icon'
 import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard'
 import { cn, LINK_CLASS } from '@/lib/utils'
 
@@ -33,21 +32,7 @@ export function CopyEmail({ className, email }: CopyEmailProps) {
                     copy(email)
                 }}
                 type="button">
-                {status === 'copied' ? (
-                    <Check
-                        aria-hidden
-                        className="text-success size-3.5"
-                        strokeWidth={2}
-                    />
-                ) : status === 'failed' ? (
-                    <X
-                        aria-hidden
-                        className="text-destructive size-3.5"
-                        strokeWidth={2}
-                    />
-                ) : (
-                    <Copy aria-hidden className="size-3.5" strokeWidth={1.75} />
-                )}
+                <CopyStatusIcon status={status} />
             </button>
             <span
                 aria-live="polite"
