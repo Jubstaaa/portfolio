@@ -2,14 +2,15 @@
 // edge — the same treatment Payload applies to uploads on the other projects
 // sharing this droplet, so content images stay consistent wherever they come from.
 //
-//   bun run optimize:images <dir>
+//   bun run optimize:images <source-dir> <output-dir>
 //
 // Content images live only in the bucket, never in this repo, so point this at
-// wherever the sources are, then upload the results under images/ preserving the
-// subpath (a cover at images/projects/foo/cover.webp is referenced as
-// /images/projects/foo/cover.webp).
-import { readdir, stat, unlink, writeFile } from 'node:fs/promises'
-import { extname, format, join, parse } from 'node:path'
+// wherever the sources are, then upload the output folder under images/
+// preserving the subpath (a cover at images/projects/foo/cover.webp is
+// referenced as /images/projects/foo/cover.webp). Sources are never modified, so
+// a bad run cannot destroy the only copy of an original.
+import { copyFile, mkdir, readdir, stat, writeFile } from 'node:fs/promises'
+import { dirname, extname, format, join, parse, relative } from 'node:path'
 import sharp from 'sharp'
 
 const MAX_EDGE = 2000
@@ -21,10 +22,10 @@ const QUALITY = 78
 const MIN_GAIN = 0.1
 const SOURCES = new Set(['.avif', '.jpeg', '.jpg', '.png', '.tiff', '.webp'])
 
-const root = process.argv[2]
+const [root, outRoot] = process.argv.slice(2)
 
-if (!root) {
-    console.error('usage: bun run optimize:images <dir>')
+if (!root || !outRoot) {
+    console.error('usage: bun run optimize:images <source-dir> <output-dir>')
     process.exit(1)
 }
 
@@ -53,19 +54,21 @@ for (const file of files) {
 
     before += original
 
+    const target = format({
+        ...parse(join(outRoot, relative(root, file))),
+        base: '',
+        ext: '.webp',
+    })
+    await mkdir(dirname(target), { recursive: true })
+
     // A non-webp source always gets converted; an existing webp only when the
-    // re-encode actually buys something.
-    if (!isWebp) {
-        const target = format({ ...parse(file), base: '', ext: '.webp' })
+    // re-encode actually buys something, otherwise it is copied as is.
+    if (!isWebp || buffer.length <= original * (1 - MIN_GAIN)) {
         await writeFile(target, buffer)
-        await unlink(file)
-        after += buffer.length
-        written++
-    } else if (buffer.length <= original * (1 - MIN_GAIN)) {
-        await writeFile(file, buffer)
         after += buffer.length
         written++
     } else {
+        await copyFile(file, target)
         after += original
     }
 }

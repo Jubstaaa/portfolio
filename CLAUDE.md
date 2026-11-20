@@ -230,7 +230,7 @@ Blog posts and project bodies both render through the same `mdxComponents` map. 
 
 ### Images
 
-- Content images live only in the Spaces bucket. Run `bun run optimize:images <dir>`, upload under `images/<group>/...`, reference as `/images/<group>/...`. The build fetches each image for its dimensions and fails if it is missing.
+- Content images live only in the Spaces bucket. Run `bun run optimize:images <source-dir> <output-dir>` (sources stay untouched), upload the output under `images/<group>/...`, reference as `/images/<group>/...`. The build fetches each image for its dimensions and fails if it is missing or its path is outside `/images/` — body images included.
 - Frontmatter images (`cover`, `images[]`) require `alt` — the velite schema enforces it. MDX body images (`![alt](src)`) are **not** validated: write the alt text yourself.
 
 ---

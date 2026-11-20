@@ -62,9 +62,9 @@ All content is Zod-validated at build time by [`velite.config.ts`](./velite.conf
 
 Content images live only in the DigitalOcean Spaces bucket, never in the repo.
 
-1. `bun run optimize:images <dir>` — converts to webp q78 and caps the long edge at 2000px.
+1. `bun run optimize:images <source-dir> <output-dir>` — writes webp q78 copies, long edge capped at 2000px, to the output folder; the sources are left untouched.
 2. Upload the output to the bucket under `images/`, preserving the subpath, with public-read access.
-3. Reference it root-relative: `/images/projects/foo/cover.webp`.
+3. Reference it root-relative: `/images/projects/foo/cover.webp`. Paths outside `/images/` fail the build.
 
 The image must be on the CDN before you build — the build fetches it to read its dimensions and fails if it is missing.
 
