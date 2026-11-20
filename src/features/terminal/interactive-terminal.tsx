@@ -8,10 +8,7 @@ import { TerminalCaret } from '@/components/terminal-block/terminal-caret'
 import { TerminalLine } from '@/components/terminal-block/terminal-line'
 import { cn } from '@/lib/utils'
 
-import type { CommandContext } from './commands.types'
-
-import { commands } from './commands'
-import { parseCommand } from './terminal-parser'
+import { runCommand } from './run-command'
 import {
     appendEntry,
     clearTerminal,
@@ -26,13 +23,11 @@ import { useTerminalIntro } from './use-terminal-intro'
 interface InteractiveTerminalProps {
     children?: ReactNode
     className?: string
-    introCommands?: string[]
 }
 
 export function InteractiveTerminal({
     children,
     className,
-    introCommands,
 }: InteractiveTerminalProps) {
     const router = useRouter()
     // The terminal is the only TanStack Query consumer (now-playing), so the client
@@ -56,33 +51,7 @@ export function InteractiveTerminal({
     const execute = (raw: string) => {
         resetHistoryNavigation()
 
-        const parsed = parseCommand(raw)
-        if (!parsed) {
-            appendEntry('', null)
-            return
-        }
-
-        const trimmed = raw.trim()
-        pushHistory(trimmed)
-        const { args, name } = parsed
-
-        if (name === 'clear') {
-            clearTerminal()
-            return
-        }
-
-        const command = Object.hasOwn(commands, name)
-            ? commands[name]
-            : undefined
-        if (!command) {
-            appendEntry(
-                trimmed,
-                <p className="text-muted-foreground">{`command not found: ${name} — try 'help'`}</p>
-            )
-            return
-        }
-
-        const ctx: CommandContext = {
+        const result = runCommand(raw, {
             getHistory: () => [...getSessionState().history],
             glitch: () => {
                 setGlitching(true)
@@ -90,27 +59,21 @@ export function InteractiveTerminal({
             navigate: href => {
                 router.push(href)
             },
+        })
+        if (result.kind === 'empty') {
+            appendEntry('', null)
+            return
         }
 
-        let output: ReactNode
-        try {
-            output = command.run(args, ctx)
-        } catch (error) {
-            console.error(`terminal: '${name}' failed`, error)
-            output = (
-                <p className="text-muted-foreground">
-                    error: something went wrong
-                </p>
-            )
+        pushHistory(result.command)
+        if (result.kind === 'clear') {
+            clearTerminal()
+            return
         }
-        appendEntry(trimmed, output)
+        appendEntry(result.command, result.output)
     }
 
-    const {
-        revealStatic,
-        skipIntro,
-        status: introStatus,
-    } = useTerminalIntro({ execute, introCommands, setInput })
+    const { playing: introPlaying, skipIntro } = useTerminalIntro()
 
     const { complete, resetCompletion } = useTabCompletion({
         appendEntry,
@@ -119,7 +82,7 @@ export function InteractiveTerminal({
     })
 
     const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (skipIntro()) return
+        skipIntro()
         if (event.nativeEvent.isComposing) return
 
         if (event.key === 'Enter') {
@@ -153,7 +116,7 @@ export function InteractiveTerminal({
         }
 
         const handleDocumentClick = (event: MouseEvent) => {
-            if (skipIntro()) return
+            skipIntro()
             if (window.getSelection()?.toString()) return
             if (!(event.target instanceof HTMLElement)) return
             if (!event.target.closest('#main')) return
@@ -189,11 +152,8 @@ export function InteractiveTerminal({
                 }}>
                 {cleared ? null : (
                     <div
-                        className={cn(
-                            'flex flex-col gap-3',
-                            !revealStatic &&
-                                'motion-safe:[@media(scripting:enabled)]:hidden'
-                        )}
+                        className="flex flex-col gap-3"
+                        data-terminal-intro={introPlaying || undefined}
                         data-terminal-static>
                         {children}
                     </div>
@@ -231,7 +191,6 @@ export function InteractiveTerminal({
                             setFocused(true)
                         }}
                         onKeyDown={handleKeyDown}
-                        readOnly={introStatus === 'playing'}
                         ref={inputRef}
                         spellCheck={false}
                         style={{ width: `${input.length}ch` }}

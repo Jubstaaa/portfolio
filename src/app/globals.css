@@ -121,6 +121,21 @@
         animation: terminal-glitch 0.4s steps(2) both;
     }
 
+    /* Types a command one character per step over text that is already laid
+       out: clip-path never moves anything, so typing causes no layout shift,
+       and the output below stays painted throughout. */
+    [data-terminal-intro] .terminal-typing {
+        animation: terminal-typing
+            calc(var(--typing-chars) * var(--duration-typing-char))
+            steps(var(--typing-chars))
+            calc(
+                var(--duration-typing-lead) + var(--typing-offset) *
+                    var(--duration-typing-char) + var(--typing-index) *
+                    var(--duration-typing-pause)
+            )
+            both;
+    }
+
     /* Driven by the root scroller, not time: no JS and no re-render per scroll.
        Browsers without scroll timelines would run it as a 0s animation and show a
        full bar, so the bar only appears where the timeline is supported. */
@@ -163,6 +178,15 @@
     }
     to {
         opacity: 0;
+    }
+}
+
+@keyframes terminal-typing {
+    from {
+        clip-path: inset(0 100% 0 0);
+    }
+    to {
+        clip-path: inset(0);
     }
 }
 

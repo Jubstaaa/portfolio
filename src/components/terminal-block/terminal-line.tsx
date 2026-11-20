@@ -7,7 +7,7 @@ import { TerminalCaret } from './terminal-caret'
 interface TerminalLineProps {
     children?: ReactNode
     className?: string
-    command: string
+    command: ReactNode
 }
 
 export function TerminalLine({
