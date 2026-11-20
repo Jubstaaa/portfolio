@@ -29,19 +29,23 @@ Locally they go in `.env.local` (see `.env.example`); on the droplet in `/opt/po
 
 ## Scripts
 
-| Command                           | What it does                                                   |
-| --------------------------------- | -------------------------------------------------------------- |
-| `bun dev`                         | velite + `next dev`                                            |
-| `bun run build`                   | velite + `next build`                                          |
-| `bun start`                       | `next start` (local only — production runs `server.js`)        |
-| `bun run typecheck`               | velite + `next typegen` + `tsc --noEmit`                       |
-| `bun run test`                    | `bun test`                                                     |
-| `bun run audit`                   | `bun audit --audit-level=high` with the reviewed ignores       |
-| `bun run lint` / `lint:fix`       | ESLint                                                         |
-| `bun run format` / `format:check` | Prettier                                                       |
-| `bun run velite` / `velite:watch` | build / watch the content pipeline                             |
-| `bun run optimize:images <dir>`   | webp q78, ≤2000px long edge — run before uploading to the CDN  |
-| `bun scripts/smoke.ts <url>`      | post-build smoke test (CI runs it against the candidate image) |
+| Command                           | What it does                                                  |
+| --------------------------------- | ------------------------------------------------------------- |
+| `bun dev`                         | velite + `next dev`                                           |
+| `bun run build`                   | velite + `next build`                                         |
+| `bun start`                       | `next start` (local only — production runs `server.js`)       |
+| `bun run generate`                | velite + `next typegen`                                       |
+| `bun run typecheck`               | `generate` + `tsc --noEmit`                                   |
+| `bun run test`                    | `bun test`                                                    |
+| `bun run audit`                   | `bun audit --audit-level=high`                                |
+| `bun run knip`                    | unused files, exports and dependencies                        |
+| `bun run jscpd`                   | duplication in `src/` (fails above 1 %)                       |
+| `bun run depcruise`               | module graph: no cycles, orphans or dev deps in `src/`        |
+| `bun run lint` / `lint:fix`       | ESLint                                                        |
+| `bun run format` / `format:check` | Prettier                                                      |
+| `bun run velite` / `velite:watch` | build / watch the content pipeline                            |
+| `bun run optimize:images <dir>`   | webp q78, ≤2000px long edge — run before uploading to the CDN |
+| `bun run test:smoke`              | smoke test against `SMOKE_BASE_URL` (CI: the candidate image) |
 
 ## Content authoring
 
@@ -73,10 +77,10 @@ The image must be on the CDN before you build — the build fetches it to read i
 
 ## Deploy
 
-`.github/workflows/ci.yml` runs on every PR and, as a reusable workflow, before every deploy; `.github/workflows/deploy.yml` runs on `main` and on manual dispatch. Shared setup is the `.github/actions/setup-bun` composite action; the deploy itself uses [Jubstaaa/deploy-actions](https://github.com/Jubstaaa/deploy-actions) (`ssh` with a pinned host key, `compose` for the health-gated release), shared with the other apps on the droplet.
+`.github/workflows/ci.yml` runs on every PR, and deploy reuses its `image` job; `.github/workflows/deploy.yml` runs on `main` and on manual dispatch. Shared setup is the `.github/actions/setup-bun` composite action; the deploy itself uses [Jubstaaa/deploy-actions](https://github.com/Jubstaaa/deploy-actions) (`ssh` with a pinned host key, `compose` for the health-gated release), shared with the other apps on the droplet.
 
-1. **check** — format, lint, typecheck, tests, dependency audit and actionlint. New advisories between pushes come from Dependabot alerts, not a scheduled run.
-2. **image** — builds the Docker image (`output: 'standalone'`, Node 24 LTS runner), runs it with the production constraints, runs `scripts/smoke.ts` against it, and on `main` pushes exactly that image as `ghcr.io/jubstaaa/portfolio:<commit-sha>`.
+1. **check** — Trivy (lockfile, Dockerfile, secrets), format, lint, typecheck, tests, dependency audit, knip, jscpd, dependency-cruiser and actionlint. New advisories between pushes come from Dependabot alerts, not a scheduled run.
+2. **image** — builds the Docker image (`output: 'standalone'`, Node 26 LTS runner), runs it with the production constraints, runs `bun run test:smoke` against it, and on `main` pushes exactly that image as `ghcr.io/jubstaaa/portfolio:<commit-sha>`. The `protect-main` ruleset only merges branches that are up to date with `main` and passed both jobs, so on `main` the deploy runs `image` alone and does not repeat `check`.
 3. **deploy** (`main` only, `Production` environment) — copies `docker-compose.yml` to `/opt/portfolio`, then `docker compose up --wait` with `IMAGE_TAG=<sha>`. If the container is not healthy within 120 s it rolls back to the previously running tag and fails the job. `/opt/portfolio/release.env` records the current and previous tags, and `:latest` moves to the released SHA, so it always means "what production runs".
 
 After a healthy deploy the job purges the Cloudflare cache (`CF_PURGE_TOKEN`, a token scoped to Cache Purge on this zone only). HTML is cached at the edge until that purge; requests for RSC payloads (`?_rsc`, `RSC` header), `/api/*` and `/_next/image` bypass the cache.
@@ -99,7 +103,7 @@ Find good SHAs in `/opt/portfolio/release.env` (`PREVIOUS_TAG`), `git log --firs
 
 ### Dependency updates
 
-Dependabot opens weekly PRs. Patch and minor updates merge themselves once the required checks (`check`, `image`) pass; majors wait for review. GitHub does not start workflows from those bot merges, so they reach production with the next deploy (any push to `main`, or `gh workflow run deploy.yml`).
+Dependabot opens weekly PRs. Patch and minor updates merge themselves once the required checks (`check`, `image`) pass; majors wait for review. GitHub does not start workflows from a merge made with `GITHUB_TOKEN`, so the auto-merge workflow dispatches `deploy.yml` itself after merging. A Dependabot branch that fell behind `main` gets an `@dependabot rebase` comment instead, which re-runs the checks.
 
 ### Monitoring
 

@@ -3,8 +3,13 @@ name: CI
 on:
     pull_request:
         branches: [main]
-    # deploy.yml runs the same gate before every release.
+    # deploy.yml reuses the image job to build and push the release image.
     workflow_call:
+        inputs:
+            run-check:
+                description: 'Run the check job. deploy.yml skips it: the ruleset requires an up-to-date branch whose check passed, so main already holds a checked tree.'
+                type: boolean
+                default: true
 
 permissions:
     contents: read
@@ -18,27 +23,51 @@ env:
 
 jobs:
     check:
+        # A pull_request has no inputs (null == false in expressions), so test the
+        # event explicitly. In a called workflow, event_name is the caller's event.
+        if: ${{ github.event_name == 'pull_request' || inputs.run-check }}
         runs-on: ubuntu-latest
         timeout-minutes: 10
         steps:
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               with:
                   persist-credentials: false
+            # Before install, so it scans the lockfile and Dockerfile, not node_modules.
+            - name: Trivy (vulnerabilities, secrets, misconfiguration)
+              uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+              env:
+                  TRIVY_INCLUDE_DEV_DEPS: true
+              with:
+                  scan-type: fs
+                  scan-ref: .
+                  scanners: vuln,secret,misconfig
+                  severity: HIGH,CRITICAL
+                  exit-code: '1'
+                  cache-dir: ${{ runner.temp }}/trivy
             - uses: ./.github/actions/setup-bun
             - run: bun run format:check
-            # Type-aware lint resolves #site/content and Next's route types, so the
-            # generated sources must exist first.
+            # Lint, the type check, knip and dependency-cruiser all resolve
+            # #site/content and Next's route types, so generate them once first.
             - name: Generate content and route types
-              run: bun run velite && bunx next typegen
+              run: bun run generate
             - run: bun run lint
-            - run: bun run typecheck
+            - name: Typecheck
+              run: bunx tsc --noEmit
             - run: bun run test
             - run: bun run audit
+            - name: Dead code and unused dependencies (knip)
+              run: bun run knip
+            - name: Duplication (jscpd)
+              run: bun run jscpd
+            - name: Module graph (dependency-cruiser)
+              run: bun run depcruise
             - name: actionlint
               run: docker run --rm -v "$PWD:/repo" -w /repo rhysd/actionlint:1.7.12@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667 -color
 
     image:
         needs: check
+        # Also runs when deploy.yml skipped the check, never after a failed one.
+        if: ${{ !cancelled() && (needs.check.result == 'success' || needs.check.result == 'skipped') }}
         runs-on: ubuntu-latest
         timeout-minutes: 20
         permissions:
