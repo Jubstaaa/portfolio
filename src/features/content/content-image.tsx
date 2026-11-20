@@ -3,13 +3,13 @@ import Image from 'next/image'
 import { cdnUrl } from '@/lib/cdn'
 import { cn } from '@/lib/utils'
 
-import { CONTENT_IMAGE_CLASS } from './content-image.constants'
+import { CONTENT_IMAGE_CLASS, LCP_IMAGE_PROPS } from './content-image.constants'
 
 interface ContentImageProps {
     alt: string
     className?: string
     height: number
-    preload?: boolean
+    lcpCandidate?: boolean
     src: string
     width: number
 }
@@ -18,7 +18,7 @@ export function ContentImage({
     alt,
     className,
     height,
-    preload = false,
+    lcpCandidate = false,
     src,
     width,
 }: ContentImageProps) {
@@ -27,7 +27,7 @@ export function ContentImage({
             alt={alt}
             className={cn(CONTENT_IMAGE_CLASS, className)}
             height={height}
-            preload={preload}
+            {...(lcpCandidate ? LCP_IMAGE_PROPS : {})}
             sizes="(min-width: 1024px) 720px, 100vw"
             src={cdnUrl(src)}
             width={width}

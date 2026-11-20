@@ -74,7 +74,7 @@ export function ContentDetail({
                         <ContentImage
                             alt={cover.alt}
                             height={cover.height}
-                            preload
+                            lcpCandidate
                             src={cover.src}
                             width={cover.width}
                         />
