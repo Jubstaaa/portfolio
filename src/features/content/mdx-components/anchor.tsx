@@ -11,18 +11,20 @@ export function Anchor({
     href,
     ...rest
 }: AnchorHTMLAttributes<HTMLAnchorElement>) {
-    const external = isExternal(href)
-    const linkClass = cn(LINK_CLASS, className)
-    if (!href) return <span className={linkClass}>{children}</span>
-    if (external) {
+    if (!href) {
+        return <span className={cn(LINK_CLASS, className)}>{children}</span>
+    }
+    // Only an absolute URL (any scheme, including mailto:) parses without a base;
+    // site paths and fragments do not.
+    if (URL.canParse(href)) {
         return (
-            <ExternalLink className={linkClass} href={href} {...rest}>
+            <ExternalLink
+                arrowClassName="text-muted-foreground"
+                className={className}
+                href={href}
+                showArrow
+                {...rest}>
                 {children}
-                <span
-                    aria-hidden
-                    className="text-muted-foreground ml-1 select-none">
-                    ↗
-                </span>
             </ExternalLink>
         )
     }
@@ -31,9 +33,4 @@ export function Anchor({
             {children}
         </StyledLink>
     )
-}
-
-function isExternal(href: string | undefined): boolean {
-    if (!href) return false
-    return /^https?:\/\//.test(href) || href.startsWith('mailto:')
 }
