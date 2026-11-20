@@ -23,8 +23,9 @@ env:
 
 jobs:
     check:
-        # On pull_request there are no inputs, so this is always true there.
-        if: ${{ inputs.run-check != false }}
+        # A pull_request has no inputs (null == false in expressions), so test the
+        # event explicitly. In a called workflow, event_name is the caller's event.
+        if: ${{ github.event_name == 'pull_request' || inputs.run-check }}
         runs-on: ubuntu-latest
         timeout-minutes: 10
         steps:
