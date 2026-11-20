@@ -98,9 +98,9 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
                 ? {
                       cover: {
                           alt: cover.alt,
-                          height: cover.height ?? 0,
+                          height: cover.height,
                           src: cover.src,
-                          width: cover.width ?? 0,
+                          width: cover.width,
                       },
                   }
                 : {})}

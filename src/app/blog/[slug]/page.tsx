@@ -64,9 +64,9 @@ export default async function BlogDetailPage({ params }: PostPageProps) {
                 ? {
                       cover: {
                           alt: post.cover.alt,
-                          height: post.cover.height ?? 0,
+                          height: post.cover.height,
                           src: post.cover.src,
-                          width: post.cover.width ?? 0,
+                          width: post.cover.width,
                       },
                   }
                 : {})}

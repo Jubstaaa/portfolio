@@ -5,10 +5,8 @@ import rehypePrettyCode, {
 import remarkGfm from 'remark-gfm'
 import { defineCollection, defineConfig, s } from 'velite'
 
-import {
-    readImageDimensions,
-    rehypeImageDimensions,
-} from './src/features/content/pipeline/image-dimensions'
+import { rehypeImageDimensions } from './src/features/content/pipeline/image-dimensions'
+import { imageSchema } from './src/features/content/pipeline/image-schema'
 import { rehypeFirstImagePriority } from './src/features/content/pipeline/rehype-first-image-priority'
 import { rehypeNormalizeHeadings } from './src/features/content/pipeline/rehype-normalize-headings'
 import { isYearMonth } from './src/lib/format'
@@ -18,25 +16,6 @@ const prettyCode: PrettyCodeOptions = {
     keepBackground: false,
     theme: { dark: 'github-dark-default', light: 'github-light' },
 }
-
-const image = s
-    .object({
-        alt: s.string(),
-        caption: s.string().optional(),
-        src: s.string(),
-    })
-    .transform(async data => {
-        // Stamp intrinsic dimensions on local images so next/image reserves the
-        // aspect-ratio box (no flicker on cover / gallery images).
-        const blank = {
-            ...data,
-            height: undefined as number | undefined,
-            width: undefined as number | undefined,
-        }
-        if (!data.src.startsWith('/')) return blank
-
-        return { ...data, ...(await readImageDimensions(data.src)) }
-    })
 
 const site = defineCollection({
     name: 'Site',
@@ -63,7 +42,7 @@ const posts = defineCollection({
         .object({
             body: s.mdx(),
             category: s.string(),
-            cover: image.optional(),
+            cover: imageSchema.optional(),
             date: s.isodate(),
             description: s.string(),
             draft: s.boolean().default(false),
@@ -88,7 +67,7 @@ const projects = defineCollection({
             body: s.mdx(),
             category: s.string(),
             highlights: s.array(s.string()).default([]),
-            images: s.array(image).default([]),
+            images: s.array(imageSchema).default([]),
             order: s.number().optional(),
             raw: s.raw(),
             repo: s.string().url().optional(),

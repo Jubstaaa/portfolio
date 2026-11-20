@@ -30,3 +30,17 @@ test('under a cover the first body image does not compete with it', () => {
     expect(html).not.toContain('fetchPriority')
     expect(html).toContain('loading="lazy"')
 })
+
+test('renders a body image at its stamped size', () => {
+    const html = renderToStaticMarkup(<Img {...image} />)
+    expect(html).toContain('width="1200"')
+    expect(html).toContain('height="600"')
+})
+
+// The content pipeline stamps every body image; a missing size is a pipeline bug
+// that would otherwise ship as a layout shift.
+test('refuses a body image without dimensions', () => {
+    expect(() =>
+        renderToStaticMarkup(<Img alt="a" src="/images/a.webp" />)
+    ).toThrow('/images/a.webp')
+})

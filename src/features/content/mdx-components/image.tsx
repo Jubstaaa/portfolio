@@ -30,29 +30,19 @@ export function Img({
         className
     )
 
-    if (w && h) {
-        return (
-            <Image
-                alt={alt}
-                height={h}
-                src={resolvedSrc}
-                width={w}
-                {...priorityProps}
-                className={cn(sharedClassName, 'h-auto')}
-                sizes="(min-width: 768px) 720px, 100vw"
-            />
-        )
-    }
+    // The content pipeline stamps every body image; rendering one without a size
+    // would ship a layout shift instead of failing the build.
+    if (!w || !h) throw new Error(`body image ${src} has no intrinsic size`)
 
     return (
         <Image
             alt={alt}
-            height={0}
+            height={h}
             src={resolvedSrc}
-            width={0}
+            width={w}
             {...priorityProps}
-            className={sharedClassName}
-            sizes="100vw"
+            className={cn(sharedClassName, 'h-auto')}
+            sizes="(min-width: 768px) 720px, 100vw"
         />
     )
 }

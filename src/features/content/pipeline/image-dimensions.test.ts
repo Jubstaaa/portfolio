@@ -52,3 +52,15 @@ test('keeps dimensions an author already wrote', async () => {
     await stampImageDimensions({ children: [node], type: 'root' })
     expect(node.properties).toMatchObject({ height: 10, width: 20 })
 })
+
+test('fails the build on a body image that is not on the CDN', async () => {
+    const tree: Root = {
+        children: [img({ src: 'https://example.com/a.png' })],
+        type: 'root',
+    }
+    const failure = await stampImageDimensions(tree).catch(
+        (error: unknown) => error
+    )
+    expect(failure).toBeInstanceOf(Error)
+    expect(String(failure)).toContain('/images/')
+})
