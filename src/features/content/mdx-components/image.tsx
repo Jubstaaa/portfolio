@@ -32,7 +32,11 @@ export function Img({
 
     // The content pipeline stamps every body image; rendering one without a size
     // would ship a layout shift instead of failing the build.
-    if (!w || !h) throw new Error(`body image ${src} has no intrinsic size`)
+    if (!w || !h) {
+        throw new Error(
+            `body image ${src} has no intrinsic size: it skipped the content pipeline (a JSX <img> in MDX does)`
+        )
+    }
 
     return (
         <Image

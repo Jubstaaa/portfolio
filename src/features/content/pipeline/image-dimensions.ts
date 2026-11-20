@@ -10,8 +10,14 @@ export const CONTENT_IMAGE_PREFIX = '/images/'
 export async function readImageDimensions(
     src: string
 ): Promise<{ height: number; width: number }> {
-    const { height, width } = await sharp(await readImageBytes(src)).metadata()
-    return { height, width }
+    const bytes = await readImageBytes(src)
+    try {
+        const { height, width } = await sharp(bytes).metadata()
+        return { height, width }
+    } catch (cause) {
+        // sharp's decode errors do not say which file they were decoding.
+        throw new Error(`cannot read the size of ${src}`, { cause })
+    }
 }
 
 export function rehypeImageDimensions() {

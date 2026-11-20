@@ -64,3 +64,15 @@ test('fails the build on a body image that is not on the CDN', async () => {
     expect(failure).toBeInstanceOf(Error)
     expect(String(failure)).toContain('/images/')
 })
+
+test('names the image when the CDN serves something that is not one', async () => {
+    server.use(
+        http.get(`${CDN_BASE}/images/broken.png`, () =>
+            HttpResponse.text('<html>not an image</html>')
+        )
+    )
+    const failure = await readImageDimensions('/images/broken.png').catch(
+        (error: unknown) => error
+    )
+    expect(String(failure)).toContain('/images/broken.png')
+})
