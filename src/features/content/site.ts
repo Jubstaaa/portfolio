@@ -1,4 +1,4 @@
-import { site } from '@/features/content/content'
+import { site } from './content'
 
 export function absoluteUrl(path: string): string {
     return new URL(path, site.url).toString()

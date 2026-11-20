@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 
 import { getAllProjects, getProjectBySlug } from '@/features/content/content'
-import { renderOgImage } from '@/lib/og/og'
+import { renderOgImage } from '@/features/content/og/og'
 
 export function generateStaticParams() {
     return getAllProjects().map(project => ({ slug: project.slug }))

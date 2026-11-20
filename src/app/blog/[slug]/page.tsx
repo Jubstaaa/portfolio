@@ -10,12 +10,12 @@ import {
     site,
 } from '@/features/content/content'
 import { ContentDetail } from '@/features/content/content-detail'
-import { formatDate } from '@/lib/format'
 import {
     buildArticleJsonLd,
     buildBreadcrumbJsonLd,
     buildMetadata,
-} from '@/lib/seo'
+} from '@/features/content/seo'
+import { formatDate } from '@/lib/format'
 
 export default async function BlogDetailPage({
     params,

@@ -1,7 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 
-import { getAllProjects, site } from '@/features/content/content'
-
+import { getAllProjects, site } from './content'
 import { buildMetadata, buildProjectJsonLd } from './seo'
 
 describe('buildMetadata', () => {

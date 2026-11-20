@@ -5,7 +5,7 @@ import { PathBar } from '@/components/path-bar'
 import { SectionHeading } from '@/components/section-heading'
 import { getPublishedPosts } from '@/features/content/content'
 import { ContentCard } from '@/features/content/content-card'
-import { buildMetadata } from '@/lib/seo'
+import { buildMetadata } from '@/features/content/seo'
 
 export const metadata: Metadata = buildMetadata({
     description:

@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-import { handlePath } from '@/lib/site'
+import { handlePath } from '@/features/content/site'
 import { cn } from '@/lib/utils'
 
 interface LogoProps {

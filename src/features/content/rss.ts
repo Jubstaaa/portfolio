@@ -1,6 +1,6 @@
 import { Feed } from 'feed'
 
-import { absoluteUrl } from '@/lib/site'
+import { absoluteUrl } from '@/features/content/site'
 
 import { getPublishedPosts, site } from './content'
 

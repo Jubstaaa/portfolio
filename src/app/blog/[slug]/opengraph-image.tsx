@@ -1,8 +1,8 @@
 import { notFound } from 'next/navigation'
 
 import { getPostBySlug, getPublishedPosts } from '@/features/content/content'
+import { renderOgImage } from '@/features/content/og/og'
 import { formatDate } from '@/lib/format'
-import { renderOgImage } from '@/lib/og/og'
 
 export default async function BlogOgImage({
     params,

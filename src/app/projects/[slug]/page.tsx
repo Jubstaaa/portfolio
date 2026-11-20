@@ -14,7 +14,7 @@ import {
     buildBreadcrumbJsonLd,
     buildMetadata,
     buildProjectJsonLd,
-} from '@/lib/seo'
+} from '@/features/content/seo'
 
 export async function generateMetadata({
     params,

@@ -10,9 +10,9 @@ import type {
 
 import { pickBy } from 'lodash-es'
 
-import { type Post, type Project, site } from '@/features/content/content'
+import { cdnUrl } from '@/lib/cdn'
 
-import { cdnUrl } from './cdn'
+import { type Post, type Project, site } from './content'
 import { absoluteUrl, ogLocale } from './site'
 
 interface BuildMetadataInput {

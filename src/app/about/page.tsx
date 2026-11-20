@@ -7,7 +7,7 @@ import { Stacks } from '@/app/about/_components/stacks'
 import { PathBar } from '@/components/path-bar'
 import { SectionHeading } from '@/components/section-heading'
 import { site } from '@/features/content/content'
-import { buildMetadata } from '@/lib/seo'
+import { buildMetadata } from '@/features/content/seo'
 
 export const metadata: Metadata = buildMetadata({
     description:

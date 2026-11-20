@@ -2,10 +2,10 @@ import { JsonLd } from '@/components/json-ld'
 import { TerminalBlock } from '@/components/terminal-block/terminal-block'
 import { TerminalMeta } from '@/components/terminal-block/terminal-meta'
 import { site } from '@/features/content/content'
+import { buildPersonJsonLd } from '@/features/content/seo'
+import { handlePath } from '@/features/content/site'
 import { InteractiveTerminal } from '@/features/terminal/interactive-terminal'
 import { IntroTranscript } from '@/features/terminal/intro-transcript'
-import { buildPersonJsonLd } from '@/lib/seo'
-import { handlePath } from '@/lib/site'
 
 const INTRO_COMMANDS = ['whoami', 'ls', 'now-playing']
 

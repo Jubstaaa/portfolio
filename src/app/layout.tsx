@@ -7,7 +7,7 @@ import { Providers } from '@/app/_components/providers'
 import { ScrollProgress } from '@/app/_components/scroll-progress'
 import { SkipLink } from '@/app/_components/skip-link'
 import { site } from '@/features/content/content'
-import { ogLocale } from '@/lib/site'
+import { ogLocale } from '@/features/content/site'
 
 import './globals.css'
 import { fontVariables } from '@/styles/fonts'

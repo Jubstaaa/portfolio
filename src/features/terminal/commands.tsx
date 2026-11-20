@@ -2,8 +2,8 @@ import type { ReactNode } from 'react'
 
 import { NavLinks } from '@/components/nav-links'
 import { site } from '@/features/content/content'
+import { handlePath } from '@/features/content/site'
 import { NowPlaying } from '@/features/now-playing/now-playing'
-import { handlePath } from '@/lib/site'
 
 import type { CommandContext, TerminalCommand } from './commands.types'
 

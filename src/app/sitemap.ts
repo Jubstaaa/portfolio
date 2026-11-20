@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next'
 
 import { getAllProjects, getPublishedPosts } from '@/features/content/content'
-import { absoluteUrl } from '@/lib/site'
+import { absoluteUrl } from '@/features/content/site'
 
 export default function sitemap(): MetadataRoute.Sitemap {
     const now = new Date()
