@@ -11,11 +11,12 @@ import { buildMetadata } from '@/features/content/seo'
 
 export const metadata: Metadata = buildMetadata({
     description:
-        'Software engineer based in Istanbul. Full-stack web development with Next.js, React, TypeScript, Node.js, and cloud infra. Currently studying Software Engineering.',
+        'Software engineer based in Istanbul. Web and mobile apps, backend services, databases and infrastructure, mainly in TypeScript with PHP/Laravel and C#/.NET. Currently studying Software Engineering.',
     keywords: [
         'ilker balcilar',
         'software engineer',
         'full-stack developer',
+        'backend developer',
         'istanbul',
         'nextjs developer',
         'typescript',
@@ -35,11 +36,14 @@ export default function AboutPage() {
                     <div className="text-foreground space-y-4 leading-relaxed">
                         <p>
                             I&apos;m a software engineer based in Istanbul with
-                            five years of experience shipping production web and
-                            mobile apps in TypeScript. At Macellan I build
-                            fintech products: the Box Office web panel, the
-                            JoyPort customer wallet app and the company&apos;s
-                            React component library.
+                            five years of experience building products end to
+                            end: web and mobile apps, backend services and APIs,
+                            databases and the infrastructure they run on. I work
+                            mainly in TypeScript, and also ship in PHP/Laravel
+                            and C#/.NET when the product needs it. At Macellan I
+                            build fintech products: the Box Office web panel,
+                            the JoyPort customer wallet app and the
+                            company&apos;s React component library.
                         </p>
                         <p>
                             I like the infra side too: my own projects run as
