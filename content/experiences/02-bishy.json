@@ -1,13 +1,24 @@
 {
     "company": "Bishy",
-    "role": "Frontend Developer",
+    "role": "Software Engineer",
     "start": "2024-08",
     "end": "2025-05",
     "location": "İstanbul, Türkiye",
-    "summary": "Multilingual mobile wallet web app for personal and business users, plus the agency's landing site.",
+    "summary": "Multilingual mobile wallet platform for personal and business users: web app, .NET backend APIs and the agency's landing site.",
     "highlights": [
         "Built the wallet web app with Next.js and Node.js: transactions, cashback tracking, virtual cards, and user, corporate and admin dashboards with content management, analytics and support tools.",
+        "Developed REST APIs in the .NET backend (C#, Entity Framework, PostgreSQL).",
         "Built the landing site with Next.js and Tailwind CSS; set up Nginx on Ubuntu and GitHub Actions CI/CD for automated deployments."
     ],
-    "stack": ["Next.js", "Node.js", "Tailwind CSS", "Nginx", "GitHub Actions"]
+    "stack": [
+        "Next.js",
+        "Node.js",
+        "C#",
+        ".NET",
+        "Entity Framework",
+        "PostgreSQL",
+        "Tailwind CSS",
+        "Nginx",
+        "GitHub Actions"
+    ]
 }

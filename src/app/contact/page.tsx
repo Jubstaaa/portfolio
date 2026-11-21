@@ -12,7 +12,7 @@ export const metadata: Metadata = buildMetadata({
         'Get in touch with İlker Balcılar — email and social links for collaboration, contract work, or open-source questions.',
     keywords: [
         'contact ilker balcilar',
-        'hire frontend engineer',
+        'hire software engineer',
         'freelance developer istanbul',
     ],
     path: '/contact',

@@ -8,7 +8,8 @@
         "Led development of the Box Office web panel: ticket and product sales, wallet top-ups, customer management and reporting, used daily by venue staff (React, RTK Query, Zod).",
         "Developed the JoyPort customer wallet app for iOS, Android and web: OTP sign-in, onboarding, QR payments and account management (Expo, NativeWind).",
         "Core developer of the company's React component library; contributed to its React Native counterpart (Radix UI, Tailwind, Storybook).",
-        "Delivered the PAX POS device mode with NFC card payments in the merchant terminal app, a customer-facing ticket booking site, and wallet and payment features in the WaaS web app."
+        "Delivered the PAX POS device mode with NFC card payments in the merchant terminal app, a customer-facing ticket booking site, and wallet and payment features in the WaaS web app.",
+        "Contributed to backend services in Laravel and Hono on Bun with PostgreSQL; built the open-source hono-telescope to debug the team's Hono backend."
     ],
     "stack": [
         "React",
@@ -24,6 +25,11 @@
         "NativeWind",
         "Radix UI",
         "Storybook",
-        "i18next"
+        "i18next",
+        "Laravel",
+        "PHP",
+        "Hono",
+        "Bun",
+        "PostgreSQL"
     ]
 }

@@ -15,7 +15,6 @@ export const metadata: Metadata = buildMetadata({
     keywords: [
         'ilker balcilar',
         'software engineer',
-        'frontend engineer',
         'full-stack developer',
         'istanbul',
         'nextjs developer',
