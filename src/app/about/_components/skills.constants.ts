@@ -11,8 +11,8 @@ export const SKILL_CATEGORY_LABEL: Record<Skill['category'], string> = {
 
 export const SKILL_CATEGORY_ORDER: Skill['category'][] = [
     'lang',
-    'frontend',
     'backend',
+    'frontend',
     'devops',
     'design',
     'other',

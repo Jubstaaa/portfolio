@@ -5,10 +5,12 @@
     "location": "İstanbul, Türkiye",
     "summary": "Fintech products for venues and merchants, shipped to web, iOS and Android.",
     "highlights": [
-        "Led development of the Box Office web panel: ticket and product sales, wallet top-ups, customer management and reporting, used daily by venue staff (React, RTK Query, Zod).",
-        "Developed the JoyPort customer wallet app for iOS, Android and web: OTP sign-in, onboarding, QR payments and account management (Expo, NativeWind).",
-        "Core developer of the company's React component library; contributed to its React Native counterpart (Radix UI, Tailwind, Storybook).",
-        "Delivered the PAX POS device mode with NFC card payments in the merchant terminal app, a customer-facing ticket booking site, and wallet and payment features in the WaaS web app."
+        "Led development of the Box Office web panel: ticket and product sales, wallet top-ups, customer management and reporting, used daily by venue staff; installable PWA with real-time updates over WebSockets (React, RTK Query, Zod).",
+        "Developed the JoyPort customer wallet app for iOS, Android and web: OTP sign-in, onboarding, QR payments and account management (Expo, Expo Router, NativeWind, Reanimated).",
+        "Core developer of the company's React component library, 50+ components documented in Storybook; contributed to its React Native counterpart (Radix UI, Tailwind).",
+        "Delivered the PAX POS device mode with NFC card payments in the merchant terminal app, a customer-facing ticket booking site, and wallet and payment features in the WaaS web app.",
+        "Contributed to the backend: Hono microservices on Bun (PostgreSQL, MongoDB, Redis, Pusher) and the Laravel API (Octane, Filament); built the open-source hono-telescope to debug the services.",
+        "Merged 440+ merge requests across 20 repositories and reviewed 340+ from teammates (GitLab), in two-week Scrum sprints (Jira)."
     ],
     "stack": [
         "React",
@@ -24,6 +26,18 @@
         "NativeWind",
         "Radix UI",
         "Storybook",
-        "i18next"
+        "i18next",
+        "Laravel",
+        "PHP",
+        "Hono",
+        "Bun",
+        "PostgreSQL",
+        "Expo Router",
+        "Reanimated",
+        "MongoDB",
+        "Redis",
+        "Pusher",
+        "WebSocket",
+        "PWA"
     ]
 }

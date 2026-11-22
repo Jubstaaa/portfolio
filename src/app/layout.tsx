@@ -19,7 +19,6 @@ interface RootLayoutProps {
 const SITE_KEYWORDS = [
     'ilker balcilar',
     'software engineer',
-    'frontend engineer',
     'full-stack developer',
     'istanbul',
     'nextjs',
