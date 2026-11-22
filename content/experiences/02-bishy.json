@@ -4,7 +4,7 @@
     "start": "2024-08",
     "end": "2025-05",
     "location": "İstanbul, Türkiye",
-    "summary": "Multilingual mobile wallet platform for personal and business users: web app, .NET backend APIs and the agency's landing site.",
+    "summary": "Multilingual mobile wallet platform for personal and business users: web app, .NET backend APIs and the company's landing site.",
     "highlights": [
         "Built the wallet web app with Next.js and Node.js: transactions, cashback tracking, virtual cards, and user, corporate and admin dashboards with content management, analytics and support tools.",
         "Developed REST APIs in the .NET backend (C#, Entity Framework, PostgreSQL).",

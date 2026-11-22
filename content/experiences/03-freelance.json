@@ -1,16 +1,22 @@
 {
     "company": "Freelance",
-    "role": "Freelance Software Developer",
+    "role": "Software Engineer",
     "start": "2023-10",
     "end": "2025-09",
     "location": "Remote",
-    "summary": "Full-stack web products for clients with Next.js, React, Node.js and Payload CMS, including an agency site and blog and a personal site on a headless CMS. Owned deployment on Ubuntu VPS, Docker, Cloudflare and GitHub Actions.",
+    "summary": "Full-stack web products for clients with Next.js, React, Node.js and Payload CMS, deployed on Docker, Cloudflare and GitHub Actions. Rebuilt a legacy PHP site and WordPress blog (220+ posts) as one Next.js 16 app with TR/EN i18n and an AI chat assistant (Vercel AI SDK).",
     "stack": [
         "Next.js",
         "React",
         "Node.js",
         "Payload CMS",
         "Docker",
-        "Cloudflare"
+        "Cloudflare",
+        "TypeScript",
+        "PostgreSQL",
+        "MongoDB",
+        "Vercel AI SDK",
+        "next-intl",
+        "GitHub Actions"
     ]
 }
