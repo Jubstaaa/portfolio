@@ -34,6 +34,8 @@ jobs:
                   steps.metadata.outputs.package-ecosystem != 'docker'
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  # No checkout here, so gh cannot read the repo from a git remote.
+                  GH_REPO: ${{ github.repository }}
                   PR_URL: ${{ github.event.pull_request.html_url }}
                   BASE: ${{ github.event.pull_request.base.ref }}
               run: |
