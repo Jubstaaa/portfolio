@@ -177,14 +177,20 @@ export function InteractiveTerminal({
                     ))}
                 </div>
 
-                <label className="has-[:focus-visible]:outline-ring flex cursor-default items-center has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2">
+                <label className="flex cursor-default items-center">
                     <TerminalCaret />
                     <input
                         aria-label="terminal input — type 'help' for commands"
                         autoCapitalize="off"
                         autoComplete="off"
                         autoCorrect="off"
-                        className="text-foreground min-w-0 cursor-default bg-transparent p-0 caret-transparent outline-none"
+                        // outline-none!, not a bare outline-none: the global
+                        // :focus-visible ring sits in @layer utilities so a
+                        // casual opt-out cannot silently drop it. This one is
+                        // deliberate — the prompt is autofocused on load, so a
+                        // ring would sit on the page at rest, and the blinking
+                        // caret beside the input is the affordance instead.
+                        className="text-foreground min-w-0 cursor-default bg-transparent p-0 caret-transparent outline-none!"
                         enterKeyHint="go"
                         id="terminal-input"
                         name="terminal-input"
