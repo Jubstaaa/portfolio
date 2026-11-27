@@ -84,9 +84,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             className={fontVariables}
             lang={site.locale}
             suppressHydrationWarning>
-            <body
-                className="bg-background text-foreground flex min-h-screen flex-col font-mono antialiased"
-                suppressHydrationWarning>
+            <body className="bg-background text-foreground flex min-h-screen flex-col font-mono antialiased">
                 <Providers>
                     <SkipLink />
                     <Nav />

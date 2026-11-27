@@ -1,4 +1,4 @@
 {
     "$schema": "https://unpkg.com/knip@6/schema.json",
-    "entry": ["velite.config.ts", "scripts/*.mjs"]
+    "entry": ["velite.config.ts", "scripts/*.ts"]
 }

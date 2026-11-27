@@ -1,6 +1,8 @@
 import { s, z } from 'velite'
 
-import { CONTENT_IMAGE_PREFIX, readImageDimensions } from './image-dimensions'
+import { CONTENT_IMAGE_PREFIX } from '@/lib/cdn'
+
+import { readImageDimensions } from './image-dimensions'
 
 // Frontmatter images (covers, project galleries). Every one is on the CDN, so the
 // build can stamp its intrinsic size and next/image always reserves the box.
@@ -9,7 +11,6 @@ import { CONTENT_IMAGE_PREFIX, readImageDimensions } from './image-dimensions'
 export const imageSchema = s
     .object({
         alt: s.string(),
-        caption: s.string().optional(),
         src: s.string(),
     })
     .transform(async (data, ctx) => {

@@ -43,7 +43,11 @@ export default async function ProjectDetailPage({
     if (!project) notFound()
 
     const cover = project.images[0]
-    const { next, prev } = getAdjacent(getAllProjects(), project)
+    const { next, prev } = getAdjacent(
+        getAllProjects(),
+        project,
+        'display-order'
+    )
 
     return (
         <ContentDetail

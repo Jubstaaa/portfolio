@@ -65,7 +65,18 @@ async function loadCover(src?: string): Promise<string | undefined> {
     return `data:image/png;base64,${png.toString('base64')}`
 }
 
-async function loadFonts() {
+// Memoised: every post and project renders a card, and the two faces do not
+// change between them.
+let fontsPromise: Promise<OgFont[]> | undefined
+
+type OgFont = Awaited<ReturnType<typeof readFonts>>[number]
+
+function loadFonts(): Promise<OgFont[]> {
+    fontsPromise ??= readFonts()
+    return fontsPromise
+}
+
+async function readFonts() {
     const [regular, bold] = await Promise.all([
         readFile(join(FONT_DIR, 'Hermit-Regular.otf')),
         readFile(join(FONT_DIR, 'Hermit-Bold.otf')),

@@ -12,7 +12,11 @@ export function Anchor({
     ...rest
 }: AnchorHTMLAttributes<HTMLAnchorElement>) {
     if (!href) {
-        return <span className={cn(LINK_CLASS, className)}>{children}</span>
+        return (
+            <span className={cn(LINK_CLASS, className)} {...rest}>
+                {children}
+            </span>
+        )
     }
     // Only an absolute URL (any scheme, including mailto:) parses without a base;
     // site paths and fragments do not.
@@ -29,7 +33,7 @@ export function Anchor({
         )
     }
     return (
-        <StyledLink className={className} href={href}>
+        <StyledLink className={className} href={href} {...rest}>
             {children}
         </StyledLink>
     )

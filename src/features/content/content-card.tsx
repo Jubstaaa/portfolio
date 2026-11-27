@@ -24,7 +24,7 @@ export function ContentCard({
     return (
         <Link
             className={cn(
-                'hairline group transition-token block border-b py-6 transition-[border-color]',
+                'hairline group transition-token block border-b py-6',
                 className
             )}
             href={href}>

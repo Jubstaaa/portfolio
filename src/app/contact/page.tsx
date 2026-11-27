@@ -32,12 +32,14 @@ export default function ContactPage() {
                 />
 
                 <div className="space-y-4">
-                    <p className="text-muted-foreground label-caps">email</p>
+                    <h2 className="text-muted-foreground label-caps">email</h2>
                     <CopyEmail email={site.email} />
                 </div>
 
                 <div className="space-y-4">
-                    <p className="text-muted-foreground label-caps">socials</p>
+                    <h2 className="text-muted-foreground label-caps">
+                        socials
+                    </h2>
                     <SocialLinks />
                 </div>
             </section>

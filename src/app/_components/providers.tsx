@@ -13,7 +13,6 @@ export function Providers({ children }: ProvidersProps) {
             attribute="class"
             defaultTheme="dark"
             disableTransitionOnChange
-            enableSystem
             storageKey="theme"
             themes={['light', 'dark']}>
             {children}

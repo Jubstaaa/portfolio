@@ -32,7 +32,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
             <Sun
                 aria-hidden
                 className={cn(
-                    'transition-token absolute size-4',
+                    'transition-token-motion absolute size-4',
                     isDark
                         ? 'scale-0 rotate-90 opacity-0'
                         : 'scale-100 rotate-0 opacity-100'
@@ -42,7 +42,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
             <Moon
                 aria-hidden
                 className={cn(
-                    'transition-token absolute size-4',
+                    'transition-token-motion absolute size-4',
                     isDark
                         ? 'scale-100 rotate-0 opacity-100'
                         : 'scale-0 -rotate-90 opacity-0'

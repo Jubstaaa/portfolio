@@ -2,6 +2,7 @@ import Image from 'next/image'
 
 import {
     CONTENT_IMAGE_MAX_HEIGHT_CLASS,
+    CONTENT_IMAGE_SIZES,
     LCP_IMAGE_PROPS,
 } from '@/features/content/content-image.constants'
 import { cdnUrl } from '@/lib/cdn'
@@ -46,7 +47,7 @@ export function Img({
             width={w}
             {...priorityProps}
             className={cn(sharedClassName, 'h-auto')}
-            sizes="(min-width: 768px) 720px, 100vw"
+            sizes={CONTENT_IMAGE_SIZES}
         />
     )
 }

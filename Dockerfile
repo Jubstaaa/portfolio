@@ -18,10 +18,7 @@ RUN bun install --frozen-lockfile --ignore-scripts
 # inlined into the prerendered HTML and compiled into the optimizer's remote
 # allow-list. Left empty, src/lib/cdn.ts falls back to the production bucket; CI
 # refuses an empty value so a misconfigured repository variable cannot slip by.
-FROM oven/bun:1.4.4-alpine@sha256:4cf82f5686b196504fe119db3fcd9185b191f82ece82c40680e597228ec6070a AS build
-RUN apk add --no-cache libc6-compat
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
+FROM deps AS build
 COPY . .
 ARG NEXT_PUBLIC_CDN_BASE
 ENV NEXT_PUBLIC_CDN_BASE=$NEXT_PUBLIC_CDN_BASE

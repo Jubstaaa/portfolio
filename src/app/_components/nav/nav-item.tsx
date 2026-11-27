@@ -1,8 +1,9 @@
 import Link from 'next/link'
 
+import { navLabel } from '@/features/content/site'
 import { cn } from '@/lib/utils'
 
-import { isActive, routeLabel } from './nav.utils'
+import { isActive } from './nav.utils'
 
 const NAV_ITEM_VARIANT = {
     desktop: {
@@ -19,12 +20,19 @@ const NAV_ITEM_VARIANT = {
 
 interface NavItemProps {
     href: string
+    label: string
     onNavigate?: () => void
     pathname: string
     variant: keyof typeof NAV_ITEM_VARIANT
 }
 
-export function NavItem({ href, onNavigate, pathname, variant }: NavItemProps) {
+export function NavItem({
+    href,
+    label,
+    onNavigate,
+    pathname,
+    variant,
+}: NavItemProps) {
     const active = isActive(pathname, href)
     const styles = NAV_ITEM_VARIANT[variant]
     return (
@@ -37,7 +45,7 @@ export function NavItem({ href, onNavigate, pathname, variant }: NavItemProps) {
                 )}
                 href={href}
                 {...(onNavigate ? { onClick: onNavigate } : {})}>
-                {routeLabel(href)}
+                {navLabel(label)}
             </Link>
         </li>
     )

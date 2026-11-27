@@ -36,7 +36,10 @@ export function getCompletions(
     const name = input.slice(0, spaceIndex).toLowerCase()
     const candidates = ARGUMENT_COMPLETIONS.get(name)
     if (!candidates) return null
-    const prefix = input.slice(spaceIndex + 1).trimStart()
+    const prefix = input
+        .slice(spaceIndex + 1)
+        .trimStart()
+        .toLowerCase()
     const matches = candidates.filter(candidate => candidate.startsWith(prefix))
     return matches.length
         ? { build: match => `${name} ${match}`, matches }
@@ -55,6 +58,10 @@ export function parseCommand(raw: string): null | ParsedCommand {
 }
 
 export function resolvePage(arg: string): string | undefined {
-    const key = arg.replace(/^\.?\//, '').replace(/\/$/, '') || '~'
+    const key =
+        arg
+            .toLowerCase()
+            .replace(/^\.?\//, '')
+            .replace(/\/$/, '') || '~'
     return PAGES.get(key)
 }

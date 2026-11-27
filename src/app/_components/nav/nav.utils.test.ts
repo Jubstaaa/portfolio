@@ -1,6 +1,8 @@
 import { describe, expect, test } from 'bun:test'
 
-import { isActive, routeLabel } from './nav.utils'
+import { navLabel } from '@/features/content/site'
+
+import { isActive } from './nav.utils'
 
 describe('isActive', () => {
     test('home is active only on the home page', () => {
@@ -18,6 +20,6 @@ describe('isActive', () => {
     })
 })
 
-test('routeLabel renders the path as a relative directory', () => {
-    expect(routeLabel('/about')).toBe('./about')
+test('navLabel renders a content label as a relative directory', () => {
+    expect(navLabel('about')).toBe('./about')
 })

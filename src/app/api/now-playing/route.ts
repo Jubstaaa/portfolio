@@ -3,19 +3,18 @@ import { NextResponse } from 'next/server'
 import type { NowPlayingPayload } from '@/features/now-playing/now-playing.schema'
 
 import { getSocialHref } from '@/features/content/content'
-import { parseRecentTracks } from '@/features/now-playing/last-fm'
+import { fetchRecentTracks } from '@/features/now-playing/recent-tracks'
 
-const RECENT_TRACKS_ENDPOINT = 'https://ws.audioscrobbler.com/2.0/'
 const SPOTIFY_PROFILE_URL = getSocialHref('Spotify')
-const UPSTREAM_TIMEOUT_MS = 3000
-// One Last.fm call per window, shared by every visitor through Next's data cache;
-// the client polls on the same cadence.
-const REVALIDATE_SECONDS = 30
 
 const CACHE_HEADERS = {
     'Cache-Control':
         'public, max-age=15, s-maxage=30, stale-while-revalidate=60',
 }
+
+// A transient Last.fm hiccup must not be cached as "not playing" for up to 90
+// seconds at a shared cache after the upstream has already recovered.
+const NO_CACHE_HEADERS = { 'Cache-Control': 'no-store' }
 
 let warnedMissingCredentials = false
 
@@ -29,7 +28,7 @@ export async function GET(): Promise<NextResponse> {
                 'now-playing: LASTFM_API_KEY or LASTFM_USERNAME is unset; the widget always reports idle'
             )
         }
-        return respond({ isPlaying: false })
+        return respond({ isPlaying: false }, NO_CACHE_HEADERS)
     }
 
     try {
@@ -39,26 +38,13 @@ export async function GET(): Promise<NextResponse> {
         )
     } catch (error) {
         console.error('now-playing: upstream request failed', error)
-        return respond({ isPlaying: false })
+        return respond({ isPlaying: false }, NO_CACHE_HEADERS)
     }
 }
 
-async function fetchRecentTracks(apiKey: string, user: string) {
-    const params = new URLSearchParams({
-        api_key: apiKey,
-        format: 'json',
-        limit: '1',
-        method: 'user.getrecenttracks',
-        user,
-    })
-    const res = await fetch(`${RECENT_TRACKS_ENDPOINT}?${params}`, {
-        next: { revalidate: REVALIDATE_SECONDS },
-        signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
-    })
-    if (!res.ok) throw new Error(`Last.fm responded ${res.status}`)
-    return parseRecentTracks(await res.json())
-}
-
-function respond(payload: NowPlayingPayload): NextResponse {
-    return NextResponse.json(payload, { headers: CACHE_HEADERS })
+function respond(
+    payload: NowPlayingPayload,
+    headers: Record<string, string> = CACHE_HEADERS
+): NextResponse {
+    return NextResponse.json(payload, { headers })
 }

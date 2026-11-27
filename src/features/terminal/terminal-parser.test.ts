@@ -29,6 +29,9 @@ describe('resolvePage', () => {
         ['/', '/'],
         ['~', '/'],
         ['', '/'],
+        // Arguments fold case like command names do, so `cd BLOG` navigates.
+        ['BLOG', '/blog'],
+        ['./Blog/', '/blog'],
     ])('%p resolves to %p', (arg, href) => {
         expect(resolvePage(arg)).toBe(href)
     })
@@ -56,6 +59,10 @@ describe('getCompletions', () => {
 
     test('folds case the same way execution does', () => {
         expect(getCompletions('CD bl', names)?.matches).toEqual(['blog'])
+        // The argument half used to be case-sensitive while the command half
+        // was not, so `cd BL<Tab>` went dead while `cd bl<Tab>` completed.
+        expect(getCompletions('cd BL', names)?.matches).toEqual(['blog'])
+        expect(getCompletions('CD BL', names)?.matches).toEqual(['blog'])
     })
 
     test('does not complete arguments of other commands', () => {

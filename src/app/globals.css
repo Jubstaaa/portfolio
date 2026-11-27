@@ -2,7 +2,6 @@
 @import '../styles/tokens.css';
 
 @custom-variant dark (&:is(.dark, .dark *));
-@custom-variant light (&:is(.light, .light *));
 
 @theme inline {
     --color-background: var(--background);
@@ -79,51 +78,113 @@
         color: var(--foreground);
     }
 
-    :focus-visible {
-        outline: 2px solid var(--ring);
-        outline-offset: 2px;
-        border-radius: 2px;
+    /* rehype-pretty-code is configured with two themes, so it stamps
+       --shiki-dark/--shiki-light per token and emits no `color` of its own:
+       reading them here is what actually paints the highlighting. A span
+       without the variable (the data-line wrappers) inherits instead. */
+    [data-rehype-pretty-code-figure] span {
+        color: var(--shiki-dark);
+    }
+
+    html.light [data-rehype-pretty-code-figure] span {
+        color: var(--shiki-light);
     }
 }
 
-@layer utilities {
-    .container-default {
-        @apply mx-auto w-full max-w-(--content-max) px-(--space-gutter);
-    }
+/* Registered with the engine via @utility, not written into @layer utilities:
+   that is what makes variants work, so `md:container-default` compiles instead
+   of silently doing nothing. */
+@utility container-default {
+    @apply mx-auto w-full max-w-(--content-max) px-(--space-gutter);
+}
 
-    .section-pad {
-        @apply py-(--space-section);
-    }
+@utility section-pad {
+    @apply py-(--space-section);
+}
 
-    .prose-max {
-        @apply max-w-(--prose-max);
-    }
+@utility prose-max {
+    @apply max-w-(--prose-max);
+}
 
-    .hairline {
-        border-color: color-mix(in oklch, var(--border) 70%, transparent);
-    }
+@utility hairline {
+    border-color: color-mix(in oklch, var(--border) 70%, transparent);
+}
 
-    .transition-token {
-        @apply duration-(--duration-base) ease-(--ease-out);
-    }
+/* Named properties, not the `transition-property: all` that omitting them would
+   mean: `all` animates layout on every breakpoint and aria-current flip. Motion
+   that is not a colour change opts in below. */
+@utility transition-token {
+    @apply transition-colors duration-(--duration-base) ease-(--ease-out);
+}
 
-    .cursor-blink {
-        animation: cursor-blink var(--duration-blink) steps(2) infinite;
-    }
+@utility transition-token-motion {
+    @apply transition-[transform,opacity] duration-(--duration-base) ease-(--ease-out);
+}
 
-    .term-rule {
+@utility dot-nudge {
+    margin-top: calc((1lh - 0.375rem) / 2);
+}
+
+@utility cursor-blink {
+    animation: cursor-blink var(--duration-blink) steps(2) infinite;
+}
+
+@utility term-rule {
+    color: var(--muted-foreground);
+    letter-spacing: -0.05em;
+    user-select: none;
+}
+
+@utility terminal-glitch {
+    animation: terminal-glitch var(--duration-glitch) steps(2) both;
+}
+
+/* Driven by the root scroller, not time: no JS and no re-render per scroll.
+   Browsers without scroll timelines would run it as a 0s animation and show a
+   full bar, so the bar only appears where the timeline is supported. */
+@utility scroll-progress {
+    display: none;
+    transform-origin: left;
+
+    @supports (animation-timeline: scroll()) {
+        display: block;
+        /* A page too short to scroll has an inactive timeline, which applies no
+           keyframes; start empty so the bar does not render full width. */
+        transform: scaleX(0);
+        animation: scroll-progress linear both;
+        animation-timeline: scroll(root block);
+    }
+}
+
+@utility arrow-bullet {
+    @apply pl-[1.5ch];
+
+    &::before {
+        content: '\2192';
+        margin-right: 0.5ch;
+        margin-left: -1.5ch;
         color: var(--muted-foreground);
-        letter-spacing: -0.05em;
         user-select: none;
     }
+}
 
-    .terminal-glitch {
-        animation: terminal-glitch var(--duration-glitch) steps(2) both;
+@utility label-caps {
+    @apply text-xs tracking-[0.18em] uppercase;
+}
+
+@layer utilities {
+    /* Neither of these is a utility — one is a descendant selector, the other an
+       element state — so they stay hand-written here. The focus ring in
+       particular has to sit in this layer: @layer base loses to every utility,
+       so a lone `outline-none` would have dropped it. */
+    :focus-visible {
+        outline: 2px solid var(--ring);
+        outline-offset: 2px;
     }
 
-    /* Types a command one character per step over text that is already laid
-       out: clip-path never moves anything, so typing causes no layout shift,
-       and the output below stays painted throughout. */
+    /* Types a command one character per step over text that is already laid out:
+       clip-path never moves anything, so typing causes no layout shift, and the
+       output below stays painted throughout. */
     [data-terminal-intro] .terminal-typing {
         animation: terminal-typing
             calc(var(--typing-chars) * var(--duration-typing-char))
@@ -134,41 +195,6 @@
                     var(--duration-typing-pause)
             )
             both;
-    }
-
-    /* Driven by the root scroller, not time: no JS and no re-render per scroll.
-       Browsers without scroll timelines would run it as a 0s animation and show a
-       full bar, so the bar only appears where the timeline is supported. */
-    .scroll-progress {
-        display: none;
-        transform-origin: left;
-    }
-
-    @supports (animation-timeline: scroll()) {
-        .scroll-progress {
-            display: block;
-            /* A page too short to scroll has an inactive timeline, which applies
-               no keyframes; start empty so the bar does not render full width. */
-            transform: scaleX(0);
-            animation: scroll-progress linear both;
-            animation-timeline: scroll(root block);
-        }
-    }
-
-    .arrow-bullet {
-        @apply pl-[1.5ch];
-    }
-
-    .arrow-bullet::before {
-        content: '→';
-        margin-right: 0.5ch;
-        margin-left: -1.5ch;
-        color: var(--muted-foreground);
-        user-select: none;
-    }
-
-    .label-caps {
-        @apply text-xs tracking-[0.18em] uppercase;
     }
 }
 

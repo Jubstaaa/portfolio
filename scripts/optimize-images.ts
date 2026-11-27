@@ -52,7 +52,7 @@ const files = (await readdir(root, { recursive: true, withFileTypes: true }))
     )
     .map(entry => join(entry.parentPath, entry.name))
 
-const targetOf = file =>
+const targetOf = (file: string): string =>
     format({
         ...parse(join(outRoot, relative(root, file))),
         base: '',
@@ -61,7 +61,7 @@ const targetOf = file =>
 
 // cover.png and cover.jpg would both become cover.webp, and one would silently
 // replace the other.
-const sourceByTarget = new Map()
+const sourceByTarget = new Map<string, string>()
 for (const file of files) {
     const target = targetOf(file)
     const other = sourceByTarget.get(target)

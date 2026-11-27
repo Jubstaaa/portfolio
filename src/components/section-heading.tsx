@@ -22,7 +22,7 @@ export function SectionHeading({
             {number ? (
                 <span
                     aria-hidden
-                    className="text-muted-foreground absolute top-0 -left-10 hidden text-xs md:block">
+                    className="text-muted-foreground absolute top-0 -left-7 hidden text-xs md:block">
                     {number}
                 </span>
             ) : null}

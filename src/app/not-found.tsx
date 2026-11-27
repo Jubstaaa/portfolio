@@ -11,10 +11,10 @@ export default function NotFound() {
                 <TerminalMeta branch="detached" path="~/unknown" />
 
                 <TerminalLine command="cat .">
-                    <p>
+                    <h1 className="font-normal">
                         <StatusDot tone="danger" />
                         not found · 404
-                    </p>
+                    </h1>
                     <p className="text-muted-foreground">
                         <span aria-hidden className="mr-1 select-none">
                             →

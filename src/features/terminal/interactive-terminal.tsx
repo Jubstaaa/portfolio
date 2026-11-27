@@ -135,6 +135,10 @@ export function InteractiveTerminal({
     }, [skipIntro])
 
     useEffect(() => {
+        // Nothing has been run yet on the first paint, and scrolling here would
+        // undo the preventScroll focus above and push the intro output — the
+        // page's LCP element — out of view on a short viewport.
+        if (entries.length === 0) return
         inputRef.current?.scrollIntoView({ block: 'nearest' })
     }, [entries])
 
@@ -142,7 +146,7 @@ export function InteractiveTerminal({
         <QueryClientProvider client={queryClient}>
             <div
                 className={cn(
-                    'flex flex-col gap-3',
+                    'flex flex-col',
                     glitching && 'terminal-glitch',
                     className
                 )}
@@ -152,16 +156,20 @@ export function InteractiveTerminal({
                 }}>
                 {cleared ? null : (
                     <div
-                        className="flex flex-col gap-3"
+                        className="mb-3 flex flex-col gap-3"
                         data-terminal-intro={introPlaying || undefined}
                         data-terminal-static>
                         {children}
                     </div>
                 )}
 
+                {/* Always rendered: a region that enters the accessibility tree
+                    and receives its content in the same frame is not announced,
+                    which would silently lose the first command's output. It
+                    carries its own margin so staying empty costs no gap. */}
                 <div
                     aria-live="polite"
-                    className="flex flex-col gap-3 empty:hidden">
+                    className="mb-3 flex flex-col gap-3 empty:mb-0">
                     {entries.map(entry => (
                         <TerminalLine command={entry.command} key={entry.id}>
                             {entry.output}
@@ -169,7 +177,7 @@ export function InteractiveTerminal({
                     ))}
                 </div>
 
-                <label className="flex cursor-default items-center">
+                <label className="has-[:focus-visible]:outline-ring flex cursor-default items-center has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2">
                     <TerminalCaret />
                     <input
                         aria-label="terminal input — type 'help' for commands"
@@ -185,6 +193,9 @@ export function InteractiveTerminal({
                         }}
                         onChange={event => {
                             resetCompletion()
+                            // Typing leaves history navigation, or the next
+                            // ArrowDown would overwrite what was just typed.
+                            resetHistoryNavigation()
                             setInput(event.target.value)
                         }}
                         onFocus={() => {

@@ -2,6 +2,7 @@ import { posix } from 'node:path'
 import rehypePrettyCode, {
     type Options as PrettyCodeOptions,
 } from 'rehype-pretty-code'
+import rehypeSlug from 'rehype-slug'
 import remarkGfm from 'remark-gfm'
 import { defineCollection, defineConfig, s } from 'velite'
 
@@ -46,7 +47,6 @@ const posts = defineCollection({
             date: s.isodate(),
             description: s.string(),
             draft: s.boolean().default(false),
-            raw: s.raw(),
             showCover: s.boolean().default(true),
             slug: s.path(),
             tags: s.array(s.string()).default([]),
@@ -69,7 +69,6 @@ const projects = defineCollection({
             highlights: s.array(s.string()).default([]),
             images: s.array(imageSchema).default([]),
             order: s.number().optional(),
-            raw: s.raw(),
             repo: s.string().url().optional(),
             stack: s.array(s.string()).default([]),
             summary: s.string(),
@@ -173,6 +172,10 @@ export default defineConfig({
     },
     mdx: {
         rehypePlugins: [
+            // Without ids a post's sections cannot be deep-linked and an
+            // in-post [x](#section) resolves to nothing. Runs first: the slug
+            // comes from the heading text, not from its rank.
+            rehypeSlug,
             rehypeNormalizeHeadings,
             rehypeFirstImagePriority,
             rehypeImageDimensions,

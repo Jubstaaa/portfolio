@@ -72,6 +72,29 @@ describe('getAdjacent', () => {
     test('an item missing from the list has no neighbours', () => {
         expect(getAdjacent(list, { slug: 'draft' })).toEqual({})
     })
+
+    // getAllProjects sorts by `order` ascending, so a shared direction pointed
+    // "prev" at the project that comes after the current one.
+    test('a display-order list walks the other way', () => {
+        const ordered = [
+            { slug: 'first' },
+            { slug: 'second' },
+            { slug: 'third' },
+        ]
+        expect(
+            getAdjacent(ordered, { slug: 'second' }, 'display-order')
+        ).toEqual({ next: { slug: 'third' }, prev: { slug: 'first' } })
+        expect(
+            getAdjacent(ordered, { slug: 'first' }, 'display-order')
+        ).toEqual({
+            next: { slug: 'second' },
+        })
+        expect(
+            getAdjacent(ordered, { slug: 'third' }, 'display-order')
+        ).toEqual({
+            prev: { slug: 'second' },
+        })
+    })
 })
 
 describe('byRecency', () => {

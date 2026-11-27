@@ -2,14 +2,14 @@ import type { ReactNode } from 'react'
 
 import { useCallback, useRef } from 'react'
 
-import type { Completion } from './terminal-parser.types'
+import type { CompletionSession } from './terminal-completion'
 
 import { COMMAND_NAMES } from './commands'
-import { getCompletions } from './terminal-parser'
-
-interface CompletionSession extends Completion {
-    index: number
-}
+import {
+    completionValue,
+    nextCompletion,
+    startCompletion,
+} from './terminal-completion'
 
 interface UseTabCompletionOptions {
     appendEntry: (command: string, output: ReactNode) => void
@@ -28,31 +28,31 @@ export function useTabCompletion({
         completionRef.current = null
     }, [])
 
+    const apply = (session: CompletionSession) => {
+        completionRef.current = session
+        const value = completionValue(session)
+        if (value !== null) setInput(value)
+    }
+
     const complete = (): boolean => {
         const active = completionRef.current
         if (active) {
-            active.index = (active.index + 1) % active.matches.length
-            const match = active.matches[active.index]
-            if (match) setInput(active.build(match))
+            apply(nextCompletion(active))
             return true
         }
 
-        const completion = getCompletions(input, COMMAND_NAMES)
-        if (!completion) return false
-        const { build, matches } = completion
-
-        const first = matches[0]
-        if (matches.length === 1 && first) {
-            setInput(build(first))
+        const start = startCompletion(input, COMMAND_NAMES)
+        if (start.kind === 'none') return false
+        if (start.kind === 'single') {
+            setInput(start.value)
             return true
         }
 
         appendEntry(
             input,
-            <p className="text-muted-foreground">{matches.join('  ')}</p>
+            <p className="text-muted-foreground">{start.listing.join('  ')}</p>
         )
-        completionRef.current = { build, index: 0, matches }
-        if (first) setInput(build(first))
+        apply(start.session)
         return true
     }
 
