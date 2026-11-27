@@ -41,5 +41,7 @@ bun-debug.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# SDD scratch (not committed)
+# agent tooling scratch (not committed)
 .superpowers/
+.claude/
+.playwright-mcp/

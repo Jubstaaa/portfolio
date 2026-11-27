@@ -49,8 +49,6 @@ Locally they go in `.env.local` (see `.env.example`); on the droplet in `/opt/po
 
 ## Content authoring
 
-See [`CLAUDE.md`](./CLAUDE.md) for full conventions. Short version:
-
 - `content/blog/<slug>.mdx` — frontmatter (title, description, date, category, tags, cover, draft) + MDX body. Supports `<Note>` and `<Warn>` shortcodes.
 - `content/projects/<slug>.mdx` — frontmatter (title, summary, category, order, stack, repo, url, images, highlights) + MDX body.
 - `content/site.json` — name, role, location, title/description, canonical `url`, email, locale and `nav`.
