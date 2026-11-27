@@ -10,4 +10,4 @@
 *.woff2 binary
 *.ttf binary
 *.otf binary
-bun.lock binary
+bun.lock -merge linguist-generated=true

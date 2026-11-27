@@ -9,14 +9,29 @@ services:
         image: ghcr.io/jubstaaa/portfolio:${IMAGE_TAG:-latest}
         container_name: portfolio
         restart: unless-stopped
+        # PID 1 that reaps orphans: node handles its own SIGTERM, but nothing
+        # else in the container would be collected.
+        init: true
         mem_limit: 256m
         pids_limit: 128
         # The only runtime writes are Next's caches: optimized images (persisted below)
         # and the fetch cache behind /api/now-playing (ephemeral is fine).
         read_only: true
-        tmpfs:
-            - /tmp
-            - /app/.next/cache/fetch-cache
+        # Capped: tmpfs pages count against mem_limit, so without a size an
+        # unexpectedly large /tmp (sharp spools there) OOM-kills the app and
+        # looks like an app crash rather than a full disk.
+        volumes:
+            - type: tmpfs
+              target: /tmp
+              tmpfs:
+                  size: 33554432
+            - type: tmpfs
+              target: /app/.next/cache/fetch-cache
+              tmpfs:
+                  size: 16777216
+            # Persist Next's optimized-image cache so it survives redeploys
+            # (otherwise every deploy resets it and images go cold again).
+            - ${IMAGE_CACHE_DIR:-/opt/portfolio/cache/images}:/app/.next/cache/images
         cap_drop:
             - ALL
         security_opt:
@@ -40,7 +55,10 @@ services:
                     'CMD-SHELL',
                     'wget -q -O /dev/null -T 3 http://127.0.0.1:3000/ || exit 1',
                 ]
-            interval: 30s
+            # 10s, not 30: with 3 retries a dead container is unhealthy at
+            # ~70s, inside the deploy's wait, so the rollback reads as an
+            # unhealthy verdict instead of a timeout.
+            interval: 10s
             timeout: 5s
             retries: 3
             start_period: 40s
@@ -65,7 +83,3 @@ services:
         #     io.portainer.accesscontrol.teams: ${PORTAINER_TEAMS}
         ports:
             - '127.0.0.1:3002:3000'
-        volumes:
-            # Persist Next's optimized-image cache so it survives redeploys
-            # (otherwise every deploy resets it and images go cold again).
-            - ${IMAGE_CACHE_DIR:-/opt/portfolio/cache/images}:/app/.next/cache/images

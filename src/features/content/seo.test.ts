@@ -36,14 +36,6 @@ describe('buildMetadata', () => {
         expect(metadata.openGraph).not.toHaveProperty('modifiedTime')
         expect(metadata.openGraph).not.toHaveProperty('section')
     })
-
-    test('an og image is shared with twitter', () => {
-        const metadata = buildMetadata({ ogImage: '/og.png', title: 'X' })
-        expect(metadata.openGraph).toMatchObject({
-            images: [{ url: '/og.png' }],
-        })
-        expect(metadata.twitter).toMatchObject({ images: [{ url: '/og.png' }] })
-    })
 })
 
 describe('buildProjectJsonLd', () => {

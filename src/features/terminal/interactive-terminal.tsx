@@ -193,6 +193,9 @@ export function InteractiveTerminal({
                         }}
                         onChange={event => {
                             resetCompletion()
+                            // Typing leaves history navigation, or the next
+                            // ArrowDown would overwrite what was just typed.
+                            resetHistoryNavigation()
                             setInput(event.target.value)
                         }}
                         onFocus={() => {

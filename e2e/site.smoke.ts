@@ -37,6 +37,19 @@ describe('home', () => {
         expect(res.headers.has('x-powered-by')).toBe(false)
     })
 
+    // Asserting the values, not just their presence: this suite runs against
+    // the candidate container, so it is the only place that would notice an
+    // image built with NODE_ENV=development, which serves 'unsafe-eval' and ws:.
+    test('the CSP is the production one, not the dev one', async () => {
+        const csp =
+            (await get('/')).headers.get('content-security-policy') ?? ''
+        expect(csp).not.toContain('unsafe-eval')
+        expect(csp).not.toContain('ws:')
+        expect(csp).toContain('upgrade-insecure-requests')
+        expect(csp).toContain("form-action 'none'")
+        expect(csp).toContain("frame-ancestors 'none'")
+    })
+
     // The output is the LCP element: the typing intro animates only the command
     // text, so the output must be in the HTML and never hidden.
     test('server-renders the terminal output visible', async () => {
@@ -100,6 +113,28 @@ test('the image optimizer rejects cache-busting query strings', async () => {
     })
     const res = await get(`/_next/image?${query}`)
     expect(res.status).toBe(400)
+})
+
+// The disk cache is bounded by size, so the host allow-list is what stops a
+// stranger's images filling it.
+test('the image optimizer rejects a host that is not the CDN', async () => {
+    const query = new URLSearchParams({
+        q: '75',
+        url: 'https://example.com/images/x.webp',
+        w: '640',
+    })
+    expect((await get(`/_next/image?${query}`)).status).toBe(400)
+})
+
+// Only proves the allow-list admits the host: the path need not exist, so an
+// upstream 404 here is a pass. A 400 would mean the pattern rejected the CDN.
+test('the image optimizer admits the CDN itself', async () => {
+    const query = new URLSearchParams({
+        q: '75',
+        url: `${cdnBase}/images/x.webp`,
+        w: '640',
+    })
+    expect((await get(`/_next/image?${query}`)).status).not.toBe(400)
 })
 
 test('legacy paths still redirect, permanently', async () => {

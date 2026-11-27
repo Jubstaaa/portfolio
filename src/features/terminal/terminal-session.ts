@@ -17,6 +17,11 @@ interface TerminalSessionState {
     nextId: number
 }
 
+// Bounded because the store outlives client-side navigation: without a cap, a
+// held-down Enter grows the DOM and the live-region announcements forever.
+const MAX_ENTRIES = 200
+const MAX_HISTORY = 100
+
 // Module-level so the transcript survives client-side navigation away from and
 // back to the home page; the server always renders the initial state.
 const store = createStore<TerminalSessionState>()(() => ({
@@ -29,7 +34,10 @@ const store = createStore<TerminalSessionState>()(() => ({
 
 export function appendEntry(command: string, output: ReactNode): void {
     store.setState(state => ({
-        entries: [...state.entries, { command, id: state.nextId + 1, output }],
+        entries: [
+            ...state.entries,
+            { command, id: state.nextId + 1, output },
+        ].slice(-MAX_ENTRIES),
         nextId: state.nextId + 1,
     }))
 }
@@ -47,7 +55,9 @@ export function getSessionState(): TerminalSessionState {
 }
 
 export function pushHistory(command: string): void {
-    store.setState(state => ({ history: [...state.history, command] }))
+    store.setState(state => ({
+        history: [...state.history, command].slice(-MAX_HISTORY),
+    }))
 }
 
 export function useTerminalSession(): TerminalSessionState {

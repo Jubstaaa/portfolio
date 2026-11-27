@@ -20,7 +20,6 @@ interface BuildMetadataInput {
     description?: string
     keywords?: string[]
     modifiedTime?: string
-    ogImage?: string
     path?: string
     publishedTime?: string
     section?: string
@@ -66,7 +65,6 @@ export function buildMetadata(input: BuildMetadataInput): Metadata {
     const description = input.description ?? site.description
     const path = input.path ?? '/'
     const url = absoluteUrl(path)
-    const images = input.ogImage ? [{ url: input.ogImage }] : undefined
     const type = input.type ?? 'website'
 
     const base = {
@@ -75,7 +73,6 @@ export function buildMetadata(input: BuildMetadataInput): Metadata {
         siteName: site.name,
         title: input.title,
         url,
-        ...(images ? { images } : {}),
     }
     const openGraph: Metadata['openGraph'] =
         type === 'article'
@@ -110,7 +107,6 @@ export function buildMetadata(input: BuildMetadataInput): Metadata {
             card: 'summary_large_image',
             description,
             title: input.title,
-            ...(images ? { images } : {}),
         },
     }
 }

@@ -81,6 +81,22 @@ describe('GET /api/now-playing', () => {
         expect(await res.json()).toEqual({ isPlaying: false })
     })
 
+    // A hiccup cached as "not playing" would outlive the recovery by up to 90s
+    // at a shared cache, so only a real answer gets the long window.
+    test('does not cache a degraded answer', async () => {
+        lastFm(() => HttpResponse.error())
+        expect((await GET()).headers.get('cache-control')).toBe('no-store')
+
+        resetRecentTracksCache()
+        delete process.env.LASTFM_API_KEY
+        expect((await GET()).headers.get('cache-control')).toBe('no-store')
+    })
+
+    test('caches a real answer for the polling window', async () => {
+        lastFm(() => HttpResponse.json(nowPlaying))
+        expect((await GET()).headers.get('cache-control')).toContain('s-maxage')
+    })
+
     test('is idle when the network fails', async () => {
         lastFm(() => HttpResponse.error())
         const res = await GET()

@@ -18,5 +18,6 @@ README.md
 *.tsbuildinfo
 .DS_Store
 .claude
+.playwright-mcp
 .superpowers
 *.log

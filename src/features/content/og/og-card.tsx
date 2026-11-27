@@ -78,11 +78,17 @@ export function OgCard({ coverUrl, cta, eyebrow, path, title }: OgCardProps) {
                     <div
                         style={{
                             color: '#ece9e1',
-                            display: 'flex',
+                            // -webkit-box + a clamp so a long title degrades to
+                            // an ellipsis instead of pushing the footer off the
+                            // fixed 630px card.
+                            display: '-webkit-box',
                             fontSize: 60,
                             fontWeight: 700,
                             letterSpacing: '-0.02em',
                             lineHeight: 1.12,
+                            overflow: 'hidden',
+                            WebkitBoxOrient: 'vertical',
+                            WebkitLineClamp: 3,
                         }}>
                         {title}
                     </div>

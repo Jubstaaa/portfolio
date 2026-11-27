@@ -23,6 +23,16 @@ describe('image optimizer', () => {
     })
 })
 
+async function directive(name: string): Promise<string> {
+    const rules = (await config.headers?.()) ?? []
+    const csp =
+        rules
+            .find(rule => rule.source === '/:path*')
+            ?.headers.find(h => h.key === 'Content-Security-Policy')?.value ??
+        ''
+    return csp.split('; ').find(d => d.startsWith(`${name} `)) ?? ''
+}
+
 describe('response headers', () => {
     test('does not advertise the framework', () => {
         expect(config.poweredByHeader).toBe(false)
@@ -51,19 +61,29 @@ describe('response headers', () => {
 
     // Cloudflare Web Analytics (automatic setup) injects its beacon into proxied
     // HTML; blocking it silently breaks the site's analytics.
+    // Every one of these is verified unused in the app, so inheriting them from
+    // default-src would only leave an injected page more room than it needs.
+    test.each([
+        ['form-action', "'none'"],
+        ['frame-src', "'none'"],
+        ['worker-src', "'none'"],
+        ['base-uri', "'none'"],
+        ['frame-ancestors', "'none'"],
+        ['object-src', "'none'"],
+        ['manifest-src', "'self'"],
+    ])('%s is %s', async (name, value) => {
+        expect(await directive(name)).toBe(`${name} ${value}`)
+    })
+
+    test('nothing can produce a blob URL, so img-src does not allow one', async () => {
+        expect(await directive('img-src')).not.toContain('blob:')
+    })
+
     test('lets the Cloudflare Web Analytics beacon load and report', async () => {
-        const rules = (await config.headers?.()) ?? []
-        const csp =
-            rules
-                .find(rule => rule.source === '/:path*')
-                ?.headers.find(h => h.key === 'Content-Security-Policy')
-                ?.value ?? ''
-        const directive = (name: string) =>
-            csp.split('; ').find(d => d.startsWith(`${name} `)) ?? ''
-        expect(directive('script-src')).toContain(
+        expect(await directive('script-src')).toContain(
             'https://static.cloudflareinsights.com'
         )
-        expect(directive('connect-src')).toContain("'self'")
+        expect(await directive('connect-src')).toContain("'self'")
     })
 })
 

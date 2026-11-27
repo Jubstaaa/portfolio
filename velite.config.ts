@@ -2,6 +2,7 @@ import { posix } from 'node:path'
 import rehypePrettyCode, {
     type Options as PrettyCodeOptions,
 } from 'rehype-pretty-code'
+import rehypeSlug from 'rehype-slug'
 import remarkGfm from 'remark-gfm'
 import { defineCollection, defineConfig, s } from 'velite'
 
@@ -171,6 +172,10 @@ export default defineConfig({
     },
     mdx: {
         rehypePlugins: [
+            // Without ids a post's sections cannot be deep-linked and an
+            // in-post [x](#section) resolves to nothing. Runs first: the slug
+            // comes from the heading text, not from its rank.
+            rehypeSlug,
             rehypeNormalizeHeadings,
             rehypeFirstImagePriority,
             rehypeImageDimensions,

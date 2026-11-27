@@ -30,6 +30,11 @@ yarn-error.log*
 .pnpm-debug.log*
 bun-debug.log*
 
+# only bun.lock belongs here
+/package-lock.json
+/pnpm-lock.yaml
+/yarn.lock
+
 # env files
 .env*
 !.env.example

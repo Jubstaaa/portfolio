@@ -14,12 +14,21 @@ const contentSecurityPolicy = [
     // into proxied HTML. It reports to /cdn-cgi/rum on this origin ('self').
     `script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com${isDev ? " 'unsafe-eval'" : ''}`,
     "style-src 'self' 'unsafe-inline'",
-    `img-src 'self' data: blob: ${CDN_BASE}`,
+    // blob: is gone — nothing in the app calls createObjectURL. data: stays:
+    // it costs little on img-src and removing it would break the first inline
+    // SVG or blur placeholder anyone adds, with no test to catch it.
+    `img-src 'self' data: ${CDN_BASE}`,
     "font-src 'self'",
     `connect-src 'self'${isDev ? ' ws:' : ''}`,
+    "manifest-src 'self'",
     "object-src 'none'",
-    "base-uri 'self'",
-    "form-action 'self'",
+    // All 'none' rather than inherited from default-src: there is no <form> and
+    // no Server Action, no <base>, nothing framed and no worker. An injected
+    // form then has nowhere to post, same-origin included.
+    "frame-src 'none'",
+    "worker-src 'none'",
+    "base-uri 'none'",
+    "form-action 'none'",
     "frame-ancestors 'none'",
     ...(isDev ? [] : ['upgrade-insecure-requests']),
 ].join('; ')
