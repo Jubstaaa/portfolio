@@ -5,7 +5,6 @@ import { absoluteUrl } from '@/features/content/site'
 
 import sitemap from './sitemap'
 
-// A lastmod that changes on every build teaches crawlers to ignore it.
 test('only dated content carries a last-modified date', () => {
     const entries = sitemap()
     const posts = new Set(

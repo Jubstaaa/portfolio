@@ -25,7 +25,6 @@ test('stamps the intrinsic size on a CDN image', async () => {
     ).toEqual({ alt: 'a', height: 2, src: '/images/a.png', width: 3 })
 })
 
-// Without dimensions next/image cannot reserve the box, so the page shifts.
 test.each(['https://example.com/a.png', 'a.png', '/other/a.png'])(
     'rejects %p, which is not on the CDN',
     async src => {

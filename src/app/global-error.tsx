@@ -8,8 +8,6 @@ import { fontVariables } from '@/styles/fonts'
 import ErrorPage from './error'
 import './globals.css'
 
-// Replaces the root layout when the layout itself throws, so it renders its own
-// document shell and stylesheet.
 export default function GlobalError(props: ComponentProps<typeof ErrorPage>) {
     return (
         <html className={fontVariables} lang={site.locale}>

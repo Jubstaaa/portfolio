@@ -12,14 +12,9 @@ export async function readImageDimensions(
 ): Promise<{ height: number; width: number }> {
     const bytes = await readImageBytes(src)
     try {
-        // autoOrient, not the top-level width/height: those are
-        // pre-orientation, while browsers default to image-orientation:
-        // from-image — a rotated source would get a transposed box, which is
-        // the exact layout shift this module exists to prevent.
         const { autoOrient } = await sharp(bytes).metadata()
         return { height: autoOrient.height, width: autoOrient.width }
     } catch (cause) {
-        // sharp's decode errors do not say which file they were decoding.
         throw new Error(`cannot read the size of ${src}`, { cause })
     }
 }
@@ -28,9 +23,6 @@ export function rehypeImageDimensions() {
     return stampImageDimensions
 }
 
-// Stamp intrinsic width/height on body images so next/image reserves the
-// correct aspect-ratio box up front — kills the reload layout shift / flicker.
-// An image the build cannot measure fails it rather than shipping that shift.
 export async function stampImageDimensions(tree: Root): Promise<void> {
     const images: Element[] = []
     visit(tree, { tagName: 'img', type: 'element' }, (node: Element) => {

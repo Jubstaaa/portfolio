@@ -78,15 +78,14 @@ export function OgCard({ coverUrl, cta, eyebrow, path, title }: OgCardProps) {
                     <div
                         style={{
                             color: '#ece9e1',
-                            // -webkit-box + a clamp so a long title degrades to
-                            // an ellipsis instead of pushing the footer off the
-                            // fixed 630px card.
+
                             display: '-webkit-box',
                             fontSize: 60,
                             fontWeight: 700,
                             letterSpacing: '-0.02em',
                             lineHeight: 1.12,
                             overflow: 'hidden',
+                            // eslint-disable-next-line @typescript-eslint/no-deprecated -- Satori renders the clamp only through the -webkit-box pair
                             WebkitBoxOrient: 'vertical',
                             WebkitLineClamp: 3,
                         }}>

@@ -126,8 +126,6 @@ export function buildPersonJsonLd(): WithContext<Person> {
     }
 }
 
-// A project with a repository is source code, which is the type that defines
-// codeRepository; the rest are plain creative works.
 export function buildProjectJsonLd(
     project: Project
 ): WithContext<CreativeWork | SoftwareSourceCode> {
@@ -150,8 +148,6 @@ export function buildProjectJsonLd(
         : { '@context': 'https://schema.org', '@type': 'CreativeWork', ...base }
 }
 
-// Content image paths are relative in frontmatter but only resolve on the CDN, so
-// structured data has to name the bucket URL rather than a site path that redirects.
 function absoluteImageUrl(src: string): string {
     return absoluteUrl(cdnUrl(src))
 }

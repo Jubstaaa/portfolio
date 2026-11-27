@@ -10,7 +10,6 @@ describe('nowPlayingPayloadSchema', () => {
         expect(nowPlayingPayloadSchema.parse(payload)).toEqual(payload)
     })
 
-    // The route is ours, but a proxy or an error page can still answer for it.
     test.each([{}, { isPlaying: true }, '<html>', null])(
         'rejects %p',
         payload => {

@@ -4,7 +4,6 @@ import { renderToStaticMarkup } from 'react-dom/server'
 
 import { site } from '@/features/content/content'
 
-// next/font is a compiler transform with no runtime outside the Next build.
 void mock.module('@/styles/fonts', () => ({
     fontVariables: 'hermit-variable hermit-italic-variable',
 }))

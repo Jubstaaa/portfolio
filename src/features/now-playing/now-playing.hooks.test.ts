@@ -17,7 +17,6 @@ test('returns a valid payload', async () => {
     expect(await fetchNowPlaying()).toEqual({ isPlaying: false })
 })
 
-// The widget only reads data, so a failed query would otherwise leave no trace.
 test.each([
     ['an unexpected body', { isPlaying: 'yes' }, 200],
     ['an error status', { isPlaying: false }, 502],

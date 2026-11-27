@@ -16,9 +16,6 @@ function render(payload?: NowPlayingPayload) {
     )
 }
 
-// Chrome records a text block's LCP once, at its first paint. The track name
-// arrives after hydration, so it has to land in the block that was painted
-// with the placeholder; a new, larger block would become the home page's LCP.
 const LABEL_BLOCK = /^<span class="[^"]*"><span class="[^"]*break-all[^"]*">/
 
 test.each([

@@ -30,8 +30,7 @@ export function InteractiveTerminal({
     className,
 }: InteractiveTerminalProps) {
     const router = useRouter()
-    // The terminal is the only TanStack Query consumer (now-playing), so the client
-    // lives here rather than in the root layout, keeping query-core off other pages.
+
     const [queryClient] = useState(() => new QueryClient())
     const { cleared, entries, history } = useTerminalSession()
 
@@ -135,9 +134,6 @@ export function InteractiveTerminal({
     }, [skipIntro])
 
     useEffect(() => {
-        // Nothing has been run yet on the first paint, and scrolling here would
-        // undo the preventScroll focus above and push the intro output — the
-        // page's LCP element — out of view on a short viewport.
         if (entries.length === 0) return
         inputRef.current?.scrollIntoView({ block: 'nearest' })
     }, [entries])
@@ -163,10 +159,6 @@ export function InteractiveTerminal({
                     </div>
                 )}
 
-                {/* Always rendered: a region that enters the accessibility tree
-                    and receives its content in the same frame is not announced,
-                    which would silently lose the first command's output. It
-                    carries its own margin so staying empty costs no gap. */}
                 <div
                     aria-live="polite"
                     className="mb-3 flex flex-col gap-3 empty:mb-0">
@@ -184,12 +176,7 @@ export function InteractiveTerminal({
                         autoCapitalize="off"
                         autoComplete="off"
                         autoCorrect="off"
-                        // outline-none!, not a bare outline-none: the global
-                        // :focus-visible ring sits in @layer utilities so a
-                        // casual opt-out cannot silently drop it. This one is
-                        // deliberate — the prompt is autofocused on load, so a
-                        // ring would sit on the page at rest, and the blinking
-                        // caret beside the input is the affordance instead.
+
                         className="text-foreground min-w-0 cursor-default bg-transparent p-0 caret-transparent outline-none!"
                         enterKeyHint="go"
                         id="terminal-input"
@@ -199,8 +186,7 @@ export function InteractiveTerminal({
                         }}
                         onChange={event => {
                             resetCompletion()
-                            // Typing leaves history navigation, or the next
-                            // ArrowDown would overwrite what was just typed.
+
                             resetHistoryNavigation()
                             setInput(event.target.value)
                         }}

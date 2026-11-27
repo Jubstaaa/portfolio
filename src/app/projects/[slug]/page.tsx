@@ -112,5 +112,4 @@ export default async function ProjectDetailPage({
     )
 }
 
-// Unknown slugs 404 instead of rendering on demand.
 export const dynamicParams = false

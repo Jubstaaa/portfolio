@@ -6,15 +6,11 @@ export interface CompletionSession extends Completion {
     index: number
 }
 
-// `none` leaves the Tab key alone, `single` fills the one match, and `cycle`
-// starts a session the next Tab advances through.
 export type CompletionStart =
     | { kind: 'cycle'; listing: string[]; session: CompletionSession }
     | { kind: 'none' }
     | { kind: 'single'; value: string }
 
-// Pure transitions behind useTabCompletion: the hook owns the ref and the JSX,
-// the cycling arithmetic is testable without a DOM.
 export function completionValue(session: CompletionSession): null | string {
     const match = session.matches[session.index]
     return match === undefined ? null : session.build(match)

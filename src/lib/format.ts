@@ -16,8 +16,6 @@ export function formatMonth(value: string | undefined): string {
     return format(month, 'MMM yyyy').toLowerCase()
 }
 
-// isMatch alone accepts "2024-3"; the round trip also requires the zero padding
-// that string-sorting these values relies on.
 export function isYearMonth(value: string): boolean {
     return (
         isMatch(value, YEAR_MONTH) &&

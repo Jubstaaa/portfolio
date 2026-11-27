@@ -1,4 +1,5 @@
 {
     "$schema": "https://unpkg.com/knip@6/schema.json",
-    "entry": ["velite.config.ts", "scripts/*.ts"]
+    "entry": ["velite.config.ts", "scripts/*.ts"],
+    "ignoreDependencies": ["eslint-config-next", "eslint-plugin-jsx-a11y"]
 }

@@ -13,9 +13,6 @@ export function NowPlaying({ className }: NowPlayingProps) {
     const track = data?.isPlaying ? data : undefined
     const label = track && `${track.title} — ${track.artist}`
 
-    // Every state renders its text into the same label block: Chrome records a
-    // block's LCP once, at first paint, so the track name that arrives after
-    // hydration does not become the home page's LCP.
     return (
         <span className={cn('inline-flex items-start gap-2', className)}>
             {track && (

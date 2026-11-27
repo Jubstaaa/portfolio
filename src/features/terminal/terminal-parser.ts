@@ -4,7 +4,6 @@ import type { Completion, ParsedCommand } from './terminal-parser.types'
 
 import { HIDDEN_FILES } from './terminal-output.constants'
 
-// Insertion order is the order `cd <Tab>` offers pages, so it is not sorted.
 /* eslint-disable perfectionist/sort-maps */
 const PAGES = new Map<string, string>([
     ['~', '/'],

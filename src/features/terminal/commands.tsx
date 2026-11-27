@@ -20,7 +20,6 @@ import { resolvePage } from './terminal-parser'
 const VIM_ESCAPE_MESSAGE =
     "E37: no write since last change — just kidding, you're free."
 
-// Context for rendering command output on the server, where nothing can navigate.
 const STATIC_CTX: CommandContext = {
     getHistory: () => [],
     glitch: () => undefined,

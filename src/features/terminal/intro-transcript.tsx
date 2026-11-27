@@ -15,8 +15,6 @@ interface TypedCommand {
     offset: number
 }
 
-// Read by `.terminal-typing` in globals.css, which turns them into a delay and a
-// steps() count; the durations come from tokens so reduced motion zeroes them.
 interface TypingStyle extends CSSProperties {
     '--typing-chars': number
     '--typing-index': number

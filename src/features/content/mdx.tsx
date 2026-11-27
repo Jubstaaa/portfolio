@@ -24,7 +24,7 @@ export function Mdx({ code, components }: MdxProps) {
 function getComponent(code: string): MdxComponent {
     const cached = cache.get(code)
     if (cached) return cached
-    // velite's documented MDX runtime: compiled, repo-authored content only.
+
     // eslint-disable-next-line @typescript-eslint/no-implied-eval
     const fn = new Function(code) as (scope: typeof runtime) => {
         default: MdxComponent

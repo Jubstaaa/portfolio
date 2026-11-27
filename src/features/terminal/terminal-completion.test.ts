@@ -44,7 +44,7 @@ describe('nextCompletion', () => {
             current = nextCompletion(current)
             seen.push(completionValue(current))
         }
-        // Back to the first match on the fourth Tab, so cycling is a loop.
+
         expect(seen).toEqual(['cat ', 'cd ', 'clear ', 'cat '])
     })
 

@@ -52,8 +52,6 @@ export async function renderOgImage({
     })
 }
 
-// Satori cannot decode webp, so the cover is rasterised to PNG and inlined as a
-// data URL. The bytes come from the Spaces CDN (see readImageBytes).
 async function loadCover(src?: string): Promise<string | undefined> {
     if (!src) return undefined
 
@@ -65,8 +63,6 @@ async function loadCover(src?: string): Promise<string | undefined> {
     return `data:image/png;base64,${png.toString('base64')}`
 }
 
-// Memoised: every post and project renders a card, and the two faces do not
-// change between them.
 let fontsPromise: Promise<OgFont[]> | undefined
 
 type OgFont = Awaited<ReturnType<typeof readFonts>>[number]

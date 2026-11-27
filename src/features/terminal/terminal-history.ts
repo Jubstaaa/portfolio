@@ -1,6 +1,3 @@
-// Pure transitions behind useCommandHistory. `index` is -1 while the user is not
-// navigating, and `draft` holds what they had typed before the first ArrowUp so
-// walking back down to the bottom restores it.
 export interface HistoryCursor {
     draft: string
     index: number
@@ -8,7 +5,6 @@ export interface HistoryCursor {
 
 export const IDLE_CURSOR: HistoryCursor = { draft: '', index: -1 }
 
-// null means the key was not ours to handle, so the caller leaves the event alone.
 export function historyDown(
     cursor: HistoryCursor,
     history: readonly string[]

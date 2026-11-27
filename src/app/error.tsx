@@ -72,8 +72,6 @@ export default function ErrorPage({ error, retry }: ErrorPageProps) {
     )
 }
 
-// Server Component errors arrive as an Error carrying a digest; a Client
-// Component may throw any value, which Next forwards untouched.
 function errorDigest(error: unknown): string | undefined {
     if (!(error instanceof Error) || !('digest' in error)) return undefined
     return typeof error.digest === 'string' ? error.digest : undefined

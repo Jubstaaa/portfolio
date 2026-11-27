@@ -52,8 +52,6 @@ describe('historyDown', () => {
     })
 })
 
-// The round trip is the behaviour users actually notice: type, walk up, walk
-// back down, and the half-typed command is still there.
 test('up then down returns the draft untouched', () => {
     const up = historyUp(IDLE_CURSOR, HISTORY, 'git stat')
     if (!up) throw new Error('expected ArrowUp to be handled')

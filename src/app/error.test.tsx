@@ -13,7 +13,6 @@ test('shows the digest of a server error so it can be matched to the logs', () =
     expect(render(error)).toContain('ref: 4242')
 })
 
-// A Client Component can throw anything, and Next forwards it as-is.
 test.each([null, undefined, 'boom', { digest: 'not-an-error' }])(
     'renders for a thrown %p without a reference',
     thrown => {

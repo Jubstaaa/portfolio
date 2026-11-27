@@ -37,8 +37,6 @@ test('renders a body image at its stamped size', () => {
     expect(html).toContain('height="600"')
 })
 
-// The content pipeline stamps every body image; a missing size is a pipeline bug
-// that would otherwise ship as a layout shift.
 test('refuses a body image without dimensions', () => {
     expect(() =>
         renderToStaticMarkup(<Img alt="a" src="/images/a.webp" />)

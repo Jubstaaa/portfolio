@@ -1,7 +1,3 @@
-// Runs against a live server (CI points it at the candidate container):
-//   SMOKE_BASE_URL=http://127.0.0.1:3002 CDN_BASE=https://… bun run test:smoke
-// It covers what unit tests cannot see: response headers, Next's routing of
-// unknown slugs, edge-facing caching headers and the image optimizer allow-list.
 import { describe, expect, setDefaultTimeout, test } from 'bun:test'
 import { z } from 'zod'
 
@@ -37,9 +33,6 @@ describe('home', () => {
         expect(res.headers.has('x-powered-by')).toBe(false)
     })
 
-    // Asserting the values, not just their presence: this suite runs against
-    // the candidate container, so it is the only place that would notice an
-    // image built with NODE_ENV=development, which serves 'unsafe-eval' and ws:.
     test('the CSP is the production one, not the dev one', async () => {
         const csp =
             (await get('/')).headers.get('content-security-policy') ?? ''
@@ -50,8 +43,6 @@ describe('home', () => {
         expect(csp).toContain("frame-ancestors 'none'")
     })
 
-    // The output is the LCP element: the typing intro animates only the command
-    // text, so the output must be in the HTML and never hidden.
     test('server-renders the terminal output visible', async () => {
         const page = await html('/')
         expect(page).toContain('<h1')
@@ -115,8 +106,6 @@ test('the image optimizer rejects cache-busting query strings', async () => {
     expect(res.status).toBe(400)
 })
 
-// The disk cache is bounded by size, so the host allow-list is what stops a
-// stranger's images filling it.
 test('the image optimizer rejects a host that is not the CDN', async () => {
     const query = new URLSearchParams({
         q: '75',
@@ -126,8 +115,6 @@ test('the image optimizer rejects a host that is not the CDN', async () => {
     expect((await get(`/_next/image?${query}`)).status).toBe(400)
 })
 
-// Only proves the allow-list admits the host: the path need not exist, so an
-// upstream 404 here is a pass. A 400 would mean the pattern rejected the CDN.
 test('the image optimizer admits the CDN itself', async () => {
     const query = new URLSearchParams({
         q: '75',

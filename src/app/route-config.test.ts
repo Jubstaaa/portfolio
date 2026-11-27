@@ -2,8 +2,6 @@ import { describe, expect, test } from 'bun:test'
 
 import { getAllProjects, getPublishedPosts } from '@/features/content/content'
 
-// Next reads segment config statically from the route file itself, so these must
-// stay literal exports there.
 describe.each([
     ['blog page', () => import('./blog/[slug]/page')],
     ['blog OG image', () => import('./blog/[slug]/opengraph-image')],

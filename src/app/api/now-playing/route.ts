@@ -12,8 +12,6 @@ const CACHE_HEADERS = {
         'public, max-age=15, s-maxage=30, stale-while-revalidate=60',
 }
 
-// A transient Last.fm hiccup must not be cached as "not playing" for up to 90
-// seconds at a shared cache after the upstream has already recovered.
 const NO_CACHE_HEADERS = { 'Cache-Control': 'no-store' }
 
 let warnedMissingCredentials = false

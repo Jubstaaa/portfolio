@@ -1,4 +1,3 @@
-/** @type {import('dependency-cruiser').IConfiguration} */
 const config = {
     forbidden: [
         {
@@ -22,10 +21,10 @@ const config = {
             from: {
                 orphan: true,
                 pathNot: [
-                    '(^|/)[.][^/]+[.](?:js|cjs|mjs|ts|cts|mts|json)$', // dot files
-                    '[.]d[.]ts$', // TypeScript declaration files
-                    '(^|/)tsconfig[.]json$', // TypeScript config
-                    '(^|/)(?:babel|webpack)[.]config[.](?:js|cjs|mjs|ts|cts|mts|json)$', // other configs
+                    '(^|/)[.][^/]+[.](?:js|cjs|mjs|ts|cts|mts|json)$',
+                    '[.]d[.]ts$',
+                    '(^|/)tsconfig[.]json$',
+                    '(^|/)(?:babel|webpack)[.]config[.](?:js|cjs|mjs|ts|cts|mts|json)$',
                 ],
             },
             name: 'no-orphans',
@@ -109,8 +108,6 @@ const config = {
             name: 'no-duplicate-dep-types',
             severity: 'warn',
             to: {
-                // as it's common to use a devDependency for type-only imports: don't
-                // consider type-only dependencyTypes for this rule
                 dependencyTypesNot: ['type-only'],
                 moreThanOneDependencyType: true,
             },
@@ -125,8 +122,6 @@ const config = {
             severity: 'error',
             to: { path: '^src/features/' },
         },
-
-        // rules you might want to tweak for your specific situation:
 
         {
             comment:
@@ -151,8 +146,7 @@ const config = {
                 path: '^(src)',
                 pathNot: [
                     '[.](?:spec|test)[.](?:js|mjs|cjs|jsx|ts|mts|cts|tsx)$',
-                    // Test helpers, and content processing that only runs inside velite
-                    // and the prerendered OG routes at build time.
+
                     '^src/test-utils/',
                     '^src/features/content/pipeline/',
                 ],
@@ -161,8 +155,7 @@ const config = {
             severity: 'error',
             to: {
                 dependencyTypes: ['npm-dev'],
-                // type only dependencies are not a problem as they don't end up in the
-                // production code or are ignored by the runtime.
+
                 dependencyTypesNot: ['type-only'],
                 pathNot: ['node_modules/@types/'],
             },
@@ -195,11 +188,6 @@ const config = {
         },
     ],
     options: {
-        /* List of built-in modules to use on top of the ones node declares.
-
-       See https://github.com/sverweij/dependency-cruiser/blob/main/doc/options-reference.md#builtinmodules-influencing-what-to-consider-built-in--core-modules
-       for details
-    */
         builtInModules: {
             add: [
                 'bun',
@@ -214,87 +202,18 @@ const config = {
             ],
         },
 
-        // Which modules to exclude
-        // exclude : {
-        //   // path: an array of regular expressions in strings to match against
-        //   path: '',
-        // },
-
-        // Which modules to exclusively include (array of regular expressions in strings)
-        // dependency-cruiser will skip everything that doesn't match this pattern
-        // includeOnly : [''],
-
-        // List of module systems to cruise.
-        // When left out dependency-cruiser will fall back to the list of _all_
-        // module systems it knows of ('amd', 'cjs', 'es6', 'tsd']). It's the
-        // default because it's the safe option. It comes at a performance penalty, though
-        // As in practice only commonjs ('cjs') and ecmascript modules ('es6')
-        // are in wide use, you can limit the moduleSystems to those.
-        // moduleSystems: ['cjs', 'es6'],
-
-        // false: don't look at JSDoc imports (the default)
-        // true: detect dependencies in JSDoc-style import statements.
-        // Implies parser: 'tsc', which a.o. means the typescript compiler will need
-        // to be installed in the same spot you run dependency-cruiser from.
-        // detectJSDocImports: true,
-
-        // false: don't look at imports in ambient module declarations (the default)
-        // true: detect imports, re-exports and import-equals declarations inside
-        // ambient modules and namespaces. Implies parser: 'tsc'.
-        // detectImportsInAmbientModules: true,
-
-        // false: don't look at process.getBuiltinModule calls (the default)
-        // true: dependency-cruiser will detect calls to process.getBuiltinModule/
         // globalThis.process.getBuiltinModule as imports.
         detectProcessBuiltinModuleCalls: true,
 
-        // prefix for links in html, d2, mermaid and dot/ svg output (e.g. 'https://github.com/you/yourrepo/blob/main/'
-        // to open it on your online repo or `vscode://file/${process.cwd()}/` to
-        // open it in visual studio code),
-        // prefix: `vscode://file/${process.cwd()}/`,
-
-        // suffix for links in output. E.g. put .html here if you use it to link to
-        // your coverage reports.
-        // suffix: '.html',
-
-        // Which modules not to follow further when encountered
         doNotFollow: {
-            // path: an array of regular expressions in strings to match against
             path: ['node_modules'],
         },
 
-        // list of extensions to scan that aren't javascript or compile-to-javascript.
-        // Empty by default. Only put extensions in here that you want to take into
-        // account that are _not_ parsable.
-        // extraExtensionsToScan: ['.json', '.jpg', '.png', '.svg', '.webp'],
-
-        // if true combines the package.jsons found from the module up to the base
-        // folder the cruise is initiated from. Useful for how (some) mono-repos
-        // manage dependencies & dependency definitions.
-        // combinedDependencies: false,
-
-        // if true leave symlinks untouched, otherwise use the realpath
-        // preserveSymlinks: false,
-
-        // options to pass on to enhanced-resolve, the package dependency-cruiser
-        // uses to resolve module references to disk. The values below should be
-        // suitable for most situations
-        //
-        // If you use webpack: you can also set these in webpack.conf.js. The set
-        // there will override the ones specified here.
         enhancedResolveOptions: {
-            // List of conditions to check for in the exports field.
-            // Only works when the 'exportsFields' array is non-empty.
             conditionNames: ['import', 'require', 'node', 'default', 'types'],
 
-            // What to consider as an 'exports' field in package.jsons
             exportsFields: ['exports'],
 
-            // The extensions, by default are the same as the ones dependency-cruiser
-            // can access (run `npx dependency-cruiser --info` to see which ones that are in
-            // _your_ environment). If that list is larger than you need you can pass
-            // the extensions you actually use (e.g. ['.js', '.jsx']). This can speed
-            // up module resolution, which is the most expensive step.
             extensions: [
                 '.ts',
                 '.tsx',
@@ -305,103 +224,30 @@ const config = {
                 '.json',
             ],
 
-            // What to consider a 'main' field in package.json
-
-            // if you migrate to ESM (or are in an ESM environment already) you will want to
-            // have "module" in the list of mainFields, like so:
-            // mainFields: ["module", "main", "types", "typings"],
             mainFields: ['main', 'types', 'typings'],
-
-            // A list of alias fields in package.jsons
-            // See https://github.com/defunctzombie/package-browser-field-spec and
-            // the webpack [resolve.alias](https://webpack.js.org/configuration/resolve/#resolvealiasfields)
-            // documentation.
-            // Defaults to an empty array (= don't use alias fields).
-            // aliasFields: ['browser'],
         },
-
-        // Webpack configuration to use to get resolve options from.
-        //
-        // The (optional) fileName attribute specifies which file to take (relative
-        // to dependency-cruiser's current working directory. When not provided defaults
-        // to './webpack.conf.js'.
-        //
-        // The (optional) 'env' and 'arguments' attributes contain the parameters
-        // to be passed if your webpack config is a function and takes them (see
-        //  webpack documentation for details)
-        // webpackConfig: {
-        //  fileName: 'webpack.config.js',
-        //  env: {},
-        //  arguments: {}
-        // },
-
-        // Babel config ('.babelrc', '.babelrc.json', '.babelrc.json5', ...) to use
-        // for compilation
-        // babelConfig: {
-        //   fileName: '.babelrc',
-        // },
-
-        // List of strings you have in use in addition to cjs/ es6 requires
-        // & imports to declare module dependencies. Use this e.g. if you've
-        // re-declared require, use a require-wrapper or use window.require as
-        // a hack.
-        // exoticRequireStrings: [],
 
         reporterOptions: {
             archi: {
-                // Pattern of modules to consolidate to.
                 collapsePattern:
                     '^(?:packages|src|lib(s?)|app(s?)|bin|test(s?)|spec(s?))/[^/]+|node_modules/(?:@[^/]+/[^/]+|[^/]+)',
-
-                // Options to tweak the appearance of your graph. If you don't specify a
-                // theme for 'archi' dependency-cruiser will use the one specified in the
-                // dot section above and otherwise use the default one.
-                // theme: { },
             },
             dot: {
-                // Pattern of modules to consolidate to. The default pattern in this configuration
-                // collapses everything in node_modules to one folder deep so you see
-                // the external modules, but not their innards.
                 collapsePattern: 'node_modules/(?:@[^/]+/[^/]+|[^/]+)',
-
-                // Options to tweak the appearance of your graph. See
-                // https://github.com/sverweij/dependency-cruiser/blob/main/doc/options-reference.md#reporteroptions
-                // If you don't specify a theme dependency-cruiser falls back to a built-in one.
-                // theme: {
-                //   graph: {
-                //     // splines: 'ortho' - straight lines; slow on big graphs
-                //     // splines: 'true' - bezier curves; fast but not as nice as ortho
-                //     splines: 'true'
-                //   },
-                // },
             },
             text: {
                 highlightFocused: true,
             },
         },
 
-        // skipAnalysisNotInRules will make dependency-cruiser execute
-        // analysis strictly necessary for checking the rule set only.
-        // See https://github.com/sverweij/dependency-cruiser/blob/main/doc/options-reference.md#skipanalysisnotinrules
         skipAnalysisNotInRules: true,
 
-        // TypeScript project file ('tsconfig.json') to use for
-        // (1) compilation and
-        // (2) resolution (e.g. with the paths property)
-        //
-        // The (optional) fileName attribute specifies which file to take (relative to
-        // dependency-cruiser's current working directory). When not provided
-        // defaults to './tsconfig.json'.
         tsConfig: {
             fileName: 'tsconfig.json',
         },
 
-        // false (the default): ignore dependencies that only exist before typescript-to-javascript compilation
-        // true: also detect dependencies that only exist before typescript-to-javascript compilation
-        // 'specify': for each dependency identify whether it only exists before compilation or also after
         tsPreCompilationDeps: true,
     },
 }
-// generated: dependency-cruiser@18.8.0 on 2026-11-20T08:18:06.053Z
 
 export default config
