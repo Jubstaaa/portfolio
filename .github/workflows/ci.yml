@@ -52,7 +52,11 @@ jobs:
               run: bun run generate
             - run: bun run lint
             - name: Typecheck
-              run: bunx tsc --noEmit
+              # bun run, not bunx: bunx falls back to DOWNLOADING a package of
+              # that name when local resolution fails, and tsc is a real
+              # third-party package — the gate must not be able to silently run
+              # someone else's compiler.
+              run: bun run tsc
             - run: bun run test
             - run: bun run audit
             - name: Dead code and unused dependencies (knip)
