@@ -24,3 +24,4 @@ export default async function ProjectOgImage({
 export const dynamicParams = false
 export const size = { height: 630, width: 1200 }
 export const contentType = 'image/jpeg'
+export const alt = 'Project cover'

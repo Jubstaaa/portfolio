@@ -1,6 +1,7 @@
 import Link from 'next/link'
 
 import { site } from '@/features/content/content'
+import { navLabel } from '@/features/content/site'
 
 interface NavLinksProps {
     includeHome?: boolean
@@ -13,7 +14,7 @@ export function NavLinks({ includeHome = false }: NavLinksProps) {
                 <Link
                     className="hover:text-accent transition-token underline-offset-4 hover:underline"
                     href="/">
-                    ./home
+                    {navLabel('home')}
                 </Link>
             ) : null}
             {site.nav.map(item => (
@@ -21,7 +22,7 @@ export function NavLinks({ includeHome = false }: NavLinksProps) {
                     className="hover:text-accent transition-token underline-offset-4 hover:underline"
                     href={item.href}
                     key={item.href}>
-                    .{item.href}
+                    {navLabel(item.label)}
                 </Link>
             ))}
         </p>

@@ -41,6 +41,7 @@ export function Nav() {
                             <NavItem
                                 href={item.href}
                                 key={item.href}
+                                label={item.label}
                                 pathname={pathname}
                                 variant="desktop"
                             />
@@ -103,6 +104,7 @@ export function Nav() {
                             <NavItem
                                 href={item.href}
                                 key={item.href}
+                                label={item.label}
                                 onNavigate={closeMenu}
                                 pathname={pathname}
                                 variant="mobile"

@@ -27,10 +27,10 @@ export default function ErrorPage({ error, retry }: ErrorPageProps) {
                 <TerminalMeta branch="500" path="~/error" />
 
                 <TerminalLine command="cat .">
-                    <p>
+                    <h1 className="font-normal">
                         <StatusDot tone="danger" />
                         unexpected error · 500
-                    </p>
+                    </h1>
                     <p className="text-muted-foreground">
                         <span aria-hidden className="mr-1 select-none">
                             →
