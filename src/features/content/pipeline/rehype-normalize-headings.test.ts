@@ -22,7 +22,6 @@ function tags(tree: Root): string[] {
     )
 }
 
-// The page title is the document's only <h1>, so a body's top heading is an <h2>.
 describe('normalizeHeadings', () => {
     test('demotes a body that starts at h1', () => {
         const tree = doc('h1', 'h2', 'p', 'h3')

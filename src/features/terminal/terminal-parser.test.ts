@@ -29,7 +29,7 @@ describe('resolvePage', () => {
         ['/', '/'],
         ['~', '/'],
         ['', '/'],
-        // Arguments fold case like command names do, so `cd BLOG` navigates.
+
         ['BLOG', '/blog'],
         ['./Blog/', '/blog'],
     ])('%p resolves to %p', (arg, href) => {
@@ -59,8 +59,7 @@ describe('getCompletions', () => {
 
     test('folds case the same way execution does', () => {
         expect(getCompletions('CD bl', names)?.matches).toEqual(['blog'])
-        // The argument half used to be case-sensitive while the command half
-        // was not, so `cd BL<Tab>` went dead while `cd bl<Tab>` completed.
+
         expect(getCompletions('cd BL', names)?.matches).toEqual(['blog'])
         expect(getCompletions('CD BL', names)?.matches).toEqual(['blog'])
     })
@@ -74,7 +73,6 @@ describe('getCompletions', () => {
     })
 })
 
-// User-facing: `cd <Tab>` lists and cycles pages in this order.
 test('page completions start with the home aliases, then the nav order', () => {
     expect(PAGE_TARGETS.slice(0, 2)).toEqual(['~', 'home'])
 })

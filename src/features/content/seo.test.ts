@@ -39,7 +39,6 @@ describe('buildMetadata', () => {
 })
 
 describe('buildProjectJsonLd', () => {
-    // codeRepository is only defined on SoftwareSourceCode, not CreativeWork.
     test('a project with a repository is SoftwareSourceCode', () => {
         const withRepo = getAllProjects().find(project => project.repo)
         if (!withRepo) throw new Error('fixture: no project with a repo')

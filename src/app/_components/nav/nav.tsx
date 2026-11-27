@@ -67,8 +67,6 @@ export function Nav() {
                 </div>
             </div>
 
-            {/* Backdrop click is a pointer convenience; keyboard users close the
-                modal dialog with Escape, which the browser provides. */}
             {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */}
             <dialog
                 aria-label="Menu"

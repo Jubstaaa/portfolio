@@ -11,8 +11,6 @@ test('each command starts typing after the characters before it', () => {
     ])
 })
 
-// The output paragraph is the home page's LCP element: it must be in the
-// server HTML and painted from the first frame, with only the command typed.
 test('the output is server-rendered visible and only the command is typed', () => {
     const html = renderToStaticMarkup(<IntroTranscript commands={['ls']} />)
     expect(html).not.toMatch(/class="[^"]*\bhidden\b/)
@@ -22,8 +20,6 @@ test('the output is server-rendered visible and only the command is typed', () =
     )
 })
 
-// A misspelled or renamed intro command must fail the prerender, not ship a
-// typed prompt with no output under it.
 test.each(['nope', 'constructor'])(
     'an unknown intro command %s fails the render',
     name => {

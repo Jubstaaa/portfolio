@@ -41,15 +41,13 @@ export function getPublishedPosts(): Post[] {
 }
 
 export function selectPublished(all: readonly Post[]): Post[] {
-    return (
-        all
-            .filter(post => !post.draft)
-            // Same-day posts fall back to slug order so lists and feeds stay stable.
-            .toSorted(
-                (a, b) =>
-                    b.date.localeCompare(a.date) || a.slug.localeCompare(b.slug)
-            )
-    )
+    return all
+        .filter(post => !post.draft)
+
+        .toSorted(
+            (a, b) =>
+                b.date.localeCompare(a.date) || a.slug.localeCompare(b.slug)
+        )
 }
 
 const CURRENT = '9999-99'
@@ -66,9 +64,6 @@ export function byRecency(a: Datable, b: Datable): number {
     )
 }
 
-// A newest-first list (posts) reads backwards — the next array entry is the
-// older post, so it is "prev". A display-order list (projects, sorted by
-// `order` ascending) reads forwards, and sharing one direction inverted it.
 export function getAdjacent<T extends { slug: string }>(
     list: T[],
     current: T,
@@ -90,15 +85,12 @@ export function getExperiencesSorted(): Experience[] {
     return experiences.toSorted(byRecency)
 }
 
-// Categories without entries are absent from the result.
 export function getSkillsByCategory(): Partial<
     Record<Skill['category'], Skill[]>
 > {
     return groupBy(skills, 'category')
 }
 
-// Identity links live in content/data/socials.json; a missing label is a content
-// error that should fail the build, not render a dead link.
 export function getSocialHref(label: string): string {
     const social = socials.find(entry => entry.label === label)
     if (!social) throw new Error(`no "${label}" entry in socials.json`)

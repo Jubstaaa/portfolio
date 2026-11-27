@@ -1,14 +1,3 @@
-// Prepares images for the Spaces bucket: webp q78, capped at 2000px on the long
-// edge — the same treatment Payload applies to uploads on the other projects
-// sharing this droplet, so content images stay consistent wherever they come from.
-//
-//   bun run optimize:images <source-dir> <output-dir>
-//
-// Content images live only in the bucket, never in this repo, so point this at
-// wherever the sources are, then upload the output folder under images/
-// preserving the subpath (a cover at images/projects/foo/cover.webp is
-// referenced as /images/projects/foo/cover.webp). Sources are never modified, so
-// a bad run cannot destroy the only copy of an original.
 import { copyFile, mkdir, readdir, stat, writeFile } from 'node:fs/promises'
 import {
     dirname,
@@ -23,10 +12,7 @@ import sharp from 'sharp'
 
 const MAX_EDGE = 2000
 const QUALITY = 78
-// Re-encoding a lossy webp almost always yields a slightly smaller file, so a
-// "smaller than before" test would rewrite every image on every run and stack up
-// generation loss. Only a real win justifies another lossy pass, which also makes
-// repeat runs no-ops.
+
 const MIN_GAIN = 0.1
 const SOURCES = new Set(['.avif', '.jpeg', '.jpg', '.png', '.tiff', '.webp'])
 
@@ -37,8 +23,6 @@ if (!root || !outRoot) {
     process.exit(1)
 }
 
-// An output folder at or inside the sources would overwrite originals, or feed
-// this run's results back in as sources on the next one.
 const outFromRoot = relative(resolve(root), resolve(outRoot))
 if (!outFromRoot.startsWith('..')) {
     console.error('the output folder must be outside the source folder')
@@ -59,8 +43,6 @@ const targetOf = (file: string): string =>
         ext: '.webp',
     })
 
-// cover.png and cover.jpg would both become cover.webp, and one would silently
-// replace the other.
 const sourceByTarget = new Map<string, string>()
 for (const file of files) {
     const target = targetOf(file)
@@ -93,8 +75,6 @@ for (const file of files) {
     const target = targetOf(file)
     await mkdir(dirname(target), { recursive: true })
 
-    // A non-webp source always gets converted; an existing webp only when the
-    // re-encode actually buys something, otherwise it is copied as is.
     if (!isWebp || buffer.length <= original * (1 - MIN_GAIN)) {
         await writeFile(target, buffer)
         after += buffer.length

@@ -98,5 +98,4 @@ export function generateStaticParams() {
     return getPublishedPosts().map(post => ({ slug: post.slug }))
 }
 
-// Unknown slugs 404 instead of rendering on demand.
 export const dynamicParams = false

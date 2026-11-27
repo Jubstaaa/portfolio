@@ -37,8 +37,6 @@ function lastFm(resolver: Parameters<typeof http.get>[1]) {
 
 describe('GET /api/now-playing', () => {
     beforeEach(() => {
-        // The upstream call is deduped in-process, so without this every test
-        // after the first would be served the previous test's track.
         resetRecentTracksCache()
         process.env.LASTFM_API_KEY = 'key'
         process.env.LASTFM_USERNAME = 'user'
@@ -59,7 +57,7 @@ describe('GET /api/now-playing', () => {
         expect(await (await GET()).json()).toEqual({ isPlaying: false })
         await GET()
         expect(requests).not.toHaveBeenCalled()
-        // A misconfigured droplet must leave a trace, but not on every poll.
+
         expect(console.warn).toHaveBeenCalledTimes(1)
         server.events.removeAllListeners()
     })
@@ -81,8 +79,6 @@ describe('GET /api/now-playing', () => {
         expect(await res.json()).toEqual({ isPlaying: false })
     })
 
-    // A hiccup cached as "not playing" would outlive the recovery by up to 90s
-    // at a shared cache, so only a real answer gets the long window.
     test('does not cache a degraded answer', async () => {
         lastFm(() => HttpResponse.error())
         expect((await GET()).headers.get('cache-control')).toBe('no-store')
@@ -127,8 +123,6 @@ describe('GET /api/now-playing', () => {
         { timeout: 10_000 }
     )
 
-    // One upstream call per window, shared across visitors — the reason the
-    // route does not simply pass the credentialed URL to Next's data cache.
     test('dedupes polls inside the window to one upstream call', async () => {
         const requests = mock()
         server.events.on('request:start', requests)
@@ -142,9 +136,6 @@ describe('GET /api/now-playing', () => {
         server.events.removeAllListeners()
     })
 
-    // The key can only travel as a query parameter, so the URL is a secret:
-    // Next's fetch cache stores res.url and logs the whole URL when a cache
-    // write fails, which would put the key in the droplet's container log.
     test('keeps the credentialed URL out of the Next fetch cache', async () => {
         lastFm(() => HttpResponse.json(nowPlaying))
         const fetchSpy = spyOn(globalThis, 'fetch')
@@ -155,7 +146,6 @@ describe('GET /api/now-playing', () => {
     })
 
     test('is idle rather than OOM when the upstream body is unbounded', async () => {
-        // 64 KB is the cap; the real payload at limit=1 is under a kilobyte.
         lastFm(() => HttpResponse.text('x'.repeat(128 * 1024)))
         expect(await (await GET()).json()).toEqual({ isPlaying: false })
         expect(console.error).toHaveBeenCalled()

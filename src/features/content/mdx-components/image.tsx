@@ -20,7 +20,7 @@ export function Img({
 }: ImgProps) {
     if (typeof src !== 'string') return null
     const resolvedSrc = cdnUrl(src)
-    // The first body image is the LCP candidate when no cover is shown.
+
     const priorityProps = dataPriority === 'true' ? LCP_IMAGE_PROPS : {}
     const w = Number(width) || undefined
     const h = Number(height) || undefined
@@ -31,8 +31,6 @@ export function Img({
         className
     )
 
-    // The content pipeline stamps every body image; rendering one without a size
-    // would ship a layout shift instead of failing the build.
     if (!w || !h) {
         throw new Error(
             `body image ${src} has no intrinsic size: it skipped the content pipeline (a JSX <img> in MDX does)`

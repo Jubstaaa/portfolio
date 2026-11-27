@@ -10,8 +10,6 @@ const image = {
     width: 2000,
 }
 
-// Next 16 image docs: prefer fetchPriority/loading over `preload` for the LCP
-// image, so the browser raises its priority without a competing <link>.
 test('the LCP cover is fetched eagerly at high priority', () => {
     const html = renderToStaticMarkup(<ContentImage {...image} lcpCandidate />)
     expect(html).toContain('fetchPriority="high"')

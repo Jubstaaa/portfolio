@@ -28,7 +28,6 @@ test.each(['/blog/post', '#section', 'relative/path'])(
     }
 )
 
-// An inline-flex link cannot wrap, so a long link would overflow the prose.
 test('an external link still wraps inside a paragraph', () => {
     expect(render('https://example.com')).not.toContain('inline-flex')
 })

@@ -73,8 +73,6 @@ describe('getAdjacent', () => {
         expect(getAdjacent(list, { slug: 'draft' })).toEqual({})
     })
 
-    // getAllProjects sorts by `order` ascending, so a shared direction pointed
-    // "prev" at the project that comes after the current one.
     test('a display-order list walks the other way', () => {
         const ordered = [
             { slug: 'first' },

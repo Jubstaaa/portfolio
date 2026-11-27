@@ -18,8 +18,7 @@ export function Anchor({
             </span>
         )
     }
-    // Only an absolute URL (any scheme, including mailto:) parses without a base;
-    // site paths and fragments do not.
+
     if (URL.canParse(href)) {
         return (
             <ExternalLink

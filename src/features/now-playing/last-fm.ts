@@ -25,8 +25,7 @@ export function parseRecentTracks(
     json: unknown
 ): NowPlayingTrack | typeof IDLE {
     const recent = recentTracksSchema.safeParse(json)
-    // Unlike an empty or stopped track, a missing envelope is never a normal state:
-    // Last.fm changed its payload or sent an error body. Throw so it gets logged.
+
     if (!recent.success) {
         throw new Error(`unexpected Last.fm payload: ${recent.error.message}`)
     }

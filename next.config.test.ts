@@ -59,10 +59,6 @@ describe('response headers', () => {
         expect(csp).toContain(CDN_BASE)
     })
 
-    // Cloudflare Web Analytics (automatic setup) injects its beacon into proxied
-    // HTML; blocking it silently breaks the site's analytics.
-    // Every one of these is verified unused in the app, so inheriting them from
-    // default-src would only leave an injected page more room than it needs.
     test.each([
         ['form-action', "'none'"],
         ['frame-src', "'none'"],
@@ -92,8 +88,6 @@ describe('redirects', () => {
     const find = async (source: string) =>
         (await rules()).find(rule => rule.source === source)
 
-    // Content images used to be served from public/images and are indexed under
-    // those paths; a typo here 404s every one of them with nothing to notice it.
     test('legacy image paths point at the CDN and nowhere else', async () => {
         const rule = await find(`${CONTENT_IMAGE_PREFIX}:path*`)
         expect(rule).toBeDefined()
@@ -114,7 +108,7 @@ describe('redirects', () => {
         const rule = await find(source)
         expect(rule).toBeDefined()
         expect(rule?.destination).toBe(destination)
-        // A temporary redirect leaks the old URL's ranking instead of moving it.
+
         expect(rule?.permanent).toBe(true)
     })
 

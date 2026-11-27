@@ -2,12 +2,6 @@ import localFont from 'next/font/local'
 
 import { cn } from '@/lib/utils'
 
-// Shared by the root layout and global-error, which replaces it with its own
-// document. Each localFont call self-hosts a separate font instance, so both
-// import this one definition.
-
-// Upright faces are on every page, so they are preloaded. Italics only appear in
-// MDX emphasis and blockquotes; a separate family keeps them off the critical path.
 const hermit = localFont({
     display: 'swap',
     src: [

@@ -4,10 +4,6 @@ import { CONTENT_IMAGE_PREFIX } from '@/lib/cdn'
 
 import { readImageDimensions } from './image-dimensions'
 
-// Frontmatter images (covers, project galleries). Every one is on the CDN, so the
-// build can stamp its intrinsic size and next/image always reserves the box.
-// The prefix is checked inside the transform: a failed string check alone would
-// not stop the transform from fetching the bad path.
 export const imageSchema = s
     .object({
         alt: s.string(),

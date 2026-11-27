@@ -1,5 +1,3 @@
-// WCAG 2.4.1: lets keyboard users jump past the navigation; visible only while
-// focused.
 export function SkipLink() {
     return (
         <a

@@ -7,8 +7,6 @@ export function Table({
     ...props
 }: HTMLAttributes<HTMLTableElement>) {
     return (
-        // tabIndex so a keyboard-only user can scroll a wide table; the
-        // <pre> next door already gets one from rehype-pretty-code.
         <div
             aria-label="Table"
             className="-mx-1 my-6 overflow-x-auto px-1"

@@ -42,7 +42,6 @@ describe('parseRecentTracks', () => {
         expect(parseRecentTracks(json)).toEqual({ isPlaying: false })
     })
 
-    // Not a normal state: Last.fm changed its payload or sent an error body.
     test.each([
         ['null', null],
         ['an HTML error page', '<html>'],
