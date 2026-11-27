@@ -1,5 +1,9 @@
 import { type KeyboardEvent, useCallback, useRef } from 'react'
 
+import type { HistoryCursor } from './terminal-history'
+
+import { historyDown, historyUp, IDLE_CURSOR } from './terminal-history'
+
 interface UseCommandHistoryOptions {
     history: string[]
     input: string
@@ -11,41 +15,28 @@ export function useCommandHistory({
     input,
     setInput,
 }: UseCommandHistoryOptions) {
-    const indexRef = useRef(-1)
-    const draftRef = useRef('')
+    const cursorRef = useRef<HistoryCursor>(IDLE_CURSOR)
 
     const resetHistoryNavigation = useCallback(() => {
-        indexRef.current = -1
-        draftRef.current = ''
+        cursorRef.current = IDLE_CURSOR
     }, [])
 
-    const handleArrowUp = (event: KeyboardEvent<HTMLInputElement>): boolean => {
-        if (history.length === 0) return false
-        event.preventDefault()
-        if (indexRef.current === -1) {
-            draftRef.current = input
-            indexRef.current = history.length - 1
-        } else if (indexRef.current > 0) {
-            indexRef.current -= 1
-        }
-        setInput(history[indexRef.current] ?? '')
-        return true
-    }
-
-    const handleArrowDown = (
-        event: KeyboardEvent<HTMLInputElement>
+    const step = (
+        event: KeyboardEvent<HTMLInputElement>,
+        result: null | { cursor: HistoryCursor; value: string }
     ): boolean => {
-        if (indexRef.current === -1) return false
+        if (!result) return false
         event.preventDefault()
-        if (indexRef.current < history.length - 1) {
-            indexRef.current += 1
-            setInput(history[indexRef.current] ?? '')
-        } else {
-            indexRef.current = -1
-            setInput(draftRef.current)
-        }
+        cursorRef.current = result.cursor
+        setInput(result.value)
         return true
     }
 
-    return { handleArrowDown, handleArrowUp, resetHistoryNavigation }
+    return {
+        handleArrowDown: (event: KeyboardEvent<HTMLInputElement>) =>
+            step(event, historyDown(cursorRef.current, history)),
+        handleArrowUp: (event: KeyboardEvent<HTMLInputElement>) =>
+            step(event, historyUp(cursorRef.current, history, input)),
+        resetHistoryNavigation,
+    }
 }
