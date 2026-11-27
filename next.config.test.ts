@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 
 import config from './next.config'
-import { CDN_BASE } from './src/lib/cdn'
+import { CDN_BASE, CONTENT_IMAGE_PREFIX } from './src/lib/cdn'
 
 describe('image optimizer', () => {
     const [pattern] = config.images?.remotePatterns ?? []
@@ -64,5 +64,43 @@ describe('response headers', () => {
             'https://static.cloudflareinsights.com'
         )
         expect(directive('connect-src')).toContain("'self'")
+    })
+})
+
+describe('redirects', () => {
+    const rules = async () => (await config.redirects?.()) ?? []
+    const find = async (source: string) =>
+        (await rules()).find(rule => rule.source === source)
+
+    // Content images used to be served from public/images and are indexed under
+    // those paths; a typo here 404s every one of them with nothing to notice it.
+    test('legacy image paths point at the CDN and nowhere else', async () => {
+        const rule = await find(`${CONTENT_IMAGE_PREFIX}:path*`)
+        expect(rule).toBeDefined()
+        expect(rule?.destination).toBe(
+            `${CDN_BASE}${CONTENT_IMAGE_PREFIX}:path*`
+        )
+        expect(rule?.permanent).toBe(true)
+    })
+
+    test.each([
+        ['/bio', '/about'],
+        ['/stack', '/about'],
+        ['/portfolio', '/projects'],
+        ['/portfolio/portfolio-site', '/projects'],
+        ['/portfolio/portfolio-site-old', '/projects'],
+        ['/portfolio/:slug', '/projects/:slug'],
+    ])('%s is a permanent redirect to %s', async (source, destination) => {
+        const rule = await find(source)
+        expect(rule).toBeDefined()
+        expect(rule?.destination).toBe(destination)
+        // A temporary redirect leaks the old URL's ranking instead of moving it.
+        expect(rule?.permanent).toBe(true)
+    })
+
+    test('every rule is permanent, so none of them bleeds ranking', async () => {
+        for (const rule of await rules()) {
+            expect(rule.permanent).toBe(true)
+        }
     })
 })

@@ -101,7 +101,7 @@ Find good SHAs in `/opt/portfolio/release.env` (`PREVIOUS_TAG`), `git log --firs
 
 ### Dependency updates
 
-Dependabot opens weekly PRs. Patch and minor updates merge themselves once the required checks (`check`, `image`) pass; majors wait for review. GitHub does not start workflows from a merge made with `GITHUB_TOKEN`, so the auto-merge workflow dispatches `deploy.yml` itself after merging. A Dependabot branch that fell behind `main` gets an `@dependabot rebase` comment instead, which re-runs the checks.
+Dependabot opens weekly PRs. Patch and minor updates of npm packages merge themselves once the required checks (`check`, `image`) pass. Majors, GitHub Actions and the Docker base image all wait for review, patch releases included. GitHub does not start workflows from a merge made with `GITHUB_TOKEN`, so the auto-merge workflow dispatches `deploy.yml` itself after merging. A Dependabot branch that fell behind `main` gets an `@dependabot rebase` comment instead, which re-runs the checks.
 
 ### Monitoring
 

@@ -101,3 +101,15 @@ test('the image optimizer rejects cache-busting query strings', async () => {
     const res = await get(`/_next/image?${query}`)
     expect(res.status).toBe(400)
 })
+
+test('legacy paths still redirect, permanently', async () => {
+    const page = await fetch(new URL('/bio', base), { redirect: 'manual' })
+    expect(page.status).toBe(308)
+    expect(page.headers.get('location')).toBe('/about')
+
+    const image = await fetch(new URL('/images/x.webp', base), {
+        redirect: 'manual',
+    })
+    expect(image.status).toBe(308)
+    expect(image.headers.get('location')).toBe(`${cdnBase}/images/x.webp`)
+})

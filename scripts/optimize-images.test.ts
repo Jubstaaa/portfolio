@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import sharp from 'sharp'
 
-const SCRIPT = join(import.meta.dir, 'optimize-images.mjs')
+const SCRIPT = join(import.meta.dir, 'optimize-images.ts')
 
 let work: string
 
