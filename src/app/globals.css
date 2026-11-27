@@ -79,10 +79,16 @@
         color: var(--foreground);
     }
 
-    :focus-visible {
-        outline: 2px solid var(--ring);
-        outline-offset: 2px;
-        border-radius: 2px;
+    /* rehype-pretty-code is configured with two themes, so it stamps
+       --shiki-dark/--shiki-light per token and emits no `color` of its own:
+       reading them here is what actually paints the highlighting. A span
+       without the variable (the data-line wrappers) inherits instead. */
+    [data-rehype-pretty-code-figure] span {
+        color: var(--shiki-dark);
+    }
+
+    html.light [data-rehype-pretty-code-figure] span {
+        color: var(--shiki-light);
     }
 }
 
@@ -103,8 +109,26 @@
         border-color: color-mix(in oklch, var(--border) 70%, transparent);
     }
 
+    /* Named properties, not the `transition-property: all` that omitting them
+       would mean: `all` animates layout on every breakpoint and aria-current
+       flip. Motion that is not a colour change opts in below. */
     .transition-token {
-        @apply duration-(--duration-base) ease-(--ease-out);
+        @apply transition-colors duration-(--duration-base) ease-(--ease-out);
+    }
+
+    .transition-token-motion {
+        @apply transition-[transform,opacity] duration-(--duration-base) ease-(--ease-out);
+    }
+
+    /* Utilities outrank @layer base, so a lone `outline-none` would drop the
+       ring; it lives here to be the last word. */
+    :focus-visible {
+        outline: 2px solid var(--ring);
+        outline-offset: 2px;
+    }
+
+    .dot-nudge {
+        margin-top: calc((1lh - 0.375rem) / 2);
     }
 
     .cursor-blink {
