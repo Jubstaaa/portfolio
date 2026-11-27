@@ -74,6 +74,12 @@ export default defineConfig([
 
     {
         rules: {
+            // A scrollable region needs a tabIndex to be reachable by keyboard
+            // (WCAG 2.1.1); the rule allows only `tabpanel` out of the box.
+            'jsx-a11y/no-noninteractive-tabindex': [
+                'error',
+                { roles: ['region', 'tabpanel'], tags: [] },
+            ],
             // Server logs go through console.error / console.warn; nothing else ships.
             'no-console': ['error', { allow: ['error', 'warn'] }],
         },

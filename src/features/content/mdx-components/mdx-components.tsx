@@ -20,20 +20,22 @@ import { Tr } from './table-row'
 import { Ul } from './unordered-list'
 import { Warn } from './warn'
 
-const H1 = makeHeading('h1')
 const H2 = makeHeading('h2')
 const H3 = makeHeading('h3')
 const H4 = makeHeading('h4')
+const H5 = makeHeading('h5')
+const H6 = makeHeading('h6')
 
 export const mdxComponents = {
     a: Anchor,
     blockquote: Blockquote,
     code: InlineCode,
     em: Em,
-    h1: H1,
     h2: H2,
     h3: H3,
     h4: H4,
+    h5: H5,
+    h6: H6,
     hr: Hr,
     img: Img,
     li: Li,

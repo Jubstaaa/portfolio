@@ -8,7 +8,5 @@ interface ProseProps {
 }
 
 export function Prose({ children, className }: ProseProps) {
-    return (
-        <div className={cn('prose text-foreground', className)}>{children}</div>
-    )
+    return <div className={cn('text-foreground', className)}>{children}</div>
 }

@@ -66,14 +66,19 @@ export function byRecency(a: Datable, b: Datable): number {
     )
 }
 
+// A newest-first list (posts) reads backwards — the next array entry is the
+// older post, so it is "prev". A display-order list (projects, sorted by
+// `order` ascending) reads forwards, and sharing one direction inverted it.
 export function getAdjacent<T extends { slug: string }>(
     list: T[],
-    current: T
+    current: T,
+    order: 'display-order' | 'newest-first' = 'newest-first'
 ): { next?: T; prev?: T } {
     const index = list.findIndex(item => item.slug === current.slug)
     if (index === -1) return {}
-    const prev = list[index + 1]
-    const next = list[index - 1]
+    const step = order === 'newest-first' ? 1 : -1
+    const prev = list[index + step]
+    const next = list[index - step]
     return { ...(prev ? { prev } : {}), ...(next ? { next } : {}) }
 }
 

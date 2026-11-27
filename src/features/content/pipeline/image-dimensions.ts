@@ -3,17 +3,21 @@ import type { Element, Root } from 'hast'
 import sharp from 'sharp'
 import { visit } from 'unist-util-visit'
 
-import { readImageBytes } from './image-source'
+import { CONTENT_IMAGE_PREFIX } from '@/lib/cdn'
 
-export const CONTENT_IMAGE_PREFIX = '/images/'
+import { readImageBytes } from './image-source'
 
 export async function readImageDimensions(
     src: string
 ): Promise<{ height: number; width: number }> {
     const bytes = await readImageBytes(src)
     try {
-        const { height, width } = await sharp(bytes).metadata()
-        return { height, width }
+        // autoOrient, not the top-level width/height: those are
+        // pre-orientation, while browsers default to image-orientation:
+        // from-image — a rotated source would get a transposed box, which is
+        // the exact layout shift this module exists to prevent.
+        const { autoOrient } = await sharp(bytes).metadata()
+        return { height: autoOrient.height, width: autoOrient.width }
     } catch (cause) {
         // sharp's decode errors do not say which file they were decoding.
         throw new Error(`cannot read the size of ${src}`, { cause })

@@ -1,7 +1,7 @@
 import type { NextConfig } from 'next'
 
 // Relative, not the @/ alias: the config is evaluated before tsconfig paths exist.
-import { CDN_BASE } from './src/lib/cdn'
+import { CDN_BASE, CONTENT_IMAGE_PREFIX } from './src/lib/cdn'
 
 const isDev = process.env.NODE_ENV === 'development'
 
@@ -51,7 +51,7 @@ const nextConfig: NextConfig = {
         remotePatterns: [
             {
                 hostname: new URL(CDN_BASE).hostname,
-                pathname: '/images/**',
+                pathname: `${CONTENT_IMAGE_PREFIX}**`,
                 protocol: 'https',
                 // The bucket ignores query strings but the optimizer keys its cache
                 // on them, so allowing any would let a loop of ?x=N fill the disk.
@@ -68,9 +68,9 @@ const nextConfig: NextConfig = {
             // Content images used to be served from public/images and are indexed
             // under those paths; they live in the Spaces bucket now.
             {
-                destination: `${CDN_BASE}/images/:path*`,
+                destination: `${CDN_BASE}${CONTENT_IMAGE_PREFIX}:path*`,
                 permanent: true,
-                source: '/images/:path*',
+                source: `${CONTENT_IMAGE_PREFIX}:path*`,
             },
             // Legacy `/_next/image?url=/images/...` URLs are indexed as well and
             // cannot be salvaged: the optimizer resolves a relative `url` through
